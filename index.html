@@ -257,8 +257,24 @@
 
   /* EMPTY */
   .empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.6; }
+  .empty-title { font-size: 15px; font-weight: 700; color: var(--text2); margin-bottom: 6px; }
+  .empty-hint { font-size: 13px; color: var(--text3); line-height: 1.5; }
+  .empty-hint strong { color: var(--cyan); }
   
   .loading { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--text3); font-size: 16px; font-family: var(--font2); }
+
+  /* BUTTON SPINNER */
+  .btn-spinner {
+    width: 15px; height: 15px;
+    border: 2px solid rgba(0,0,0,0.3);
+    border-top-color: #000;
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
   /* CONSULTA POR DATA */
   .consulta-date-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
@@ -326,9 +342,19 @@
   .pie-stat-val { font-family:var(--font2); font-size:18px; font-weight:700; }
   .pie-stat-lbl { font-size:11px; color:var(--text3); }
 
+  /* COPY NAME BUTTON */
+  .btn-copy-name {
+    background: none; border: none; cursor: pointer;
+    color: var(--text3); font-size: 13px; padding: 2px 5px;
+    border-radius: 4px; transition: all .15s; line-height: 1;
+    flex-shrink: 0; opacity: 0;
+  }
+  .os-card:hover .btn-copy-name { opacity: 1; }
+  .btn-copy-name:hover { color: var(--cyan); background: #00d4ff15; }
+  .btn-copy-name.copied { color: var(--green); opacity: 1; }
+
   /* CARD ACTION BUTTONS */
-  .os-card-actions {
-    display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
+  .os-card-actions {    display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
     border-top: 1px solid var(--border);
   }
   .card-btn {
@@ -349,9 +375,38 @@
   .obs-field { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: var(--font); font-size: 14px; outline: none; resize: vertical; min-height: 70px; }
   .obs-field:focus { border-color: var(--green); }
 
+  /* MOBILE KANBAN TABS */
+  .kanban-tabs {
+    display: none;
+    gap: 0;
+    margin-bottom: 12px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .kanban-tab-btn {
+    flex: 1; padding: 11px 8px; background: none; border: none;
+    color: var(--text2); font-family: var(--font); font-size: 13px;
+    font-weight: 700; cursor: pointer; transition: all .2s;
+    letter-spacing: 0.5px; border-right: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .kanban-tab-btn:last-child { border-right: none; }
+  .kanban-tab-btn.active.aguardando { background: #ffb02018; color: var(--amber); border-bottom: 2px solid var(--amber); }
+  .kanban-tab-btn.active.andamento { background: #00d4ff18; color: var(--cyan); border-bottom: 2px solid var(--cyan); }
+  .kanban-tab-btn.active.concluido { background: #00c89618; color: var(--green); border-bottom: 2px solid var(--green); }
+  .kanban-tab-count { background: var(--bg4); border-radius: 12px; padding: 1px 6px; font-size: 11px; }
+
   @media (max-width: 900px) {
     .kanban { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .kanban-tabs { display: flex; }
+    .kanban { display: block; }
+    .kanban-col { display: none; }
+    .kanban-col.tab-active { display: block; }
   }
   @media (max-width: 600px) {
     .main { padding: 12px; }
@@ -476,17 +531,30 @@
       <button class="sort-btn" onclick="setSort('antigo')">⌛ Mais Antigo</button>
     </div>
 
+    <!-- KANBAN MOBILE TABS -->
+    <div class="kanban-tabs" id="kanban-tabs">
+      <button class="kanban-tab-btn aguardando active" onclick="selectKanbanTab('aguardando')">
+        ⏳ Aguardando <span class="kanban-tab-count" id="tab-count-aguardando">0</span>
+      </button>
+      <button class="kanban-tab-btn andamento" onclick="selectKanbanTab('andamento')">
+        ✏ Andamento <span class="kanban-tab-count" id="tab-count-andamento">0</span>
+      </button>
+      <button class="kanban-tab-btn concluido" onclick="selectKanbanTab('concluido')">
+        ✅ Concluído <span class="kanban-tab-count" id="tab-count-concluido">0</span>
+      </button>
+    </div>
+
     <!-- KANBAN -->
     <div class="kanban">
-      <div class="kanban-col">
+      <div class="kanban-col tab-active" id="kanban-col-aguardando">
         <div class="kanban-header aguardando">⏳ Aguardando <span class="kanban-count" id="count-aguardando">0</span></div>
         <div class="kanban-body" id="col-aguardando"><div class="empty">Nenhuma O.S.</div></div>
       </div>
-      <div class="kanban-col">
+      <div class="kanban-col" id="kanban-col-andamento">
         <div class="kanban-header andamento">✏ Em Andamento <span class="kanban-count" id="count-andamento">0</span></div>
         <div class="kanban-body" id="col-andamento"><div class="empty">Nenhuma O.S.</div></div>
       </div>
-      <div class="kanban-col">
+      <div class="kanban-col" id="kanban-col-concluido">
         <div class="kanban-header concluido">✅ Concluído <span class="kanban-count" id="count-concluido">0</span></div>
         <div class="kanban-body" id="col-concluido"><div class="empty">Nenhuma O.S.</div></div>
       </div>
@@ -523,12 +591,14 @@
           <select id="os-servico">
             <option value="">Selecionar...</option>
             <option>Instalação de Internet</option>
-            <option>Manutenção de Rede</option>
+            <option>Visita tecnica Rede</option>
+           <option>ONU/ONT Vermelha</option>
             <option>Troca de Equipamento</option>
             <option>Configuração de Roteador</option>
             <option>Passagem de Cabo</option>
             <option>Fusão de Fibra</option>
             <option>Reparo de Sinal</option>
+           <option>Mudança de endereço</option>
             <option>Outro</option>
           </select>
         </div>
@@ -543,7 +613,7 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Responsável</label>
+          <label>Equipe</label>
           <input type="text" id="os-responsavel" placeholder="Nome do técnico" />
         </div>
         <div class="form-group">
@@ -567,7 +637,6 @@
         <div class="add-material">
           <select id="mat-tipo">
             <option value="">Selecionar material...</option>
-            <option>APC</option>
             <option>RJ45</option>
             <option>ONT</option>
             <option>Roteador</option>
@@ -733,6 +802,25 @@
   </div>
 </div>
 
+<!-- MODAL CONFIRMAÇÃO EXCLUSÃO -->
+<div class="modal-backdrop" id="modal-confirm-delete">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-header">
+      <h2 style="color:var(--red);">🗑 Excluir O.S.</h2>
+      <button class="btn-close" onclick="closeModal('modal-confirm-delete')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:15px; color:var(--text2); margin-bottom:8px;">Tem certeza que deseja excluir esta O.S.?</p>
+      <div id="confirm-delete-info" style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px; font-size:14px; color:var(--text);"></div>
+      <p style="font-size:13px; color:var(--text3); margin-top:12px;">Esta ação não pode ser desfeita.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-confirm-delete')">Cancelar</button>
+      <button class="btn btn-danger" id="btn-confirm-delete-ok" onclick="confirmDeleteOS()">🗑 Excluir</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -842,6 +930,12 @@ window.saveOS = async () => {
     updatedAt: serverTimestamp(),
   };
 
+  // Loading state
+  const btn = document.querySelector('#modal-os .btn-primary');
+  const originalHTML = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="btn-spinner"></span> Salvando...';
+
   try {
     if (currentOSId) {
       await updateDoc(doc(db, 'ordens', currentOSId), data);
@@ -854,18 +948,37 @@ window.saveOS = async () => {
     closeModal('modal-os');
   } catch (e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalHTML;
   }
 };
 
-window.deleteCurrentOS = async () => {
+window.deleteCurrentOS = () => {
   if (!currentOSId) return;
-  if (!confirm('Excluir esta O.S.?')) return;
+  const os = allOS.find(o => o.id === currentOSId);
+  if (!os) return;
+  const num = String(os.numero || '?').padStart(4, '0');
+  document.getElementById('confirm-delete-info').innerHTML =
+    `<strong style="color:var(--cyan);font-family:var(--font2);">OS #${num}</strong> — ${esc(os.cliente)}<br><span style="color:var(--text3);font-size:13px;">${esc(os.servico || '')} · ${esc(os.responsavel || '')}</span>`;
+  openModal('modal-confirm-delete');
+};
+
+window.confirmDeleteOS = async () => {
+  if (!currentOSId) return;
+  const btn = document.getElementById('btn-confirm-delete-ok');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="btn-spinner" style="border-color:rgba(255,255,255,.3);border-top-color:#fff;"></span> Excluindo...';
   try {
     await deleteDoc(doc(db, 'ordens', currentOSId));
+    closeModal('modal-confirm-delete');
     closeModal('modal-detail');
     showToast('O.S. excluída.', 'success');
   } catch (e) {
     showToast('Erro ao excluir.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🗑 Excluir';
   }
 };
 
@@ -902,8 +1015,25 @@ window.setSort = (s) => {
 
 window.renderKanban = () => renderKanbanFn();
 
+window.copyClientName = (btn, name) => {
+  navigator.clipboard.writeText(name).then(() => {
+    const original = btn.innerHTML;
+    btn.innerHTML = '✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = original; btn.classList.remove('copied'); }, 1500);
+  }).catch(() => showToast('Não foi possível copiar.', 'error'));
+};
+
 window.openModal = (id) => document.getElementById(id).classList.add('open');
 window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+
+window.selectKanbanTab = (status) => {
+  ['aguardando', 'andamento', 'concluido'].forEach(s => {
+    document.getElementById('kanban-col-' + s)?.classList.toggle('tab-active', s === status);
+    const btn = document.querySelector(`.kanban-tab-btn.${s}`);
+    if (btn) btn.classList.toggle('active', s === status);
+  });
+};
 
 window.iniciarCurrentOS = async () => {
   if (!currentOSId) return;
@@ -1243,12 +1373,22 @@ function renderKanbanFn() {
   const cols = { aguardando: [], andamento: [], concluido: [] };
   filtered.forEach(os => { if (cols[os.status]) cols[os.status].push(os); });
 
+  const emptyMessages = {
+    aguardando: { icon: '⏳', title: 'Nenhuma O.S. aguardando', hint: 'Clique em <strong>+ Nova O.S.</strong> para começar.' },
+    andamento: { icon: '🔧', title: 'Nada em andamento', hint: 'Inicie uma O.S. da coluna <strong>Aguardando</strong>.' },
+    concluido: { icon: '✅', title: 'Nenhuma O.S. concluída', hint: 'Conclua uma O.S. em andamento para vê-la aqui.' },
+  };
+
   ['aguardando', 'andamento', 'concluido'].forEach(status => {
     const col = document.getElementById('col-' + status);
     const count = document.getElementById('count-' + status);
-    count.textContent = cols[status].length;
-    if (cols[status].length === 0) {
-      col.innerHTML = '<div class="empty">Nenhuma O.S.</div>';
+    const tabCount = document.getElementById('tab-count-' + status);
+    const n = cols[status].length;
+    count.textContent = n;
+    if (tabCount) tabCount.textContent = n;
+    if (n === 0) {
+      const em = emptyMessages[status];
+      col.innerHTML = `<div class="empty"><div class="empty-icon">${em.icon}</div><div class="empty-title">${em.title}</div><div class="empty-hint">${em.hint}</div></div>`;
     } else {
       col.innerHTML = cols[status].map(os => renderOSCard(os)).join('');
     }
@@ -1283,6 +1423,7 @@ function renderOSCard(os) {
       <div class="os-card-top">
         <span class="os-num">OS #${num}</span>
         <span class="os-title">${esc(os.cliente)}</span>
+        <button class="btn-copy-name" title="Copiar nome" onclick="event.stopPropagation(); copyClientName(this, '${esc(os.cliente)}')">⎘</button>
         <span class="priority-badge ${os.prioridade}">${prioLabel}</span>
       </div>
       <div class="os-client">📋 ${esc(os.servico || '—')}</div>
