@@ -286,6 +286,46 @@
   .consulta-item-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
   .consulta-empty { text-align: center; padding: 40px; color: var(--text3); font-size: 14px; }
 
+  /* TEMPO DE ATENDIMENTO */
+  .tempo-badge { display:inline-flex; align-items:center; gap:5px; font-family:var(--font2); font-size:12px; color:var(--cyan); background:#00d4ff12; border:1px solid #00d4ff30; border-radius:6px; padding:3px 8px; margin-top:6px; }
+
+  /* RANKING TÉCNICOS */
+  .ranking-periodo { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .ranking-periodo-btn { background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--text2); padding:6px 14px; font-size:13px; font-family:var(--font); font-weight:600; cursor:pointer; transition:all .2s; }
+  .ranking-periodo-btn.active { border-color:var(--cyan); color:var(--cyan); background:#00d4ff15; }
+  .ranking-row { display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:10px; margin-bottom:8px; }
+  .ranking-pos { font-family:var(--font2); font-size:18px; font-weight:700; width:28px; text-align:center; flex-shrink:0; }
+  .ranking-pos.first { color:var(--amber); }
+  .ranking-pos.second { color:var(--text2); }
+  .ranking-pos.third { color:#cd7f32; }
+  .ranking-nome { flex:1; font-size:15px; font-weight:700; }
+  .ranking-stats { display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .ranking-num { display:flex; flex-direction:column; align-items:center; }
+  .ranking-num-val { font-family:var(--font2); font-size:16px; font-weight:700; }
+  .ranking-num-lbl { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; }
+  .ranking-bar-wrap { width:100%; height:6px; background:var(--bg4); border-radius:3px; margin-top:8px; }
+  .ranking-bar { height:6px; border-radius:3px; background:var(--cyan); transition:width .4s; }
+
+  /* RELATÓRIO MENSAL */
+  .relatorio-mes-controls { display:flex; gap:8px; align-items:center; margin-bottom:20px; flex-wrap:wrap; }
+  .relatorio-mes-controls input[type=month] { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:8px 14px; color:var(--text); font-family:var(--font); font-size:15px; outline:none; }
+  .relatorio-mes-controls input[type=month]:focus { border-color:var(--cyan); }
+  .chart-section { margin-bottom:24px; }
+  .chart-title { font-size:12px; font-weight:700; color:var(--text3); letter-spacing:1px; text-transform:uppercase; margin-bottom:12px; }
+  .bar-chart { display:flex; align-items:flex-end; gap:4px; height:120px; border-bottom:1px solid var(--border); padding-bottom:0; overflow-x:auto; }
+  .bar-wrap { display:flex; flex-direction:column; align-items:center; gap:4px; min-width:28px; flex:1; }
+  .bar { width:100%; border-radius:3px 3px 0 0; transition:height .4s; min-height:2px; cursor:default; }
+  .bar-lbl { font-size:10px; color:var(--text3); white-space:nowrap; }
+  .bar-val { font-size:10px; font-family:var(--font2); color:var(--text2); }
+  .chart-legend { display:flex; gap:14px; flex-wrap:wrap; margin-top:10px; }
+  .legend-item { display:flex; align-items:center; gap:5px; font-size:12px; color:var(--text2); }
+  .legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .pie-row { display:flex; gap:16px; flex-wrap:wrap; }
+  .pie-stat { display:flex; align-items:center; gap:8px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 14px; flex:1; min-width:130px; }
+  .pie-stat-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+  .pie-stat-val { font-family:var(--font2); font-size:18px; font-weight:700; }
+  .pie-stat-lbl { font-size:11px; color:var(--text3); }
+
   /* CARD ACTION BUTTONS */
   .os-card-actions {
     display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
@@ -388,6 +428,8 @@
       <div class="page-title">Ordem de <span>Serviço 2.0</span></div>
       <button class="btn btn-primary btn-sm" onclick="openNewOS()">+ Nova O.S.</button>
       <button class="btn btn-outline btn-sm" onclick="openConsultaData()">📅 Consultar por Data</button>
+      <button class="btn btn-outline btn-sm" onclick="openRanking()">🏆 Ranking</button>
+      <button class="btn btn-outline btn-sm" onclick="openRelatorioMensal()">📊 Relatório Mensal</button>
       <button class="btn btn-outline btn-sm" onclick="gerarRelatorioDia()">📄 Relatório do Dia</button>
     </div>
 
@@ -567,6 +609,45 @@
       </div>
     </div>
     <div class="modal-body" id="detail-body"></div>
+  </div>
+</div>
+
+<!-- MODAL RANKING TÉCNICOS -->
+<div class="modal-backdrop" id="modal-ranking">
+  <div class="modal" style="max-width:580px;">
+    <div class="modal-header">
+      <h2>🏆 Ranking de Técnicos</h2>
+      <button class="btn-close" onclick="closeModal('modal-ranking')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="ranking-periodo">
+        <button class="ranking-periodo-btn active" onclick="setRankingPeriodo('hoje',this)">Hoje</button>
+        <button class="ranking-periodo-btn" onclick="setRankingPeriodo('semana',this)">Esta Semana</button>
+        <button class="ranking-periodo-btn" onclick="setRankingPeriodo('mes',this)">Este Mês</button>
+        <button class="ranking-periodo-btn" onclick="setRankingPeriodo('tudo',this)">Tudo</button>
+      </div>
+      <div id="ranking-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RELATÓRIO MENSAL -->
+<div class="modal-backdrop" id="modal-relatorio-mensal">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <h2>📊 Relatório Mensal</h2>
+      <button class="btn-close" onclick="closeModal('modal-relatorio-mensal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="relatorio-mes-controls">
+        <input type="month" id="relatorio-mes-input" />
+        <button class="btn btn-primary btn-sm" onclick="renderRelatorioMensal()">📊 Gerar</button>
+        <button class="btn btn-outline btn-sm" onclick="exportarCSV()">⬇ Exportar CSV</button>
+      </div>
+      <div id="relatorio-mensal-body">
+        <div class="consulta-empty">Selecione o mês e clique em Gerar.</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -835,7 +916,11 @@ window.iniciarOS = async (id) => {
   const os = allOS.find(o => o.id === id);
   if (!os || os.status !== 'aguardando') return;
   try {
-    await updateDoc(doc(db, 'ordens', id), { status: 'andamento', updatedAt: serverTimestamp() });
+    await updateDoc(doc(db, 'ordens', id), {
+      status: 'andamento',
+      iniciadoEm: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
     showToast('Manutenção iniciada!', 'success');
   } catch(e) { showToast('Erro: ' + e.message, 'error'); }
 };
@@ -893,14 +978,28 @@ function renderConcluirMateriais() {
 window.confirmarConclusao = async () => {
   if (!concluirOSId) return;
   const obs = document.getElementById('concluir-obs').value.trim();
+  const os = allOS.find(o => o.id === concluirOSId);
   try {
+    const now = new Date();
     const updateData = {
       status: 'concluido',
       materiais: concluirMateriais,
+      concluidoEm: serverTimestamp(),
       updatedAt: serverTimestamp(),
     };
+    // Calcular tempo de atendimento se tiver iniciadoEm
+    if (os?.iniciadoEm?.toDate) {
+      const inicio = os.iniciadoEm.toDate();
+      const diffMs = now - inicio;
+      const diffMin = Math.round(diffMs / 60000);
+      updateData.tempoAtendimentoMin = diffMin;
+    } else if (os?.createdAt?.toDate) {
+      // fallback: desde criação
+      const inicio = os.createdAt.toDate();
+      const diffMs = now - inicio;
+      updateData.tempoAtendimentoMin = Math.round(diffMs / 60000);
+    }
     if (obs) {
-      const os = allOS.find(o => o.id === concluirOSId);
       const descAtual = os?.descricao || '';
       updateData.descricao = descAtual ? descAtual + '\n\n[Conclusão] ' + obs : '[Conclusão] ' + obs;
     }
@@ -1165,6 +1264,8 @@ function renderOSCard(os) {
   const prioLabel = { alta: 'ALTA', media: 'MÉDIA', baixa: 'BAIXA' }[os.prioridade] || '';
   const initials = (os.responsavel || '?').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
   const date = os.createdAt?.toDate ? os.createdAt.toDate().toLocaleDateString('pt-BR') : '—';
+  const tempoBadge = os.tempoAtendimentoMin != null
+    ? `<span class="tempo-badge" title="Tempo de atendimento">⏱ ${formatTempo(os.tempoAtendimentoMin)}</span>` : '';
 
   const actionBtns = os.status === 'aguardando'
     ? `<div class="os-card-actions">
@@ -1188,9 +1289,12 @@ function renderOSCard(os) {
       <div class="os-service">${esc(os.descricao || 'Sem descrição')}</div>
       <div class="os-footer">
         <span>${date}</span>
-        <div class="os-resp">
-          <div class="avatar">${initials}</div>
-          <span>${esc(os.responsavel || '—')}</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${tempoBadge}
+          <div class="os-resp">
+            <div class="avatar">${initials}</div>
+            <span>${esc(os.responsavel || '—')}</span>
+          </div>
         </div>
       </div>
       ${actionBtns}
@@ -1209,6 +1313,15 @@ window.openDetail = (id) => {
   const date = os.createdAt?.toDate ? os.createdAt.toDate().toLocaleString('pt-BR') : '—';
   const upd = os.updatedAt?.toDate ? os.updatedAt.toDate().toLocaleString('pt-BR') : '—';
 
+  // Tempo de atendimento
+  let tempoHtml = '';
+  if (os.tempoAtendimentoMin != null) {
+    tempoHtml = `<div class="detail-row"><span class="detail-label">⏱ Tempo</span><span class="detail-value"><span class="tempo-badge">⏱ ${formatTempo(os.tempoAtendimentoMin)}</span></span></div>`;
+  } else if (os.status === 'andamento' && os.iniciadoEm?.toDate) {
+    const diffMin = Math.round((Date.now() - os.iniciadoEm.toDate()) / 60000);
+    tempoHtml = `<div class="detail-row"><span class="detail-label">⏱ Em curso</span><span class="detail-value"><span class="tempo-badge">⏱ ${formatTempo(diffMin)} em andamento</span></span></div>`;
+  }
+
   const matHtml = (os.materiais || []).length > 0
     ? os.materiais.map(m => `<div class="material-item"><span class="material-name">${esc(m.tipo)}</span><span class="material-qty">${m.qty}</span><span class="material-unit">${esc(m.unidade)}</span></div>`).join('')
     : '<div style="color:var(--text3); font-size:13px;">Nenhum material registrado.</div>';
@@ -1224,6 +1337,7 @@ window.openDetail = (id) => {
       <div class="detail-row"><span class="detail-label">Responsável</span><span class="detail-value">${esc(os.responsavel || '—')}</span></div>
       <div class="detail-row"><span class="detail-label">Criado em</span><span class="detail-value">${date}</span></div>
       <div class="detail-row"><span class="detail-label">Atualizado</span><span class="detail-value">${upd}</span></div>
+      ${tempoHtml}
     </div>
     ${os.descricao ? `<div class="detail-section"><div class="detail-label" style="margin-bottom:8px;">Descrição</div><div style="font-size:14px; color:var(--text); line-height:1.6; background:var(--bg3); padding:12px; border-radius:8px; border:1px solid var(--border);">${esc(os.descricao).replace(/\n/g,'<br>')}</div></div>` : ''}
     <div class="materiais-section">
@@ -1275,6 +1389,264 @@ function updateStats() {
   document.getElementById('stat-andamento').textContent = allOS.filter(o => o.status === 'andamento').length;
   document.getElementById('stat-concluido').textContent = allOS.filter(o => o.status === 'concluido').length;
 }
+
+// ===== TEMPO DE ATENDIMENTO =====
+function formatTempo(min) {
+  if (min < 60) return min + ' min';
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m > 0 ? `${h}h ${m}min` : `${h}h`;
+}
+
+// ===== RANKING DE TÉCNICOS =====
+let rankingPeriodoAtual = 'hoje';
+
+window.openRanking = () => {
+  rankingPeriodoAtual = 'hoje';
+  document.querySelectorAll('.ranking-periodo-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.ranking-periodo-btn')[0].classList.add('active');
+  renderRanking();
+  openModal('modal-ranking');
+};
+
+window.setRankingPeriodo = (periodo, btn) => {
+  rankingPeriodoAtual = periodo;
+  document.querySelectorAll('.ranking-periodo-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderRanking();
+};
+
+function getOSdoPeriodo(periodo) {
+  const agora = new Date();
+  return allOS.filter(os => {
+    const ts = os.createdAt?.toDate ? os.createdAt.toDate() : null;
+    if (!ts) return false;
+    if (periodo === 'hoje') {
+      return ts.toDateString() === agora.toDateString();
+    } else if (periodo === 'semana') {
+      const inicio = new Date(agora); inicio.setDate(agora.getDate() - agora.getDay()); inicio.setHours(0,0,0,0);
+      return ts >= inicio;
+    } else if (periodo === 'mes') {
+      return ts.getMonth() === agora.getMonth() && ts.getFullYear() === agora.getFullYear();
+    }
+    return true; // tudo
+  });
+}
+
+function renderRanking() {
+  const lista = getOSdoPeriodo(rankingPeriodoAtual);
+  const tecMap = {};
+  lista.forEach(os => {
+    const nome = os.responsavel || 'Sem responsável';
+    if (!tecMap[nome]) tecMap[nome] = { total: 0, concluidas: 0, tempos: [] };
+    tecMap[nome].total++;
+    if (os.status === 'concluido') {
+      tecMap[nome].concluidas++;
+      if (os.tempoAtendimentoMin != null) tecMap[nome].tempos.push(os.tempoAtendimentoMin);
+    }
+  });
+
+  const ranking = Object.entries(tecMap)
+    .map(([nome, d]) => ({
+      nome,
+      ...d,
+      tempoMedio: d.tempos.length ? Math.round(d.tempos.reduce((a,b) => a+b, 0) / d.tempos.length) : null
+    }))
+    .sort((a, b) => b.concluidas - a.concluidas || b.total - a.total);
+
+  const maxConcluidas = ranking[0]?.concluidas || 1;
+  const posEmoji = ['🥇','🥈','🥉'];
+  const posCls = ['first','second','third'];
+
+  const container = document.getElementById('ranking-list');
+  if (ranking.length === 0) {
+    container.innerHTML = '<div class="consulta-empty">Nenhuma O.S. encontrada neste período.</div>';
+    return;
+  }
+
+  container.innerHTML = ranking.map((t, i) => {
+    const barW = maxConcluidas > 0 ? Math.round((t.concluidas / maxConcluidas) * 100) : 0;
+    const pos = i < 3 ? posEmoji[i] : `${i+1}º`;
+    const posCl = i < 3 ? posCls[i] : '';
+    const tempoStr = t.tempoMedio != null ? formatTempo(t.tempoMedio) : '—';
+    return `<div class="ranking-row">
+      <div class="ranking-pos ${posCl}">${pos}</div>
+      <div style="flex:1;">
+        <div class="ranking-nome">${esc(t.nome)}</div>
+        <div class="ranking-bar-wrap"><div class="ranking-bar" style="width:${barW}%"></div></div>
+      </div>
+      <div class="ranking-stats">
+        <div class="ranking-num"><span class="ranking-num-val" style="color:var(--text)">${t.total}</span><span class="ranking-num-lbl">Total</span></div>
+        <div class="ranking-num"><span class="ranking-num-val" style="color:var(--green)">${t.concluidas}</span><span class="ranking-num-lbl">Concluídas</span></div>
+        <div class="ranking-num"><span class="ranking-num-val" style="color:var(--cyan);font-size:13px;">${tempoStr}</span><span class="ranking-num-lbl">Tempo Médio</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== RELATÓRIO MENSAL =====
+window.openRelatorioMensal = () => {
+  const hoje = new Date();
+  document.getElementById('relatorio-mes-input').value =
+    `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('relatorio-mensal-body').innerHTML = '<div class="consulta-empty">Clique em Gerar para carregar.</div>';
+  openModal('modal-relatorio-mensal');
+  renderRelatorioMensal();
+};
+
+window.renderRelatorioMensal = () => {
+  const val = document.getElementById('relatorio-mes-input').value;
+  if (!val) return;
+  const [ano, mes] = val.split('-').map(Number);
+
+  const osMes = allOS.filter(os => {
+    const ts = os.createdAt?.toDate ? os.createdAt.toDate() : null;
+    return ts && ts.getFullYear() === ano && ts.getMonth() === mes - 1;
+  });
+
+  const diasNoMes = new Date(ano, mes, 0).getDate();
+  const porDia = Array.from({length: diasNoMes}, (_, i) => {
+    const dia = i + 1;
+    const count = osMes.filter(os => os.createdAt.toDate().getDate() === dia).length;
+    return { dia, count };
+  });
+  const maxDia = Math.max(...porDia.map(d => d.count), 1);
+
+  // Por técnico
+  const porTec = {};
+  osMes.forEach(os => {
+    const t = os.responsavel || 'Sem responsável';
+    porTec[t] = (porTec[t] || 0) + 1;
+  });
+  const tecList = Object.entries(porTec).sort((a,b) => b[1]-a[1]);
+  const maxTec = tecList[0]?.[1] || 1;
+  const tecColors = ['#00d4ff','#ffb020','#00c896','#9d6fff','#ff4d6a','#4d9fff','#ff8c00','#00e5cc'];
+
+  // Por tipo de serviço
+  const porServico = {};
+  osMes.forEach(os => {
+    const s = os.servico || 'Sem tipo';
+    porServico[s] = (porServico[s] || 0) + 1;
+  });
+  const svcList = Object.entries(porServico).sort((a,b) => b[1]-a[1]);
+
+  const total = osMes.length;
+  const concluidas = osMes.filter(o => o.status === 'concluido').length;
+  const abertas = total - concluidas;
+  const temposMed = osMes.filter(o => o.tempoAtendimentoMin != null).map(o => o.tempoAtendimentoMin);
+  const tempoMedio = temposMed.length ? Math.round(temposMed.reduce((a,b)=>a+b,0)/temposMed.length) : null;
+  const nomeMes = new Date(ano, mes-1, 1).toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
+
+  document.getElementById('relatorio-mensal-body').innerHTML = `
+    <!-- Resumo -->
+    <div class="consulta-summary" style="display:grid;margin-bottom:20px;">
+      <div class="consulta-stat"><div class="consulta-stat-val" style="color:var(--text)">${total}</div><div class="consulta-stat-lbl">Total</div></div>
+      <div class="consulta-stat"><div class="consulta-stat-val" style="color:var(--green)">${concluidas}</div><div class="consulta-stat-lbl">Concluídas</div></div>
+      <div class="consulta-stat"><div class="consulta-stat-val" style="color:var(--amber)">${abertas}</div><div class="consulta-stat-lbl">Em Aberto</div></div>
+    </div>
+    ${tempoMedio != null ? `<div style="text-align:center;margin-bottom:20px;"><span class="tempo-badge" style="font-size:14px;padding:6px 14px;">⏱ Tempo médio de atendimento: <strong>${formatTempo(tempoMedio)}</strong></span></div>` : ''}
+
+    <!-- Gráfico por dia -->
+    <div class="chart-section">
+      <div class="chart-title">O.S. por Dia — ${nomeMes}</div>
+      <div class="bar-chart">
+        ${porDia.map(d => {
+          const h = Math.max(4, Math.round((d.count / maxDia) * 100));
+          return `<div class="bar-wrap">
+            <span class="bar-val">${d.count > 0 ? d.count : ''}</span>
+            <div class="bar" style="height:${h}px;background:${d.count>0?'var(--cyan)':'var(--bg4)'};" title="Dia ${d.dia}: ${d.count} O.S."></div>
+            <span class="bar-lbl">${d.dia}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <!-- Gráfico por técnico -->
+    ${tecList.length > 0 ? `<div class="chart-section">
+      <div class="chart-title">O.S. por Técnico</div>
+      ${tecList.map(([nome, cnt], i) => {
+        const pct = Math.round((cnt / maxTec) * 100);
+        const cor = tecColors[i % tecColors.length];
+        return `<div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
+            <span>${esc(nome)}</span>
+            <span style="font-family:var(--font2);color:${cor}">${cnt}</span>
+          </div>
+          <div style="height:8px;background:var(--bg4);border-radius:4px;">
+            <div style="height:8px;width:${pct}%;background:${cor};border-radius:4px;transition:width .4s;"></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : ''}
+
+    <!-- Por tipo de serviço -->
+    ${svcList.length > 0 ? `<div class="chart-section">
+      <div class="chart-title">Por Tipo de Serviço</div>
+      <div class="pie-row">
+        ${svcList.map(([svc, cnt], i) => `
+          <div class="pie-stat">
+            <div class="pie-stat-dot" style="background:${tecColors[i % tecColors.length]}"></div>
+            <div>
+              <div class="pie-stat-val" style="color:${tecColors[i % tecColors.length]}">${cnt}</div>
+              <div class="pie-stat-lbl">${esc(svc)}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+  `;
+};
+
+// ===== EXPORTAR CSV =====
+window.exportarCSV = () => {
+  const val = document.getElementById('relatorio-mes-input')?.value;
+  let osList = allOS;
+
+  if (val) {
+    const [ano, mes] = val.split('-').map(Number);
+    osList = allOS.filter(os => {
+      const ts = os.createdAt?.toDate ? os.createdAt.toDate() : null;
+      return ts && ts.getFullYear() === ano && ts.getMonth() === mes - 1;
+    });
+  }
+
+  const statusLabel = { aguardando: 'Aguardando', andamento: 'Em Andamento', concluido: 'Concluído' };
+  const prioLabel = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
+
+  const header = ['Número','Cliente','Contato','Endereço','Serviço','Prioridade','Status','Responsável','Criado em','Concluído em','Tempo (min)','Materiais','Descrição'];
+  const rows = osList.map(os => {
+    const num = String(os.numero || '?').padStart(4, '0');
+    const criado = os.createdAt?.toDate ? os.createdAt.toDate().toLocaleString('pt-BR') : '';
+    const concluido = os.concluidoEm?.toDate ? os.concluidoEm.toDate().toLocaleString('pt-BR') : '';
+    const mats = (os.materiais || []).map(m => `${m.qty}x ${m.tipo}`).join(' | ');
+    return [
+      `OS #${num}`,
+      os.cliente || '',
+      os.contato || '',
+      os.endereco || '',
+      os.servico || '',
+      prioLabel[os.prioridade] || os.prioridade || '',
+      statusLabel[os.status] || os.status || '',
+      os.responsavel || '',
+      criado,
+      concluido,
+      os.tempoAtendimentoMin != null ? os.tempoAtendimentoMin : '',
+      mats,
+      (os.descricao || '').replace(/\n/g,' ')
+    ].map(v => `"${String(v).replace(/"/g,'""')}"`);
+  });
+
+  const csv = [header.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const bom = '\uFEFF'; // BOM para Excel abrir UTF-8 corretamente
+  const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const nomeMes = val ? val.replace('-','_') : 'completo';
+  a.href = url; a.download = `OS_Inforwnet_${nomeMes}.csv`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('CSV exportado com sucesso!', 'success');
+};
 
 // ===== UTILS =====
 function esc(s) {
