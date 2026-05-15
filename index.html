@@ -257,24 +257,8 @@
 
   /* EMPTY */
   .empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
-  .empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.6; }
-  .empty-title { font-size: 15px; font-weight: 700; color: var(--text2); margin-bottom: 6px; }
-  .empty-hint { font-size: 13px; color: var(--text3); line-height: 1.5; }
-  .empty-hint strong { color: var(--cyan); }
   
   .loading { display: flex; align-items: center; justify-content: center; height: 200px; color: var(--text3); font-size: 16px; font-family: var(--font2); }
-
-  /* BUTTON SPINNER */
-  .btn-spinner {
-    width: 15px; height: 15px;
-    border: 2px solid rgba(0,0,0,0.3);
-    border-top-color: #000;
-    border-radius: 50%;
-    animation: spin .6s linear infinite;
-    flex-shrink: 0;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .btn:disabled { opacity: 0.65; cursor: not-allowed; }
 
   /* CONSULTA POR DATA */
   .consulta-date-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
@@ -301,6 +285,32 @@
   .consulta-item-servico { font-size: 12px; color: var(--text3); margin-top: 2px; }
   .consulta-item-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
   .consulta-empty { text-align: center; padding: 40px; color: var(--text3); font-size: 14px; }
+
+  /* ESTOQUE DIÁRIO */
+  .estoque-header { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+  .estoque-equipe-tabs { display:flex; gap:6px; }
+  .estoque-equipe-tab { background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--text2); padding:6px 16px; font-size:13px; font-family:var(--font); font-weight:700; cursor:pointer; transition:all .2s; }
+  .estoque-equipe-tab.active { border-color:var(--cyan); color:var(--cyan); background:#00d4ff15; }
+  .estoque-add-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; padding:12px; background:var(--bg3); border:1px solid var(--border); border-radius:10px; }
+  .estoque-add-row select, .estoque-add-row input { background:var(--bg4); border:1px solid var(--border); border-radius:7px; padding:8px 12px; color:var(--text); font-family:var(--font); font-size:14px; outline:none; }
+  .estoque-add-row select:focus, .estoque-add-row input:focus { border-color:var(--cyan); }
+  .estoque-table { width:100%; border-collapse:collapse; }
+  .estoque-table th { background:var(--bg3); color:var(--text3); font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+  .estoque-table td { padding:10px 12px; border-bottom:1px solid var(--border); font-size:14px; vertical-align:middle; }
+  .estoque-table tr:last-child td { border-bottom:none; }
+  .estoque-qty-ctrl { display:flex; align-items:center; gap:6px; }
+  .estoque-qty-btn { background:var(--bg3); border:1px solid var(--border); border-radius:5px; color:var(--text); width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; font-weight:700; transition:background .15s; }
+  .estoque-qty-btn:hover { background:var(--border); }
+  .estoque-qty-val { font-family:var(--font2); font-size:16px; font-weight:700; min-width:32px; text-align:center; }
+  .estoque-usado { color:var(--amber); font-family:var(--font2); font-weight:700; }
+  .estoque-saldo { font-family:var(--font2); font-weight:700; }
+  .estoque-saldo.ok { color:var(--green); }
+  .estoque-saldo.low { color:var(--amber); }
+  .estoque-saldo.zero { color:var(--red); }
+  .estoque-summary { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+  .estoque-sum-card { flex:1; min-width:120px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 14px; }
+  .estoque-sum-val { font-family:var(--font2); font-size:20px; font-weight:700; color:var(--cyan); }
+  .estoque-sum-lbl { font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; margin-top:2px; }
 
   /* TEMPO DE ATENDIMENTO */
   .tempo-badge { display:inline-flex; align-items:center; gap:5px; font-family:var(--font2); font-size:12px; color:var(--cyan); background:#00d4ff12; border:1px solid #00d4ff30; border-radius:6px; padding:3px 8px; margin-top:6px; }
@@ -342,19 +352,9 @@
   .pie-stat-val { font-family:var(--font2); font-size:18px; font-weight:700; }
   .pie-stat-lbl { font-size:11px; color:var(--text3); }
 
-  /* COPY NAME BUTTON */
-  .btn-copy-name {
-    background: none; border: none; cursor: pointer;
-    color: var(--text3); font-size: 13px; padding: 2px 5px;
-    border-radius: 4px; transition: all .15s; line-height: 1;
-    flex-shrink: 0; opacity: 0;
-  }
-  .os-card:hover .btn-copy-name { opacity: 1; }
-  .btn-copy-name:hover { color: var(--cyan); background: #00d4ff15; }
-  .btn-copy-name.copied { color: var(--green); opacity: 1; }
-
   /* CARD ACTION BUTTONS */
-  .os-card-actions {    display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
+  .os-card-actions {
+    display: flex; gap: 6px; margin-top: 10px; padding-top: 10px;
     border-top: 1px solid var(--border);
   }
   .card-btn {
@@ -375,38 +375,9 @@
   .obs-field { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: var(--font); font-size: 14px; outline: none; resize: vertical; min-height: 70px; }
   .obs-field:focus { border-color: var(--green); }
 
-  /* MOBILE KANBAN TABS */
-  .kanban-tabs {
-    display: none;
-    gap: 0;
-    margin-bottom: 12px;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .kanban-tab-btn {
-    flex: 1; padding: 11px 8px; background: none; border: none;
-    color: var(--text2); font-family: var(--font); font-size: 13px;
-    font-weight: 700; cursor: pointer; transition: all .2s;
-    letter-spacing: 0.5px; border-right: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .kanban-tab-btn:last-child { border-right: none; }
-  .kanban-tab-btn.active.aguardando { background: #ffb02018; color: var(--amber); border-bottom: 2px solid var(--amber); }
-  .kanban-tab-btn.active.andamento { background: #00d4ff18; color: var(--cyan); border-bottom: 2px solid var(--cyan); }
-  .kanban-tab-btn.active.concluido { background: #00c89618; color: var(--green); border-bottom: 2px solid var(--green); }
-  .kanban-tab-count { background: var(--bg4); border-radius: 12px; padding: 1px 6px; font-size: 11px; }
-
   @media (max-width: 900px) {
     .kanban { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 640px) {
-    .kanban-tabs { display: flex; }
-    .kanban { display: block; }
-    .kanban-col { display: none; }
-    .kanban-col.tab-active { display: block; }
   }
   @media (max-width: 600px) {
     .main { padding: 12px; }
@@ -482,6 +453,7 @@
     <div class="top-bar">
       <div class="page-title">Ordem de <span>Serviço 2.0</span></div>
       <button class="btn btn-primary btn-sm" onclick="openNewOS()">+ Nova O.S.</button>
+      <button class="btn btn-outline btn-sm" onclick="openEstoque()">📦 Estoque do Dia</button>
       <button class="btn btn-outline btn-sm" onclick="openConsultaData()">📅 Consultar por Data</button>
       <button class="btn btn-outline btn-sm" onclick="openRanking()">🏆 Ranking</button>
       <button class="btn btn-outline btn-sm" onclick="openRelatorioMensal()">📊 Relatório Mensal</button>
@@ -531,30 +503,17 @@
       <button class="sort-btn" onclick="setSort('antigo')">⌛ Mais Antigo</button>
     </div>
 
-    <!-- KANBAN MOBILE TABS -->
-    <div class="kanban-tabs" id="kanban-tabs">
-      <button class="kanban-tab-btn aguardando active" onclick="selectKanbanTab('aguardando')">
-        ⏳ Aguardando <span class="kanban-tab-count" id="tab-count-aguardando">0</span>
-      </button>
-      <button class="kanban-tab-btn andamento" onclick="selectKanbanTab('andamento')">
-        ✏ Andamento <span class="kanban-tab-count" id="tab-count-andamento">0</span>
-      </button>
-      <button class="kanban-tab-btn concluido" onclick="selectKanbanTab('concluido')">
-        ✅ Concluído <span class="kanban-tab-count" id="tab-count-concluido">0</span>
-      </button>
-    </div>
-
     <!-- KANBAN -->
     <div class="kanban">
-      <div class="kanban-col tab-active" id="kanban-col-aguardando">
+      <div class="kanban-col">
         <div class="kanban-header aguardando">⏳ Aguardando <span class="kanban-count" id="count-aguardando">0</span></div>
         <div class="kanban-body" id="col-aguardando"><div class="empty">Nenhuma O.S.</div></div>
       </div>
-      <div class="kanban-col" id="kanban-col-andamento">
+      <div class="kanban-col">
         <div class="kanban-header andamento">✏ Em Andamento <span class="kanban-count" id="count-andamento">0</span></div>
         <div class="kanban-body" id="col-andamento"><div class="empty">Nenhuma O.S.</div></div>
       </div>
-      <div class="kanban-col" id="kanban-col-concluido">
+      <div class="kanban-col">
         <div class="kanban-header concluido">✅ Concluído <span class="kanban-count" id="count-concluido">0</span></div>
         <div class="kanban-body" id="col-concluido"><div class="empty">Nenhuma O.S.</div></div>
       </div>
@@ -591,14 +550,12 @@
           <select id="os-servico">
             <option value="">Selecionar...</option>
             <option>Instalação de Internet</option>
-            <option>Visita tecnica Rede</option>
-           <option>ONU/ONT Vermelha</option>
+            <option>Manutenção de Rede</option>
             <option>Troca de Equipamento</option>
             <option>Configuração de Roteador</option>
             <option>Passagem de Cabo</option>
             <option>Fusão de Fibra</option>
             <option>Reparo de Sinal</option>
-           <option>Mudança de endereço</option>
             <option>Outro</option>
           </select>
         </div>
@@ -613,8 +570,11 @@
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Equipe</label>
-          <input type="text" id="os-responsavel" placeholder="Nome do técnico" />
+          <label>Responsável</label>
+          <select id="os-responsavel">
+            <option value="Equipe 01">Equipe 01</option>
+            <option value="Equipe 02">Equipe 02</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Status</label>
@@ -637,6 +597,7 @@
         <div class="add-material">
           <select id="mat-tipo">
             <option value="">Selecionar material...</option>
+            <option>APC</option>
             <option>RJ45</option>
             <option>ONT</option>
             <option>Roteador</option>
@@ -678,6 +639,65 @@
       </div>
     </div>
     <div class="modal-body" id="detail-body"></div>
+  </div>
+</div>
+
+<!-- MODAL ESTOQUE DIÁRIO -->
+<div class="modal-backdrop" id="modal-estoque">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <h2>📦 Estoque do Dia</h2>
+      <button class="btn-close" onclick="closeModal('modal-estoque')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="estoque-header">
+        <div class="estoque-equipe-tabs">
+          <button class="estoque-equipe-tab active" onclick="setEstoqueEquipe('Equipe 01',this)">Equipe 01</button>
+          <button class="estoque-equipe-tab" onclick="setEstoqueEquipe('Equipe 02',this)">Equipe 02</button>
+        </div>
+        <span id="estoque-data-label" style="font-size:13px;color:var(--text3);margin-left:auto;"></span>
+      </div>
+
+      <!-- Adicionar item -->
+      <div class="estoque-add-row">
+        <select id="est-mat-tipo" style="flex:1;min-width:160px;">
+          <option value="">Selecionar material...</option>
+          <option>APC</option><option>RJ45</option><option>ONT</option>
+          <option>Roteador</option><option>Drop</option><option>Cabo de Rede</option>
+          <option>Splitter</option><option>Conector SC/APC</option><option>Conector SC/UPC</option>
+          <option>Patch Cord</option><option>Switch</option><option>ONU</option>
+          <option>Fibra Óptica</option><option>Outro</option>
+        </select>
+        <input type="number" id="est-mat-qty" placeholder="Qtd inicial" min="1" value="1" style="width:120px;" />
+        <input type="text" id="est-mat-un" placeholder="Un" style="width:70px;" value="un" />
+        <button class="btn btn-primary btn-sm" onclick="adicionarItemEstoque()">+ Adicionar</button>
+      </div>
+
+      <!-- Resumo -->
+      <div class="estoque-summary" id="estoque-summary"></div>
+
+      <!-- Tabela -->
+      <div style="overflow-x:auto;">
+        <table class="estoque-table">
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th>Estoque Inicial</th>
+              <th>Usado nas O.S.</th>
+              <th>Ajuste Manual</th>
+              <th>Saldo</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="estoque-tbody"></tbody>
+        </table>
+      </div>
+      <div id="estoque-empty" style="display:none;" class="consulta-empty">Nenhum item cadastrado para esta equipe hoje.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="exportarEstoqueCSV()">⬇ Exportar CSV</button>
+      <button class="btn btn-outline" onclick="closeModal('modal-estoque')">Fechar</button>
+    </div>
   </div>
 </div>
 
@@ -802,25 +822,6 @@
   </div>
 </div>
 
-<!-- MODAL CONFIRMAÇÃO EXCLUSÃO -->
-<div class="modal-backdrop" id="modal-confirm-delete">
-  <div class="modal" style="max-width:400px;">
-    <div class="modal-header">
-      <h2 style="color:var(--red);">🗑 Excluir O.S.</h2>
-      <button class="btn-close" onclick="closeModal('modal-confirm-delete')">✕</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:15px; color:var(--text2); margin-bottom:8px;">Tem certeza que deseja excluir esta O.S.?</p>
-      <div id="confirm-delete-info" style="background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px; font-size:14px; color:var(--text);"></div>
-      <p style="font-size:13px; color:var(--text3); margin-top:12px;">Esta ação não pode ser desfeita.</p>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('modal-confirm-delete')">Cancelar</button>
-      <button class="btn btn-danger" id="btn-confirm-delete-ok" onclick="confirmDeleteOS()">🗑 Excluir</button>
-    </div>
-  </div>
-</div>
-
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -828,7 +829,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, where, serverTimestamp, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAjt7naEW-amQoBFyVm80MPAKnUiC6pBkQ",
@@ -902,7 +903,7 @@ window.openNewOS = () => {
   document.getElementById('os-endereco').value = '';
   document.getElementById('os-servico').value = '';
   document.getElementById('os-prioridade').value = 'media';
-  document.getElementById('os-responsavel').value = currentUser?.displayName || '';
+  document.getElementById('os-responsavel').value = 'Equipe 01';
   document.getElementById('os-status').value = 'aguardando';
   document.getElementById('os-descricao').value = '';
   renderMateriais();
@@ -930,12 +931,6 @@ window.saveOS = async () => {
     updatedAt: serverTimestamp(),
   };
 
-  // Loading state
-  const btn = document.querySelector('#modal-os .btn-primary');
-  const originalHTML = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="btn-spinner"></span> Salvando...';
-
   try {
     if (currentOSId) {
       await updateDoc(doc(db, 'ordens', currentOSId), data);
@@ -948,37 +943,18 @@ window.saveOS = async () => {
     closeModal('modal-os');
   } catch (e) {
     showToast('Erro ao salvar: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = originalHTML;
   }
 };
 
-window.deleteCurrentOS = () => {
+window.deleteCurrentOS = async () => {
   if (!currentOSId) return;
-  const os = allOS.find(o => o.id === currentOSId);
-  if (!os) return;
-  const num = String(os.numero || '?').padStart(4, '0');
-  document.getElementById('confirm-delete-info').innerHTML =
-    `<strong style="color:var(--cyan);font-family:var(--font2);">OS #${num}</strong> — ${esc(os.cliente)}<br><span style="color:var(--text3);font-size:13px;">${esc(os.servico || '')} · ${esc(os.responsavel || '')}</span>`;
-  openModal('modal-confirm-delete');
-};
-
-window.confirmDeleteOS = async () => {
-  if (!currentOSId) return;
-  const btn = document.getElementById('btn-confirm-delete-ok');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="btn-spinner" style="border-color:rgba(255,255,255,.3);border-top-color:#fff;"></span> Excluindo...';
+  if (!confirm('Excluir esta O.S.?')) return;
   try {
     await deleteDoc(doc(db, 'ordens', currentOSId));
-    closeModal('modal-confirm-delete');
     closeModal('modal-detail');
     showToast('O.S. excluída.', 'success');
   } catch (e) {
     showToast('Erro ao excluir.', 'error');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '🗑 Excluir';
   }
 };
 
@@ -1015,25 +991,8 @@ window.setSort = (s) => {
 
 window.renderKanban = () => renderKanbanFn();
 
-window.copyClientName = (btn, name) => {
-  navigator.clipboard.writeText(name).then(() => {
-    const original = btn.innerHTML;
-    btn.innerHTML = '✓';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.innerHTML = original; btn.classList.remove('copied'); }, 1500);
-  }).catch(() => showToast('Não foi possível copiar.', 'error'));
-};
-
 window.openModal = (id) => document.getElementById(id).classList.add('open');
 window.closeModal = (id) => document.getElementById(id).classList.remove('open');
-
-window.selectKanbanTab = (status) => {
-  ['aguardando', 'andamento', 'concluido'].forEach(s => {
-    document.getElementById('kanban-col-' + s)?.classList.toggle('tab-active', s === status);
-    const btn = document.querySelector(`.kanban-tab-btn.${s}`);
-    if (btn) btn.classList.toggle('active', s === status);
-  });
-};
 
 window.iniciarCurrentOS = async () => {
   if (!currentOSId) return;
@@ -1355,11 +1314,21 @@ function renderKanbanFn() {
   const search = (document.getElementById('search-input')?.value || '').toLowerCase();
   const fStatus = document.getElementById('filter-status')?.value || '';
   const fPriority = document.getElementById('filter-priority')?.value || '';
+  const hojeStr = new Date().toDateString();
 
   let filtered = allOS.filter(os => {
     const matchSearch = !search || [os.cliente, os.servico, String(os.numero), os.responsavel].some(v => (v||'').toLowerCase().includes(search));
     const matchStatus = !fStatus || os.status === fStatus;
     const matchPriority = !fPriority || os.prioridade === fPriority;
+
+    // Concluídas: mostrar apenas as de hoje no kanban
+    if (os.status === 'concluido' && !fStatus) {
+      const tsConc = os.concluidoEm?.toDate ? os.concluidoEm.toDate() :
+                     os.updatedAt?.toDate ? os.updatedAt.toDate() : null;
+      const ehHoje = tsConc && tsConc.toDateString() === hojeStr;
+      if (!ehHoje) return false;
+    }
+
     return matchSearch && matchStatus && matchPriority;
   });
 
@@ -1373,22 +1342,12 @@ function renderKanbanFn() {
   const cols = { aguardando: [], andamento: [], concluido: [] };
   filtered.forEach(os => { if (cols[os.status]) cols[os.status].push(os); });
 
-  const emptyMessages = {
-    aguardando: { icon: '⏳', title: 'Nenhuma O.S. aguardando', hint: 'Clique em <strong>+ Nova O.S.</strong> para começar.' },
-    andamento: { icon: '🔧', title: 'Nada em andamento', hint: 'Inicie uma O.S. da coluna <strong>Aguardando</strong>.' },
-    concluido: { icon: '✅', title: 'Nenhuma O.S. concluída', hint: 'Conclua uma O.S. em andamento para vê-la aqui.' },
-  };
-
   ['aguardando', 'andamento', 'concluido'].forEach(status => {
     const col = document.getElementById('col-' + status);
     const count = document.getElementById('count-' + status);
-    const tabCount = document.getElementById('tab-count-' + status);
-    const n = cols[status].length;
-    count.textContent = n;
-    if (tabCount) tabCount.textContent = n;
-    if (n === 0) {
-      const em = emptyMessages[status];
-      col.innerHTML = `<div class="empty"><div class="empty-icon">${em.icon}</div><div class="empty-title">${em.title}</div><div class="empty-hint">${em.hint}</div></div>`;
+    count.textContent = cols[status].length;
+    if (cols[status].length === 0) {
+      col.innerHTML = '<div class="empty">Nenhuma O.S.</div>';
     } else {
       col.innerHTML = cols[status].map(os => renderOSCard(os)).join('');
     }
@@ -1423,7 +1382,6 @@ function renderOSCard(os) {
       <div class="os-card-top">
         <span class="os-num">OS #${num}</span>
         <span class="os-title">${esc(os.cliente)}</span>
-        <button class="btn-copy-name" title="Copiar nome" onclick="event.stopPropagation(); copyClientName(this, '${esc(os.cliente)}')">⎘</button>
         <span class="priority-badge ${os.prioridade}">${prioLabel}</span>
       </div>
       <div class="os-client">📋 ${esc(os.servico || '—')}</div>
@@ -1530,6 +1488,164 @@ function updateStats() {
   document.getElementById('stat-andamento').textContent = allOS.filter(o => o.status === 'andamento').length;
   document.getElementById('stat-concluido').textContent = allOS.filter(o => o.status === 'concluido').length;
 }
+
+// ===== ESTOQUE DIÁRIO =====
+let estoqueEquipeAtual = 'Equipe 01';
+let estoqueData = {}; // { itemId: { tipo, unidade, inicial, ajuste } }
+
+function getEstoqueDocId() {
+  const hoje = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const equipeSlug = estoqueEquipeAtual.replace(' ', '_');
+  return `estoque_${equipeSlug}_${hoje}`;
+}
+
+window.openEstoque = async () => {
+  estoqueEquipeAtual = 'Equipe 01';
+  document.querySelectorAll('.estoque-equipe-tab').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.getElementById('estoque-data-label').textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long'});
+  await carregarEstoque();
+  openModal('modal-estoque');
+};
+
+window.setEstoqueEquipe = async (equipe, btn) => {
+  estoqueEquipeAtual = equipe;
+  document.querySelectorAll('.estoque-equipe-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  await carregarEstoque();
+};
+
+async function carregarEstoque() {
+  try {
+    const docId = getEstoqueDocId();
+    const snap = await getDoc(doc(db, 'estoque', docId));
+    estoqueData = snap.exists() ? (snap.data().itens || {}) : {};
+  } catch(e) {
+    estoqueData = {};
+  }
+  renderEstoque();
+}
+
+async function salvarEstoque() {
+  try {
+    const docId = getEstoqueDocId();
+    await setDoc(doc(db, 'estoque', docId), {
+      equipe: estoqueEquipeAtual,
+      data: new Date().toISOString().split('T')[0],
+      itens: estoqueData,
+      updatedAt: serverTimestamp()
+    });
+  } catch(e) { showToast('Erro ao salvar estoque: ' + e.message, 'error'); }
+}
+
+window.adicionarItemEstoque = async () => {
+  const tipo = document.getElementById('est-mat-tipo').value;
+  const qty = parseInt(document.getElementById('est-mat-qty').value) || 1;
+  const un = document.getElementById('est-mat-un').value.trim() || 'un';
+  if (!tipo) { showToast('Selecione o material.', 'error'); return; }
+  const id = tipo.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_' + Date.now();
+  estoqueData[id] = { tipo, unidade: un, inicial: qty, ajuste: 0 };
+  await salvarEstoque();
+  document.getElementById('est-mat-tipo').value = '';
+  document.getElementById('est-mat-qty').value = '1';
+  renderEstoque();
+  showToast('Item adicionado!', 'success');
+};
+
+window.ajustarEstoque = async (id, delta) => {
+  if (!estoqueData[id]) return;
+  estoqueData[id].ajuste = (estoqueData[id].ajuste || 0) + delta;
+  await salvarEstoque();
+  renderEstoque();
+};
+
+window.removerItemEstoque = async (id) => {
+  delete estoqueData[id];
+  await salvarEstoque();
+  renderEstoque();
+};
+
+function calcUsadoPorOS(tipo) {
+  // Soma materiais usados nas O.S. da equipe atual hoje
+  const hoje = new Date().toDateString();
+  let total = 0;
+  allOS.forEach(os => {
+    if (os.responsavel !== estoqueEquipeAtual) return;
+    const tsConc = os.concluidoEm?.toDate ? os.concluidoEm.toDate() :
+                   os.updatedAt?.toDate ? os.updatedAt.toDate() : null;
+    if (!tsConc || tsConc.toDateString() !== hoje) return;
+    (os.materiais || []).forEach(m => {
+      if (m.tipo === tipo) total += (parseFloat(m.qty) || 0);
+    });
+  });
+  return total;
+}
+
+function renderEstoque() {
+  const tbody = document.getElementById('estoque-tbody');
+  const empty = document.getElementById('estoque-empty');
+  const ids = Object.keys(estoqueData);
+
+  if (ids.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = '';
+    document.getElementById('estoque-summary').innerHTML = '';
+    return;
+  }
+  empty.style.display = 'none';
+
+  let totalInicial = 0, totalUsado = 0, totalSaldo = 0;
+
+  tbody.innerHTML = ids.map(id => {
+    const item = estoqueData[id];
+    const usadoOS = calcUsadoPorOS(item.tipo);
+    const ajuste = item.ajuste || 0;
+    const saldo = item.inicial - usadoOS + ajuste;
+    totalInicial += item.inicial;
+    totalUsado += usadoOS;
+    totalSaldo += saldo;
+    const saldoCls = saldo <= 0 ? 'zero' : saldo <= 2 ? 'low' : 'ok';
+    return `<tr>
+      <td><strong>${esc(item.tipo)}</strong> <span style="color:var(--text3);font-size:12px;">${esc(item.unidade)}</span></td>
+      <td style="font-family:var(--font2);font-weight:700;">${item.inicial}</td>
+      <td><span class="estoque-usado">${usadoOS > 0 ? '-'+usadoOS : '0'}</span></td>
+      <td>
+        <div class="estoque-qty-ctrl">
+          <button class="estoque-qty-btn" onclick="ajustarEstoque('${id}',-1)">−</button>
+          <span class="estoque-qty-val" style="color:${ajuste>=0?'var(--green)':'var(--red)'};">${ajuste>=0?'+'+ajuste:ajuste}</span>
+          <button class="estoque-qty-btn" onclick="ajustarEstoque('${id}',1)">+</button>
+        </div>
+      </td>
+      <td><span class="estoque-saldo ${saldoCls}">${saldo}</span></td>
+      <td><button class="btn btn-danger btn-sm" style="padding:3px 8px;" onclick="removerItemEstoque('${id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('estoque-summary').innerHTML = `
+    <div class="estoque-sum-card"><div class="estoque-sum-val">${totalInicial}</div><div class="estoque-sum-lbl">Estoque Inicial</div></div>
+    <div class="estoque-sum-card"><div class="estoque-sum-val" style="color:var(--amber);">${totalUsado}</div><div class="estoque-sum-lbl">Usado nas O.S.</div></div>
+    <div class="estoque-sum-card"><div class="estoque-sum-val" style="color:${totalSaldo<=0?'var(--red)':totalSaldo<=5?'var(--amber)':'var(--green)'};">${totalSaldo}</div><div class="estoque-sum-lbl">Saldo Final</div></div>
+  `;
+}
+
+window.exportarEstoqueCSV = () => {
+  const ids = Object.keys(estoqueData);
+  if (ids.length === 0) { showToast('Nenhum item para exportar.', 'error'); return; }
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const header = ['Material','Unidade','Inicial','Usado nas O.S.','Ajuste Manual','Saldo'];
+  const rows = ids.map(id => {
+    const item = estoqueData[id];
+    const usadoOS = calcUsadoPorOS(item.tipo);
+    const saldo = item.inicial - usadoOS + (item.ajuste || 0);
+    return [item.tipo, item.unidade, item.inicial, usadoOS, item.ajuste||0, saldo].map(v => `"${v}"`);
+  });
+  const csv = [`"Estoque Diário — ${estoqueEquipeAtual} — ${hoje}"`, header.join(','), ...rows.map(r=>r.join(','))].join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Estoque_${estoqueEquipeAtual.replace(' ','')}_${hoje.replace(/\//g,'-')}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  showToast('Estoque exportado!', 'success');
+};
 
 // ===== TEMPO DE ATENDIMENTO =====
 function formatTempo(min) {
