@@ -457,7 +457,9 @@
       <button class="btn btn-outline btn-sm" onclick="openConsultaData()">📅 Consultar por Data</button>
       <button class="btn btn-outline btn-sm" onclick="openRanking()">🏆 Ranking</button>
       <button class="btn btn-outline btn-sm" onclick="openRelatorioMensal()">📊 Relatório Mensal</button>
-      <button class="btn btn-outline btn-sm" onclick="gerarRelatorioDia()">📄 Relatório do Dia</button>
+      <button class="btn btn-outline btn-sm" onclick="gerarRelatorioDia()">📄 Relatório Geral</button>
+      <button class="btn btn-outline btn-sm" onclick="gerarRelatorioDia('Equipe 01')">📄 Rel. Equipe 01</button>
+      <button class="btn btn-outline btn-sm" onclick="gerarRelatorioDia('Equipe 02')">📄 Rel. Equipe 02</button>
     </div>
 
     <!-- STATS -->
@@ -682,7 +684,7 @@
           <thead>
             <tr>
               <th>Material</th>
-              <th>Estoque Inicial</th>
+              <th>Inicial ±</th>
               <th>Usado nas O.S.</th>
               <th>Ajuste Manual</th>
               <th>Saldo</th>
@@ -695,6 +697,7 @@
       <div id="estoque-empty" style="display:none;" class="consulta-empty">Nenhum item cadastrado para esta equipe hoje.</div>
     </div>
     <div class="modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="carregarEstoque()">🔄 Recarregar</button>
       <button class="btn btn-outline btn-sm" onclick="exportarEstoqueCSV()">⬇ Exportar CSV</button>
       <button class="btn btn-outline" onclick="closeModal('modal-estoque')">Fechar</button>
     </div>
@@ -1186,7 +1189,7 @@ window.filtrarConsulta = () => {
   }).join('');
 };
 
-window.gerarRelatorioDia = () => {
+window.gerarRelatorioDia = (equipeFiltro = '') => {
   const hoje = new Date();
   const hojeStr = hoje.toLocaleDateString('pt-BR');
   const hojeISO = hoje.toISOString().split('T')[0];
@@ -1194,31 +1197,61 @@ window.gerarRelatorioDia = () => {
   const osDia = allOS.filter(os => {
     const ts = os.createdAt?.toDate ? os.createdAt.toDate() : null;
     if (!ts) return false;
+    if (equipeFiltro && os.responsavel !== equipeFiltro) return false;
     return ts.toISOString().split('T')[0] === hojeISO;
   });
 
   const concluidasDia = allOS.filter(os => {
-    const ts = os.updatedAt?.toDate ? os.updatedAt.toDate() : null;
+    const ts = (os.concluidoEm?.toDate ? os.concluidoEm.toDate() : null) ||
+               (os.updatedAt?.toDate ? os.updatedAt.toDate() : null);
     if (!ts || os.status !== 'concluido') return false;
+    if (equipeFiltro && os.responsavel !== equipeFiltro) return false;
     return ts.toISOString().split('T')[0] === hojeISO;
   });
 
   const statusLabel = { aguardando: 'Aguardando', andamento: 'Em Andamento', concluido: 'Concluído' };
-  const prioLabel = { alta: 'Alta', media: 'Média', baixa: 'Baixa' };
 
-  const renderOS = (list) => list.length === 0 ? '<tr><td colspan="6" style="text-align:center;color:#888;padding:12px;">Nenhuma O.S.</td></tr>' :
-    list.map(os => {
-      const num = String(os.numero||'?').padStart(4,'0');
-      const mats = (os.materiais||[]).map(m => `${m.qty}x ${m.tipo}`).join(', ') || '—';
-      return `<tr>
-        <td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600;color:#00a8cc;">OS #${num}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid #eee;">${os.cliente||'—'}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid #eee;">${os.servico||'—'}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid #eee;">${statusLabel[os.status]||os.status}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid #eee;">${os.responsavel||'—'}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;">${mats}</td>
-      </tr>`;
-    }).join('');
+  const renderOS = (list) => list.length === 0
+    ? '<tr><td colspan="7" style="text-align:center;color:#888;padding:12px;">Nenhuma O.S.</td></tr>'
+    : list.map(os => {
+        const num = String(os.numero||'?').padStart(4,'0');
+        const mats = (os.materiais||[]).map(m => `${m.qty}x ${m.tipo}`).join(', ') || '—';
+        const tempo = os.tempoAtendimentoMin != null ? formatTempo(os.tempoAtendimentoMin) : '—';
+        return `<tr>
+          <td style="padding:8px 10px;border-bottom:1px solid #eee;font-weight:600;color:#00a8cc;">OS #${num}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #eee;">${os.cliente||'—'}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #eee;">${os.servico||'—'}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #eee;">${statusLabel[os.status]||os.status}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #eee;">${os.responsavel||'—'}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;">${mats}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #eee;font-size:12px;">${tempo}</td>
+        </tr>`;
+      }).join('');
+
+  // Seções por equipe
+  const equipes = ['Equipe 01', 'Equipe 02'];
+  const secoesPorEquipe = equipes.map(eq => {
+    const eqOS = concluidasDia.filter(o => o.responsavel === eq);
+    if (eqOS.length === 0) return '';
+    // materiais usados por essa equipe
+    const matMap = {};
+    eqOS.forEach(os => (os.materiais||[]).forEach(m => {
+      matMap[m.tipo] = (matMap[m.tipo]||0) + parseFloat(m.qty||0);
+    }));
+    const matRows = Object.entries(matMap).map(([tipo,qty]) =>
+      `<tr><td style="padding:6px 10px;border-bottom:1px solid #eee;">${tipo}</td><td style="padding:6px 10px;border-bottom:1px solid #eee;font-weight:700;">${qty}</td></tr>`
+    ).join('') || '<tr><td colspan="2" style="padding:6px 10px;color:#888;">Nenhum material</td></tr>';
+    return `
+      <div style="margin-top:20px;padding:14px;background:#f8f8f8;border-radius:8px;border-left:4px solid #00a8cc;">
+        <div style="font-size:13px;font-weight:700;color:#00a8cc;margin-bottom:10px;">📋 ${eq} — ${eqOS.length} O.S. concluída(s)</div>
+        <table style="width:50%;border-collapse:collapse;font-size:12px;">
+          <thead><tr><th style="background:#e0e0e0;padding:6px 10px;text-align:left;">Material</th><th style="background:#e0e0e0;padding:6px 10px;text-align:left;">Total Usado</th></tr></thead>
+          <tbody>${matRows}</tbody>
+        </table>
+      </div>`;
+  }).join('');
+
+  const tituloEquipe = equipeFiltro ? ` — ${equipeFiltro}` : ' — Todas as Equipes';
 
   const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
   <title>Relatório do Dia - ${hojeStr}</title>
@@ -1234,34 +1267,33 @@ window.gerarRelatorioDia = () => {
     .stat { background: #f5f5f5; border-radius: 8px; padding: 14px; text-align: center; }
     .stat-val { font-size: 28px; font-weight: 800; }
     .stat-lbl { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
-    .stat-val.total { color: #222; }
-    .stat-val.ag { color: #cc8800; }
-    .stat-val.and { color: #00a8cc; }
-    .stat-val.conc { color: #009970; }
+    .stat-val.total { color: #222; } .stat-val.ag { color: #cc8800; }
+    .stat-val.and { color: #00a8cc; } .stat-val.conc { color: #009970; }
     .section-title { font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #555; border-left: 4px solid #00a8cc; padding-left: 10px; margin: 24px 0 12px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { background: #00a8cc; color: #fff; padding: 10px; text-align: left; font-weight: 600; font-size: 12px; letter-spacing: 0.5px; }
+    th { background: #00a8cc; color: #fff; padding: 10px; text-align: left; font-weight: 600; font-size: 12px; }
     tr:nth-child(even) td { background: #f9f9f9; }
     .footer { margin-top: 32px; border-top: 1px solid #eee; padding-top: 16px; font-size: 12px; color: #aaa; text-align: center; }
     @media print { body { padding: 15px; } }
   </style></head><body>
   <div class="header">
-    <div><div class="logo">SYST<span>OS</span></div><div style="font-size:13px;color:#888;margin-top:4px;">Sistema de Ordens de Serviço</div></div>
+    <div><div class="logo">OS <span>2.0</span></div><div style="font-size:13px;color:#888;margin-top:4px;">Ordem de Serviço 2.0${tituloEquipe}</div></div>
     <div class="meta"><strong>Relatório Diário</strong>Data: ${hojeStr}<br>Gerado: ${new Date().toLocaleTimeString('pt-BR')}<br>Usuário: ${currentUser?.displayName || currentUser?.email || '—'}</div>
   </div>
   <div class="stats">
-    <div class="stat"><div class="stat-val total">${allOS.length}</div><div class="stat-lbl">Total Geral</div></div>
-    <div class="stat"><div class="stat-val ag">${allOS.filter(o=>o.status==='aguardando').length}</div><div class="stat-lbl">Aguardando</div></div>
-    <div class="stat"><div class="stat-val and">${allOS.filter(o=>o.status==='andamento').length}</div><div class="stat-lbl">Em Andamento</div></div>
-    <div class="stat"><div class="stat-val conc">${allOS.filter(o=>o.status==='concluido').length}</div><div class="stat-lbl">Concluídas</div></div>
+    <div class="stat"><div class="stat-val total">${osDia.length}</div><div class="stat-lbl">Abertas Hoje</div></div>
+    <div class="stat"><div class="stat-val ag">${osDia.filter(o=>o.status==='aguardando').length}</div><div class="stat-lbl">Aguardando</div></div>
+    <div class="stat"><div class="stat-val and">${osDia.filter(o=>o.status==='andamento').length}</div><div class="stat-lbl">Em Andamento</div></div>
+    <div class="stat"><div class="stat-val conc">${concluidasDia.length}</div><div class="stat-lbl">Concluídas</div></div>
   </div>
-  <div class="section-title">📋 O.S. Abertas Hoje (${osDia.length})</div>
-  <table><thead><tr><th>Número</th><th>Cliente</th><th>Serviço</th><th>Status</th><th>Responsável</th><th>Materiais</th></tr></thead>
+  <div class="section-title">📋 O.S. do Dia (${osDia.length})</div>
+  <table><thead><tr><th>Número</th><th>Cliente</th><th>Serviço</th><th>Status</th><th>Equipe</th><th>Materiais</th><th>Tempo</th></tr></thead>
   <tbody>${renderOS(osDia)}</tbody></table>
-  <div class="section-title">✅ O.S. Concluídas Hoje (${concluidasDia.length})</div>
-  <table><thead><tr><th>Número</th><th>Cliente</th><th>Serviço</th><th>Status</th><th>Responsável</th><th>Materiais</th></tr></thead>
+  <div class="section-title">✅ Concluídas Hoje (${concluidasDia.length})</div>
+  <table><thead><tr><th>Número</th><th>Cliente</th><th>Serviço</th><th>Status</th><th>Equipe</th><th>Materiais</th><th>Tempo</th></tr></thead>
   <tbody>${renderOS(concluidasDia)}</tbody></table>
-  <div class="footer">SYSTOS — Relatório gerado automaticamente em ${new Date().toLocaleString('pt-BR')}</div>
+  ${secoesPorEquipe ? `<div class="section-title">🔧 Materiais por Equipe</div>${secoesPorEquipe}` : ''}
+  <div class="footer">OS 2.0 — Relatório gerado automaticamente em ${new Date().toLocaleString('pt-BR')}</div>
   <script>window.onload = () => window.print();<\/script>
   </body></html>`;
 
@@ -1515,26 +1547,37 @@ window.setEstoqueEquipe = async (equipe, btn) => {
 };
 
 async function carregarEstoque() {
+  document.getElementById('estoque-empty').textContent = 'Carregando...';
+  document.getElementById('estoque-empty').style.display = '';
+  document.getElementById('estoque-tbody').innerHTML = '';
   try {
     const docId = getEstoqueDocId();
     const snap = await getDoc(doc(db, 'estoque', docId));
     estoqueData = snap.exists() ? (snap.data().itens || {}) : {};
   } catch(e) {
+    console.error('Erro ao carregar estoque:', e);
+    showToast('Erro ao carregar estoque: ' + e.message, 'error');
     estoqueData = {};
   }
+  document.getElementById('estoque-empty').textContent = 'Nenhum item cadastrado para esta equipe hoje.';
   renderEstoque();
 }
 
 async function salvarEstoque() {
   try {
     const docId = getEstoqueDocId();
-    await setDoc(doc(db, 'estoque', docId), {
+    const payload = {
       equipe: estoqueEquipeAtual,
       data: new Date().toISOString().split('T')[0],
       itens: estoqueData,
+      userId: currentUser.uid,
       updatedAt: serverTimestamp()
-    });
-  } catch(e) { showToast('Erro ao salvar estoque: ' + e.message, 'error'); }
+    };
+    await setDoc(doc(db, 'estoque', docId), payload);
+  } catch(e) {
+    console.error('Erro estoque:', e);
+    showToast('Erro ao salvar: ' + e.message, 'error');
+  }
 }
 
 window.adicionarItemEstoque = async () => {
@@ -1554,6 +1597,15 @@ window.adicionarItemEstoque = async () => {
 window.ajustarEstoque = async (id, delta) => {
   if (!estoqueData[id]) return;
   estoqueData[id].ajuste = (estoqueData[id].ajuste || 0) + delta;
+  await salvarEstoque();
+  renderEstoque();
+};
+
+window.editarInicialEstoque = async (id, delta) => {
+  if (!estoqueData[id]) return;
+  const novo = (estoqueData[id].inicial || 0) + delta;
+  if (novo < 0) return;
+  estoqueData[id].inicial = novo;
   await salvarEstoque();
   renderEstoque();
 };
@@ -1606,7 +1658,13 @@ function renderEstoque() {
     const saldoCls = saldo <= 0 ? 'zero' : saldo <= 2 ? 'low' : 'ok';
     return `<tr>
       <td><strong>${esc(item.tipo)}</strong> <span style="color:var(--text3);font-size:12px;">${esc(item.unidade)}</span></td>
-      <td style="font-family:var(--font2);font-weight:700;">${item.inicial}</td>
+      <td>
+        <div class="estoque-qty-ctrl">
+          <button class="estoque-qty-btn" onclick="editarInicialEstoque('${id}',-1)">−</button>
+          <span class="estoque-qty-val">${item.inicial}</span>
+          <button class="estoque-qty-btn" onclick="editarInicialEstoque('${id}',1)">+</button>
+        </div>
+      </td>
       <td><span class="estoque-usado">${usadoOS > 0 ? '-'+usadoOS : '0'}</span></td>
       <td>
         <div class="estoque-qty-ctrl">
