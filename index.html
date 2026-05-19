@@ -802,6 +802,16 @@
     <div class="modal-body">
       <div id="concluir-os-info" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:16px;font-size:14px;"></div>
 
+      <!-- COLAR TEXTO DO TÉCNICO -->
+      <div style="background:var(--bg3);border:1px dashed var(--cyan);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--cyan);font-weight:700;letter-spacing:0.5px;margin-bottom:6px;">⚡ COLAR TEXTO — preenche materiais e OBS automaticamente</div>
+        <textarea id="concluir-paste-text" rows="4" placeholder="Cole o relatório do técnico aqui. Ex:&#10;METROS DE DROP: ( 30 )&#10;CONECTOR RJ45: ( 4 )&#10;CABO LAN: ( 17 )&#10;OBS( cabo danificado, passou cabo novo )" style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-family:var(--font);font-size:13px;resize:vertical;outline:none;"></textarea>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+          <button class="btn btn-primary btn-sm" onclick="parsearTextoConcluir()">⚡ Preencher campos</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('concluir-paste-text').value=''">✕ Limpar</button>
+        </div>
+      </div>
+
       <div class="concluir-section-title">🔧 Materiais Utilizados</div>
       <div id="concluir-materiais-list" style="margin-bottom:8px;"></div>
       <div class="add-material" style="flex-wrap:wrap;">
@@ -2111,6 +2121,78 @@ window.parsearTextoOS = () => {
     showToast(`Preenchido: ${preenchidos.join(', ')}`, 'success');
   } else {
     showToast('Não foi possível extrair dados. Verifique o texto.', 'error');
+  }
+};
+
+// ===== PARSE TEXTO NO MODAL CONCLUIR =====
+// Reutiliza as mesmas regras de extração, mas preenche concluirMateriais e concluir-obs
+window.parsearTextoConcluir = () => {
+  const texto = document.getElementById('concluir-paste-text').value.trim();
+  if (!texto) { showToast('Cole um texto primeiro.', 'error'); return; }
+
+  const matRules = [
+    { re: /metros?\s*de?\s*drop\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,      tipo: 'Drop',            unidade: 'm'  },
+    { re: /drop\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                        tipo: 'Drop',            unidade: 'm'  },
+    { re: /conector\s*(sc[\s\/]?)?apc\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i, tipo: 'Conector SC/APC', unidade: 'un', grp: 2 },
+    { re: /conector\s*(sc[\s\/]?)?upc\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i, tipo: 'Conector SC/UPC', unidade: 'un', grp: 2 },
+    { re: /conector\s*upc[\s\/]apc\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,   tipo: 'Conector SC/APC', unidade: 'un' },
+    { re: /acoplador\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                   tipo: 'Acoplador',       unidade: 'un' },
+    { re: /cabo\s*l[ae]n\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,              tipo: 'Cabo de Rede',    unidade: 'm'  },
+    { re: /cabo\s*de?\s*rede\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,          tipo: 'Cabo de Rede',    unidade: 'm'  },
+    { re: /conector\s*rj\s*45\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,         tipo: 'RJ45',            unidade: 'un' },
+    { re: /rj\s*45\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                     tipo: 'RJ45',            unidade: 'un' },
+    { re: /fixa\s*fio\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                  tipo: 'Outro',           unidade: 'un', nome: 'Fixa Fio' },
+    { re: /patch\s*cord\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                tipo: 'Patch Cord',      unidade: 'un' },
+    { re: /splitter\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                    tipo: 'Splitter',        unidade: 'un' },
+    { re: /ont\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                         tipo: 'ONT',             unidade: 'un' },
+    { re: /onu\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                         tipo: 'ONU',             unidade: 'un' },
+    { re: /roteador\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                    tipo: 'Roteador',        unidade: 'un' },
+  ];
+
+  const materiaisEncontrados = [];
+  for (const rule of matRules) {
+    const m = texto.match(rule.re);
+    if (!m) continue;
+    const captura = m[rule.grp || 1];
+    const qty = extrairQtd(captura);
+    if (!qty) continue;
+    const tipoFinal = rule.nome || rule.tipo;
+    if (!materiaisEncontrados.find(x => x.tipo === tipoFinal)) {
+      materiaisEncontrados.push({ tipo: tipoFinal, qty, unidade: rule.unidade });
+    }
+  }
+
+  // OBS
+  let obs = '';
+  const obsMatch = texto.match(/obs\s*[:\-\(]?\s*(.+?)(?:\)|$)/is)
+                || texto.match(/observa[çc][aã]o\s*[:\-]?\s*(.+)/is);
+  if (obsMatch) obs = obsMatch[1].replace(/\)$/, '').trim();
+
+  // Preenche materiais no concluirMateriais
+  if (materiaisEncontrados.length > 0) {
+    for (const mat of materiaisEncontrados) {
+      const jaTem = concluirMateriais.findIndex(x => x.tipo === mat.tipo);
+      if (jaTem >= 0) {
+        concluirMateriais[jaTem].qty = mat.qty;
+      } else {
+        concluirMateriais.push(mat);
+      }
+    }
+    renderConcluirMateriais();
+  }
+
+  // Preenche OBS
+  if (obs) document.getElementById('concluir-obs').value = obs;
+
+  const preenchidos = [
+    obs && 'OBS',
+    materiaisEncontrados.length > 0 && `${materiaisEncontrados.length} material(is)`
+  ].filter(Boolean);
+
+  if (preenchidos.length > 0) {
+    showToast(`Preenchido: ${preenchidos.join(', ')}`, 'success');
+  } else {
+    showToast('Nenhum material ou OBS encontrado no texto.', 'error');
   }
 };
 
