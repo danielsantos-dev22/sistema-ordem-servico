@@ -993,6 +993,16 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
     <div class="modal-body">
       <div id="concluir-os-info" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:16px;font-size:14px;"></div>
 
+      <!-- ÁREA DE COLAR TEXTO DO TÉCNICO -->
+      <div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <span style="font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:1px;">📋 COLAR TEXTO DO TÉCNICO</span>
+          <button class="btn btn-amber btn-sm" onclick="parsearTextoTecnico()" style="font-size:12px;padding:4px 12px;">⚡ Extrair automaticamente</button>
+        </div>
+        <textarea id="tecnico-texto-raw" placeholder="Cole aqui o texto enviado pelo técnico (WhatsApp, mensagem, etc.)..." style="width:100%;min-height:90px;background:var(--bg4);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font2);font-size:12px;padding:10px;resize:vertical;line-height:1.6;"></textarea>
+        <div id="parse-feedback" style="display:none;margin-top:8px;font-size:12px;color:var(--green);">✓ Dados extraídos! Verifique os materiais abaixo.</div>
+      </div>
+
       <div class="concluir-section-title">🔧 Materiais Utilizados</div>
       <div id="concluir-materiais-list" style="margin-bottom:8px;"></div>
       <div class="add-material" style="flex-wrap:wrap;">
@@ -1246,6 +1256,8 @@ window.abrirConcluir = (id) => {
   document.getElementById('concluir-os-info').innerHTML =
     `<strong style="color:var(--cyan);font-family:var(--font2);">OS #${num}</strong> — ${esc(os.cliente)} <span style="color:var(--text3);margin-left:8px;">${esc(os.servico || '')}</span>`;
   document.getElementById('concluir-obs').value = '';
+  document.getElementById('tecnico-texto-raw').value = '';
+  document.getElementById('parse-feedback').style.display = 'none';
   renderConcluirMateriais();
   closeModal('modal-detail');
   openModal('modal-concluir');
@@ -1276,12 +1288,134 @@ function renderConcluirMateriais() {
   }
   list.innerHTML = concluirMateriais.map((m, i) => `
     <div class="material-item">
-      <span class="material-name">${esc(m.tipo)}</span>
+      <span class="material-name">${esc(m.tipo)}${m.obs ? ` <span style="color:var(--text3);font-size:11px;">(${esc(m.obs)})</span>` : ''}</span>
       <span class="material-qty">${m.qty}</span>
       <span class="material-unit">${esc(m.unidade)}</span>
       <button class="btn btn-danger btn-sm" onclick="removeConcluirMaterial(${i})" style="padding:3px 8px;">✕</button>
     </div>`).join('');
 }
+
+window.parsearTextoTecnico = () => {
+  const texto = document.getElementById('tecnico-texto-raw').value;
+  if (!texto.trim()) { showToast('Cole o texto do técnico primeiro.', 'error'); return; }
+
+  // Função auxiliar: extrai valor entre parênteses após a chave
+  // ex: "METROS DE DROP: (122)" → "122"
+  const extrair = (texto, ...padroes) => {
+    for (const p of padroes) {
+      // Tenta capturar valor entre parênteses: CHAVE: ( VALOR )
+      let m = texto.match(new RegExp(p + '[^(\\n]*\\(([^)]*?)\\)', 'i'));
+      if (m) { const v = m[1].trim(); if (v) return v; }
+      // Tenta capturar valor após dois pontos sem parênteses: CHAVE: VALOR
+      m = texto.match(new RegExp(p + '\\s*[:\\-]\\s*(.+)', 'i'));
+      if (m) { const v = m[1].replace(/\(|\)/g,'').trim(); if (v) return v; }
+    }
+    return null;
+  };
+
+  const toNum = (v) => {
+    if (!v) return null;
+    const n = parseFloat(v.replace(',', '.'));
+    return isNaN(n) ? null : n;
+  };
+
+  let adicionados = 0;
+  let obsExtra = [];
+
+  // Equipamento / ONT / ONU
+  const equip = extrair(texto, 'EQUIPAMENTO', 'ONT', 'ONU', 'ROTEADOR');
+  if (equip) {
+    concluirMateriais.push({ tipo: equip.includes('TP-Link') || equip.includes('tp-link') ? 'ONU' : 'ONU', qty: 1, unidade: 'un', obs: equip });
+    adicionados++;
+  }
+
+  // Metros de Drop
+  const drop = toNum(extrair(texto, 'METROS\\s*DE\\s*DROP', 'DROP', 'FIBRA\\s*DROP'));
+  if (drop) {
+    concluirMateriais.push({ tipo: 'Drop', qty: drop, unidade: 'm' });
+    adicionados++;
+  }
+
+  // Conector SC/UPC ou SC/APC
+  const conectorRaw = extrair(texto, 'CONECTOR\\s*UPC\\/APC', 'CONECTOR\\s*APC\\/UPC', 'CONECTOR\\s*SC', 'CONECTOR\\s*UPC', 'CONECTOR\\s*APC');
+  const conectorN = toNum(conectorRaw);
+  if (conectorN) {
+    // Detecta tipo pelo texto
+    const tipoConector = /APC/i.test(texto.match(/CONECTOR[^:\n]*/i)?.[0] || '') ? 'Conector SC/APC' : 'Conector SC/UPC';
+    concluirMateriais.push({ tipo: tipoConector, qty: conectorN, unidade: 'un' });
+    adicionados++;
+  }
+
+  // Acoplador
+  const acoplador = toNum(extrair(texto, 'ACOPLADOR'));
+  if (acoplador) {
+    concluirMateriais.push({ tipo: 'Acoplador', qty: acoplador, unidade: 'un' });
+    adicionados++;
+  }
+
+  // Cabo LAN / Cabo de Rede
+  const caboLan = extrair(texto, 'CABO\\s*LAN', 'CABO\\s*DE\\s*REDE', 'CABO\\s*UTP');
+  const caboN = toNum(caboLan);
+  if (caboN) {
+    concluirMateriais.push({ tipo: 'Cabo de Rede', qty: caboN, unidade: 'm' });
+    adicionados++;
+  }
+
+  // Conector RJ45
+  const rj45 = toNum(extrair(texto, 'CONECTOR\\s*RJ\\s*45', 'RJ45', 'RJ\\s*45'));
+  if (rj45) {
+    concluirMateriais.push({ tipo: 'RJ45', qty: rj45, unidade: 'un' });
+    adicionados++;
+  }
+
+  // Fixa fio / Presilha
+  const fixa = toNum(extrair(texto, 'FIXA\\s*FIO', 'PRESILHA', 'FIXADOR'));
+  if (fixa) {
+    concluirMateriais.push({ tipo: 'Outro', qty: fixa, unidade: 'un', obs: 'Fixa fio' });
+    adicionados++;
+  }
+
+  // Splitter (geralmente mencionado na OBS)
+  const splitterM = texto.match(/splitter\s*(\d+\/\d+|\d+x\d+)?/i);
+  if (splitterM) {
+    concluirMateriais.push({ tipo: 'Splitter', qty: 1, unidade: 'un' });
+    adicionados++;
+  }
+
+  // OBS — captura a linha de observação
+  const obsMatch = extrair(texto, 'OBS', 'OBSERVA[ÇC][ÃA]O', 'OBSERVA[ÇC][ÃA]ES');
+  if (obsMatch) {
+    obsExtra.push(obsMatch);
+  }
+
+  // Rede Wi-Fi (nome e senha) → vai para OBS
+  const wifiNome = extrair(texto, 'NOME', 'WI-?FI\\s*NOME', 'SSID');
+  const wifiSenha = extrair(texto, 'SENHA', 'PASSWORD', 'WI-?FI\\s*SENHA');
+  if (wifiNome) obsExtra.push(`Wi-Fi: ${wifiNome}` + (wifiSenha ? ` | Senha: ${wifiSenha}` : ''));
+
+  // Preenche OBS
+  if (obsExtra.length > 0) {
+    const obsAtual = document.getElementById('concluir-obs').value.trim();
+    document.getElementById('concluir-obs').value = obsAtual
+      ? obsAtual + '\n' + obsExtra.join('\n')
+      : obsExtra.join('\n');
+  }
+
+  renderConcluirMateriais();
+
+  const feedback = document.getElementById('parse-feedback');
+  if (adicionados > 0) {
+    feedback.style.display = 'block';
+    feedback.style.color = 'var(--green)';
+    feedback.textContent = `✓ ${adicionados} material(is) extraído(s)!${obsExtra.length ? ' OBS preenchida.' : ''} Verifique e ajuste se necessário.`;
+    showToast(`${adicionados} material(is) extraído(s) automaticamente!`, 'success');
+  } else {
+    feedback.style.display = 'block';
+    feedback.style.color = 'var(--amber)';
+    feedback.textContent = '⚠ Nenhum material reconhecido. Verifique o formato do texto.';
+    showToast('Nenhum material reconhecido no texto.', 'error');
+  }
+};
 
 window.confirmarConclusao = async () => {
   if (!concluirOSId) return;
