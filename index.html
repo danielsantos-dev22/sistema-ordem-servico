@@ -131,6 +131,26 @@
   .btn-logout { background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--text2); padding: 6px 12px; font-size: 13px; font-family: var(--font); cursor: pointer; transition: all .2s; }
   .btn-logout:hover { border-color: var(--red); color: var(--red); }
 
+  /* NAV TABS */
+  .nav-tabs {
+    background: var(--bg2); border-bottom: 1px solid var(--border);
+    padding: 0 24px; display: flex; gap: 4px; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 12px 16px; background: none; border: none;
+    color: var(--text3); font-family: var(--font); font-size: 13px;
+    font-weight: 600; letter-spacing: 0.5px; cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -1px;
+    white-space: nowrap; transition: all .2s;
+  }
+  .nav-tab:hover { color: var(--text2); }
+  .nav-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
   /* MAIN */
   .main { flex: 1; padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
 
@@ -378,6 +398,77 @@
   .obs-field { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; color: var(--text); font-family: var(--font); font-size: 14px; outline: none; resize: vertical; min-height: 70px; }
   .obs-field:focus { border-color: var(--green); }
 
+  /* ======= DASHBOARD ======= */
+  .dash-period-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+  .dash-period-pills { display:flex; gap:6px; }
+  .dash-period-pill { background:transparent; border:1px solid var(--border); border-radius:20px; color:var(--text3); padding:5px 14px; font-size:12px; font-family:var(--font); font-weight:600; cursor:pointer; transition:all .2s; letter-spacing:0.5px; }
+  .dash-period-pill.active { border-color:var(--cyan); color:var(--cyan); background:#00d4ff15; }
+
+  .dash-metric-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:24px; }
+  .dash-metric-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:12px;
+    padding:18px 20px; display:flex; flex-direction:column; gap:12px; position:relative; overflow:hidden;
+    transition:border-color .2s;
+  }
+  .dash-metric-card:hover { border-color:var(--border); }
+  .dash-metric-top { display:flex; align-items:center; gap:12px; }
+  .dash-metric-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+  .dash-metric-icon.aguardando { background:#ffb02022; }
+  .dash-metric-icon.andamento  { background:#00d4ff22; }
+  .dash-metric-icon.concluido  { background:#00c89622; }
+  .dash-metric-icon.total      { background:#4d9fff22; }
+  .dash-metric-label { font-size:12px; font-weight:700; color:var(--text3); letter-spacing:1px; text-transform:uppercase; }
+  .dash-metric-val { font-size:36px; font-weight:700; font-family:var(--font2); line-height:1; }
+  .dash-metric-val.aguardando { color:var(--amber); }
+  .dash-metric-val.andamento  { color:var(--cyan); }
+  .dash-metric-val.concluido  { color:var(--green); }
+  .dash-metric-val.total      { color:var(--blue); }
+  .dash-metric-delta { font-size:12px; display:flex; align-items:center; gap:4px; font-weight:600; }
+  .dash-metric-delta.up   { color:var(--green); }
+  .dash-metric-delta.down { color:var(--red); }
+  .dash-metric-delta.neutral { color:var(--text3); }
+  .dash-sparkline { height:48px; width:100%; }
+
+  .dash-row { display:grid; grid-template-columns:1fr minmax(220px,320px); gap:16px; margin-bottom:20px; }
+  .dash-row-3 { display:grid; grid-template-columns:1fr 280px 260px; gap:16px; margin-bottom:20px; }
+  .dash-panel { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .dash-panel-title { font-size:12px; font-weight:700; color:var(--text3); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:16px; }
+
+  /* Donut */
+  .donut-wrap { display:flex; align-items:center; justify-content:center; position:relative; margin:8px 0; }
+  .donut-center { position:absolute; text-align:center; pointer-events:none; }
+  .donut-center-val { font-size:28px; font-weight:700; font-family:var(--font2); color:var(--text); }
+  .donut-center-lbl { font-size:11px; color:var(--text3); letter-spacing:1px; text-transform:uppercase; }
+  .donut-legend { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+  .donut-legend-row { display:flex; align-items:center; justify-content:space-between; font-size:13px; }
+  .donut-legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-right:8px; }
+  .donut-legend-name { flex:1; color:var(--text2); display:flex; align-items:center; }
+  .donut-legend-count { font-family:var(--font2); font-weight:700; }
+  .donut-legend-pct { color:var(--text3); font-size:12px; margin-left:6px; }
+
+  /* Activity feed */
+  .activity-feed { display:flex; flex-direction:column; gap:0; }
+  .activity-item { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+  .activity-item:last-child { border-bottom:none; }
+  .activity-icon { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; margin-top:1px; }
+  .activity-icon.criada    { background:#4d9fff22; }
+  .activity-icon.andamento { background:#00d4ff22; }
+  .activity-icon.concluida { background:#00c89622; }
+  .activity-icon.excluida  { background:#ff4d6a22; }
+  .activity-body { flex:1; min-width:0; }
+  .activity-msg { font-size:13px; color:var(--text); line-height:1.4; }
+  .activity-msg strong { color:var(--cyan); font-family:var(--font2); }
+  .activity-time { font-size:11px; color:var(--text3); margin-top:2px; }
+
+  /* Chart area */
+  .chart-canvas-wrap { position:relative; width:100%; height:200px; }
+
+  /* ======= CONFIRM DELETE ======= */
+  .confirm-modal { max-width: 400px; }
+  .confirm-icon { font-size: 40px; text-align: center; margin-bottom: 12px; }
+  .confirm-msg { font-size: 15px; color: var(--text2); text-align: center; line-height: 1.6; margin-bottom: 6px; }
+  .confirm-detail { font-size: 13px; color: var(--text3); text-align: center; font-family: var(--font2); }
+
   @media (max-width: 900px) {
     .kanban { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }
@@ -390,6 +481,30 @@
 </style>
 </head>
 <body>
+<script>
+// ===== LISTA CENTRALIZADA DE MATERIAIS =====
+const MATERIAIS_LISTA = [
+  'Acoplador','RJ45','ONT','ONU','Roteador','Drop','Cabo de Rede',
+  'Splitter','Conector SC/APC','Conector SC/UPC','Patch Cord',
+  'Switch','Fonte POE','Outro'
+];
+
+function buildMateriaisOptions(selectedValue = '') {
+  return '<option value="">Selecionar material...</option>' +
+    MATERIAIS_LISTA.map(m =>
+      `<option${selectedValue === m ? ' selected' : ''}>${m}</option>`
+    ).join('');
+}
+
+function populateAllMaterialSelects() {
+  ['mat-tipo','cmat-tipo','est-mat-tipo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = buildMateriaisOptions();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
+</script>
 
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
@@ -450,79 +565,305 @@
     <button class="btn-logout" onclick="doLogout()">⏻ Sair</button>
   </header>
 
+  <!-- NAV TABS -->
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('dashboard', this)">📈 Dashboard</button>
+    <button class="nav-tab" onclick="switchTab('kanban', this)">📋 Kanban</button>
+    <button class="nav-tab" onclick="switchTab('consulta', this)">📅 Consultar por Data</button>
+    <button class="nav-tab" onclick="switchTab('estoque', this)">📦 Estoque do Dia</button>
+    <button class="nav-tab" onclick="switchTab('ranking', this)">🏆 Ranking</button>
+    <button class="nav-tab" onclick="switchTab('relatorio', this)">📊 Relatório Mensal</button>
+    <button class="nav-tab" onclick="switchTab('relatorio-diario', this)">📄 Relatório Diário</button>
+  </nav>
+
   <!-- MAIN -->
   <main class="main">
-    <!-- TOP BAR -->
-    <div class="top-bar">
-      <div class="page-title">Ordem de <span>Serviço 2.0</span></div>
-      <button class="btn btn-primary btn-sm" onclick="openNewOS()">+ Nova O.S.</button>
-      <button class="btn btn-outline btn-sm" onclick="openEstoque()">📦 Estoque do Dia</button>
-      <button class="btn btn-outline btn-sm" onclick="openConsultaData()">📅 Consultar por Data</button>
-      <button class="btn btn-outline btn-sm" onclick="openRanking()">🏆 Ranking</button>
-      <button class="btn btn-outline btn-sm" onclick="openRelatorioMensal()">📊 Relatório Mensal</button>
-      <button class="btn btn-outline btn-sm" onclick="gerarRelatorioDia()">📄 Relatório Geral</button>
-      <button class="btn btn-outline btn-sm" onclick="gerarRelatorioDia('Equipe 01')">📄 Rel. Equipe 01</button>
-      <button class="btn btn-outline btn-sm" onclick="gerarRelatorioDia('Equipe 02')">📄 Rel. Equipe 02</button>
+
+    <!-- ===== PAINEL: DASHBOARD ===== -->
+    <div id="tab-dashboard" class="tab-panel active">
+      <div class="dash-period-bar">
+        <div class="page-title" style="font-size:20px;">Dashboard <span>Geral</span></div>
+        <div class="dash-period-pills">
+          <button class="dash-period-pill active" onclick="setDashPeriod('hoje',this)">Hoje</button>
+          <button class="dash-period-pill" onclick="setDashPeriod('semana',this)">7 dias</button>
+          <button class="dash-period-pill" onclick="setDashPeriod('mes',this)">30 dias</button>
+          <button class="dash-period-pill" onclick="setDashPeriod('tudo',this)">Tudo</button>
+        </div>
+      </div>
+
+      <!-- METRIC CARDS -->
+      <div class="dash-metric-grid">
+        <div class="dash-metric-card">
+          <div class="dash-metric-top">
+            <div class="dash-metric-icon total">📋</div>
+            <div>
+              <div class="dash-metric-label">Abertas</div>
+              <div class="dash-metric-val total" id="dm-abertas">0</div>
+            </div>
+          </div>
+          <svg class="dash-sparkline" id="spark-abertas" viewBox="0 0 160 48" preserveAspectRatio="none"></svg>
+          <div class="dash-metric-delta neutral" id="dm-abertas-delta">— sem dados anteriores</div>
+        </div>
+        <div class="dash-metric-card">
+          <div class="dash-metric-top">
+            <div class="dash-metric-icon andamento">🔄</div>
+            <div>
+              <div class="dash-metric-label">Em Andamento</div>
+              <div class="dash-metric-val andamento" id="dm-andamento">0</div>
+            </div>
+          </div>
+          <svg class="dash-sparkline" id="spark-andamento" viewBox="0 0 160 48" preserveAspectRatio="none"></svg>
+          <div class="dash-metric-delta neutral" id="dm-andamento-delta">— sem dados anteriores</div>
+        </div>
+        <div class="dash-metric-card">
+          <div class="dash-metric-top">
+            <div class="dash-metric-icon concluido">✅</div>
+            <div>
+              <div class="dash-metric-label">Concluídas</div>
+              <div class="dash-metric-val concluido" id="dm-concluido">0</div>
+            </div>
+          </div>
+          <svg class="dash-sparkline" id="spark-concluido" viewBox="0 0 160 48" preserveAspectRatio="none"></svg>
+          <div class="dash-metric-delta neutral" id="dm-concluido-delta">— sem dados anteriores</div>
+        </div>
+        <div class="dash-metric-card">
+          <div class="dash-metric-top">
+            <div class="dash-metric-icon aguardando">⏳</div>
+            <div>
+              <div class="dash-metric-label">Aguardando</div>
+              <div class="dash-metric-val aguardando" id="dm-aguardando">0</div>
+            </div>
+          </div>
+          <svg class="dash-sparkline" id="spark-aguardando" viewBox="0 0 160 48" preserveAspectRatio="none"></svg>
+          <div class="dash-metric-delta neutral" id="dm-aguardando-delta">— sem dados anteriores</div>
+        </div>
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="dash-row-3">
+
+        <!-- Line chart: O.S. por dia -->
+        <div class="dash-panel">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div class="dash-panel-title" style="margin-bottom:0;">Ordens de Serviço por dia</div>
+            <div style="display:flex;gap:12px;font-size:12px;color:var(--text3);">
+              <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:3px;background:var(--cyan);display:inline-block;border-radius:2px;"></span>Abertas</span>
+              <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:3px;background:var(--green);display:inline-block;border-radius:2px;"></span>Concluídas</span>
+            </div>
+          </div>
+          <div class="chart-canvas-wrap">
+            <canvas id="dash-line-chart" role="img" aria-label="Gráfico de O.S. abertas e concluídas por dia">Nenhum dado disponível.</canvas>
+          </div>
+        </div>
+
+        <!-- Donut: prioridades -->
+        <div class="dash-panel" style="display:flex;flex-direction:column;">
+          <div class="dash-panel-title">Por prioridade</div>
+          <div class="donut-wrap">
+            <canvas id="dash-donut-chart" width="150" height="150" role="img" aria-label="Distribuição por prioridade">Nenhum dado.</canvas>
+            <div class="donut-center">
+              <div class="donut-center-val" id="donut-total">0</div>
+              <div class="donut-center-lbl">Total</div>
+            </div>
+          </div>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+
+        <!-- Activity feed -->
+        <div class="dash-panel" style="display:flex;flex-direction:column;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div class="dash-panel-title" style="margin-bottom:0;">Atividades recentes</div>
+          </div>
+          <div class="activity-feed" id="activity-feed">
+            <div class="empty" style="padding:20px 0;">Carregando...</div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <!-- STATS -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">Total</div>
-        <div class="stat-value total" id="stat-total">0</div>
+    <!-- ===== PAINEL: KANBAN ===== -->
+    <div id="tab-kanban" class="tab-panel">
+      <!-- TOP BAR -->
+      <div class="top-bar">
+        <div class="page-title">Ordem de <span>Serviço 2.0</span></div>
+        <button class="btn btn-primary btn-sm" onclick="openNewOS()">+ Nova O.S.</button>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Aguardando</div>
-        <div class="stat-value aguardando" id="stat-aguardando">0</div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Total</div>
+          <div class="stat-value total" id="stat-total">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Aguardando</div>
+          <div class="stat-value aguardando" id="stat-aguardando">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Em Andamento</div>
+          <div class="stat-value andamento" id="stat-andamento">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Concluídas</div>
+          <div class="stat-value concluido" id="stat-concluido">0</div>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Em Andamento</div>
-        <div class="stat-value andamento" id="stat-andamento">0</div>
+
+      <!-- FILTERS -->
+      <div class="filters">
+        <input type="text" id="search-input" placeholder="Buscar cliente, serviço, número..." oninput="renderKanban()" />
+        <select id="filter-status" onchange="renderKanban()">
+          <option value="">Todos os status</option>
+          <option value="aguardando">Aguardando</option>
+          <option value="andamento">Em Andamento</option>
+          <option value="concluido">Concluído</option>
+        </select>
+        <select id="filter-priority" onchange="renderKanban()">
+          <option value="">Todas prioridades</option>
+          <option value="alta">Alta</option>
+          <option value="media">Média</option>
+          <option value="baixa">Baixa</option>
+        </select>
       </div>
-      <div class="stat-card">
-        <div class="stat-label">Concluídas</div>
-        <div class="stat-value concluido" id="stat-concluido">0</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+        <span class="sort-label">Ordenar:</span>
+        <button class="sort-btn active" onclick="setSort('chegada')">⏱ Chegada</button>
+        <button class="sort-btn" onclick="setSort('prioridade')">🔥 Prioridade</button>
+        <button class="sort-btn" onclick="setSort('antigo')">⌛ Mais Antigo</button>
+      </div>
+
+      <!-- KANBAN -->
+      <div class="kanban">
+        <div class="kanban-col">
+          <div class="kanban-header aguardando">⏳ Aguardando <span class="kanban-count" id="count-aguardando">0</span></div>
+          <div class="kanban-body" id="col-aguardando"><div class="empty">Nenhuma O.S.</div></div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-header andamento">✏ Em Andamento <span class="kanban-count" id="count-andamento">0</span></div>
+          <div class="kanban-body" id="col-andamento"><div class="empty">Nenhuma O.S.</div></div>
+        </div>
+        <div class="kanban-col">
+          <div class="kanban-header concluido">✅ Concluído <span class="kanban-count" id="count-concluido">0</span></div>
+          <div class="kanban-body" id="col-concluido"><div class="empty">Nenhuma O.S.</div></div>
+        </div>
       </div>
     </div>
 
-    <!-- FILTERS -->
-    <div class="filters">
-      <input type="text" id="search-input" placeholder="Buscar cliente, serviço, número..." oninput="renderKanban()" />
-      <select id="filter-status" onchange="renderKanban()">
-        <option value="">Todos os status</option>
-        <option value="aguardando">Aguardando</option>
-        <option value="andamento">Em Andamento</option>
-        <option value="concluido">Concluído</option>
-      </select>
-      <select id="filter-priority" onchange="renderKanban()">
-        <option value="">Todas prioridades</option>
-        <option value="alta">Alta</option>
-        <option value="media">Média</option>
-        <option value="baixa">Baixa</option>
-      </select>
-    </div>
-    <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
-      <span class="sort-label">Ordenar:</span>
-      <button class="sort-btn active" onclick="setSort('chegada')">⏱ Chegada</button>
-      <button class="sort-btn" onclick="setSort('prioridade')">🔥 Prioridade</button>
-      <button class="sort-btn" onclick="setSort('antigo')">⌛ Mais Antigo</button>
+    <!-- ===== PAINEL: CONSULTA POR DATA ===== -->
+    <div id="tab-consulta" class="tab-panel">
+      <div class="top-bar">
+        <div class="page-title">📅 Consultar O.S. por <span>Data</span></div>
+      </div>
+      <div class="consulta-date-bar">
+        <input type="date" id="consulta-data-inicio" />
+        <span style="color:var(--text3);font-size:14px;">até</span>
+        <input type="date" id="consulta-data-fim" />
+        <button class="btn btn-primary btn-sm" onclick="filtrarConsulta()">🔍 Buscar</button>
+        <button class="btn btn-outline btn-sm" onclick="consultaHoje()">Hoje</button>
+        <button class="btn btn-outline btn-sm" onclick="consultaSemana()">Esta Semana</button>
+      </div>
+      <div class="consulta-summary" id="consulta-summary" style="display:none;">
+        <div class="consulta-stat">
+          <div class="consulta-stat-val" id="cstat-total" style="color:var(--text);">0</div>
+          <div class="consulta-stat-lbl">Total</div>
+        </div>
+        <div class="consulta-stat">
+          <div class="consulta-stat-val" id="cstat-andamento" style="color:var(--amber);">0</div>
+          <div class="consulta-stat-lbl">Em Aberto</div>
+        </div>
+        <div class="consulta-stat">
+          <div class="consulta-stat-val" id="cstat-concluido" style="color:var(--green);">0</div>
+          <div class="consulta-stat-lbl">Concluídas</div>
+        </div>
+      </div>
+      <div class="consulta-list" id="consulta-list" style="max-height:none;">
+        <div class="consulta-empty">Selecione um período e clique em Buscar.</div>
+      </div>
     </div>
 
-    <!-- KANBAN -->
-    <div class="kanban">
-      <div class="kanban-col">
-        <div class="kanban-header aguardando">⏳ Aguardando <span class="kanban-count" id="count-aguardando">0</span></div>
-        <div class="kanban-body" id="col-aguardando"><div class="empty">Nenhuma O.S.</div></div>
+    <!-- ===== PAINEL: ESTOQUE ===== -->
+    <div id="tab-estoque" class="tab-panel">
+      <div class="top-bar">
+        <div class="page-title">📦 Estoque do <span>Dia</span></div>
+        <button class="btn btn-outline btn-sm" onclick="carregarEstoque()">🔄 Recarregar</button>
+        <button class="btn btn-outline btn-sm" onclick="exportarEstoqueCSV()">⬇ Exportar CSV</button>
       </div>
-      <div class="kanban-col">
-        <div class="kanban-header andamento">✏ Em Andamento <span class="kanban-count" id="count-andamento">0</span></div>
-        <div class="kanban-body" id="col-andamento"><div class="empty">Nenhuma O.S.</div></div>
+      <div class="estoque-header">
+        <div class="estoque-equipe-tabs">
+          <button class="estoque-equipe-tab active" onclick="setEstoqueEquipe('Equipe 01',this)">Equipe 01</button>
+          <button class="estoque-equipe-tab" onclick="setEstoqueEquipe('Equipe 02',this)">Equipe 02</button>
+        </div>
+        <span id="estoque-data-label" style="font-size:13px;color:var(--text3);margin-left:auto;"></span>
       </div>
-      <div class="kanban-col">
-        <div class="kanban-header concluido">✅ Concluído <span class="kanban-count" id="count-concluido">0</span></div>
-        <div class="kanban-body" id="col-concluido"><div class="empty">Nenhuma O.S.</div></div>
+      <div class="estoque-add-row">
+        <select id="est-mat-tipo" style="flex:1;min-width:160px;"></select>
+        <input type="number" id="est-mat-qty" placeholder="Qtd inicial" min="1" value="1" style="width:120px;" />
+        <input type="text" id="est-mat-un" placeholder="Un" style="width:70px;" value="un" />
+        <button class="btn btn-primary btn-sm" onclick="adicionarItemEstoque()">+ Adicionar</button>
+      </div>
+      <div class="estoque-summary" id="estoque-summary"></div>
+      <div style="overflow-x:auto;">
+        <table class="estoque-table">
+          <thead>
+            <tr>
+              <th>Material</th><th>Inicial ±</th><th>Usado nas O.S.</th>
+              <th>Ajuste Manual</th><th>Saldo</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="estoque-tbody"></tbody>
+        </table>
+      </div>
+      <div id="estoque-empty" style="display:none;" class="consulta-empty">Nenhum item cadastrado para esta equipe hoje.</div>
+    </div>
+
+    <!-- ===== PAINEL: RANKING ===== -->
+    <div id="tab-ranking" class="tab-panel">
+      <div class="top-bar">
+        <div class="page-title">🏆 Ranking de <span>Técnicos</span></div>
+      </div>
+      <div class="ranking-periodo">
+        <button class="ranking-periodo-btn active" onclick="setRankingPeriodo('hoje',this)">Hoje</button>
+        <button class="ranking-periodo-btn" onclick="setRankingPeriodo('semana',this)">Esta Semana</button>
+        <button class="ranking-periodo-btn" onclick="setRankingPeriodo('mes',this)">Este Mês</button>
+        <button class="ranking-periodo-btn" onclick="setRankingPeriodo('tudo',this)">Tudo</button>
+      </div>
+      <div id="ranking-list"></div>
+    </div>
+
+    <!-- ===== PAINEL: RELATÓRIO MENSAL ===== -->
+    <div id="tab-relatorio" class="tab-panel">
+      <div class="top-bar">
+        <div class="page-title">📊 Relatório <span>Mensal</span></div>
+      </div>
+      <div class="relatorio-mes-controls">
+        <input type="month" id="relatorio-mes-input" />
+        <button class="btn btn-primary btn-sm" onclick="renderRelatorioMensal()">📊 Gerar</button>
+        <button class="btn btn-outline btn-sm" onclick="exportarCSV()">⬇ Exportar CSV</button>
+      </div>
+      <div id="relatorio-mensal-body">
+        <div class="consulta-empty">Selecione o mês e clique em Gerar.</div>
       </div>
     </div>
+
+    <!-- ===== PAINEL: RELATÓRIO DIÁRIO ===== -->
+    <div id="tab-relatorio-diario" class="tab-panel">
+      <div class="top-bar">
+        <div class="page-title">📄 Relatório <span>Diário</span></div>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+        <button class="btn btn-primary" onclick="gerarRelatorioDia()">📄 Gerar Relatório Geral</button>
+        <button class="btn btn-outline" onclick="gerarRelatorioDia('Equipe 01')">📄 Apenas Equipe 01</button>
+        <button class="btn btn-outline" onclick="gerarRelatorioDia('Equipe 02')">📄 Apenas Equipe 02</button>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;color:var(--text2);font-size:14px;line-height:1.8;">
+        <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;">Como funciona</div>
+        O relatório diário abre uma nova janela com o resumo do dia atual pronto para impressão.<br>
+        Inclui todas as O.S. abertas e concluídas hoje, materiais usados por equipe e tempo de atendimento.<br><br>
+        <span style="color:var(--text3);font-size:13px;">Permita pop-ups no navegador para que a janela de impressão abra corretamente.</span>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -539,7 +880,7 @@
       <!-- COLAR TEXTO -->
       <div style="background:var(--bg3);border:1px dashed var(--cyan);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
         <div style="font-size:12px;color:var(--cyan);font-weight:700;letter-spacing:0.5px;margin-bottom:6px;">⚡ COLAR TEXTO — preenche automático</div>
-        <textarea id="os-paste-text" rows="5" placeholder="Cole o relatório do técnico aqui. Reconhece automaticamente: CLIENTE, DROP, CONECTOR APC/UPC, ACOPLADOR, CABO LAN, RJ45, FIXA FIO, OBS..." style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-family:var(--font);font-size:13px;resize:vertical;outline:none;"></textarea>
+        <textarea id="os-paste-text" rows="3" placeholder="Cole aqui o texto com os dados do cliente (nome, endereço, telefone...) e os campos serão preenchidos automaticamente." style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-family:var(--font);font-size:13px;resize:vertical;outline:none;"></textarea>
         <button class="btn btn-primary btn-sm" style="margin-top:8px;" onclick="parsearTextoOS()">⚡ Preencher campos</button>
         <button class="btn btn-outline btn-sm" style="margin-top:8px;margin-left:6px;" onclick="document.getElementById('os-paste-text').value=''">✕ Limpar</button>
       </div>
@@ -564,12 +905,12 @@
           <select id="os-servico">
             <option value="">Selecionar...</option>
             <option>Instalação de Internet</option>
-            <option>ONU/ONTvermelha</option>
+            <option>ONU/ONT Vermelha</option>
             <option>Troca de Equipamento</option>
-            <option>Mudança de endereço</option>
-            <option>Visita tecnica</option>
+            <option>Mudança de Endereço</option>
+            <option>Visita Técnica</option>
             <option>Fusão de Fibra</option>
-            <option>Mudança de Comodo</option>
+            <option>Mudança de Cômodo</option>
             <option>Outro</option>
           </select>
         </div>
@@ -609,23 +950,7 @@
         <div class="materiais-title">🔧 Materiais Utilizados</div>
         <div id="materiais-list"></div>
         <div class="add-material">
-          <select id="mat-tipo">
-            <option value="">Selecionar material...</option>
-            <option>Acoplador</option>
-            <option>RJ45</option>
-            <option>ONT</option>
-            <option>Roteador</option>
-            <option>Drop</option>
-            <option>Cabo de Rede</option>
-            <option>Splitter</option>
-            <option>Conector SC/APC</option>
-            <option>Conector SC/UPC</option>
-            <option>Patch Cord</option>
-            <option>Switch</option>
-            <option>ONU</option>
-            <option>Fonte POE</option>
-            <option>Outro</option>
-          </select>
+          <select id="mat-tipo"></select>
           <input type="number" id="mat-qty" placeholder="Qtd" min="1" value="1" />
           <input type="text" id="mat-unidade" placeholder="Un/m" style="width:70px;" />
           <button class="btn btn-amber btn-sm" onclick="addMaterial()">+ Add</button>
@@ -656,141 +981,7 @@
   </div>
 </div>
 
-<!-- MODAL ESTOQUE DIÁRIO -->
-<div class="modal-backdrop" id="modal-estoque">
-  <div class="modal" style="max-width:680px;">
-    <div class="modal-header">
-      <h2>📦 Estoque do Dia</h2>
-      <button class="btn-close" onclick="closeModal('modal-estoque')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="estoque-header">
-        <div class="estoque-equipe-tabs">
-          <button class="estoque-equipe-tab active" onclick="setEstoqueEquipe('Equipe 01',this)">Equipe 01</button>
-          <button class="estoque-equipe-tab" onclick="setEstoqueEquipe('Equipe 02',this)">Equipe 02</button>
-        </div>
-        <span id="estoque-data-label" style="font-size:13px;color:var(--text3);margin-left:auto;"></span>
-      </div>
 
-      <!-- Adicionar item -->
-      <div class="estoque-add-row">
-        <select id="est-mat-tipo" style="flex:1;min-width:160px;">
-          <option value="">Selecionar material...</option>
-          <option>Acoplador</option><option>RJ45</option><option>ONT</option>
-          <option>Roteador</option><option>Drop</option><option>Cabo de Rede</option>
-          <option>Splitter</option><option>Conector SC/APC</option><option>Conector SC/UPC</option>
-          <option>Patch Cord</option><option>Switch</option><option>ONU</option>
-          <option>Fonte POE</option><option>Outro</option>
-        </select>
-        <input type="number" id="est-mat-qty" placeholder="Qtd inicial" min="1" value="1" style="width:120px;" />
-        <input type="text" id="est-mat-un" placeholder="Un" style="width:70px;" value="un" />
-        <button class="btn btn-primary btn-sm" onclick="adicionarItemEstoque()">+ Adicionar</button>
-      </div>
-
-      <!-- Resumo -->
-      <div class="estoque-summary" id="estoque-summary"></div>
-
-      <!-- Tabela -->
-      <div style="overflow-x:auto;">
-        <table class="estoque-table">
-          <thead>
-            <tr>
-              <th>Material</th>
-              <th>Inicial ±</th>
-              <th>Usado nas O.S.</th>
-              <th>Ajuste Manual</th>
-              <th>Saldo</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="estoque-tbody"></tbody>
-        </table>
-      </div>
-      <div id="estoque-empty" style="display:none;" class="consulta-empty">Nenhum item cadastrado para esta equipe hoje.</div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline btn-sm" onclick="carregarEstoque()">🔄 Recarregar</button>
-      <button class="btn btn-outline btn-sm" onclick="exportarEstoqueCSV()">⬇ Exportar CSV</button>
-      <button class="btn btn-outline" onclick="closeModal('modal-estoque')">Fechar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL RANKING TÉCNICOS -->
-<div class="modal-backdrop" id="modal-ranking">
-  <div class="modal" style="max-width:580px;">
-    <div class="modal-header">
-      <h2>🏆 Ranking de Técnicos</h2>
-      <button class="btn-close" onclick="closeModal('modal-ranking')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="ranking-periodo">
-        <button class="ranking-periodo-btn active" onclick="setRankingPeriodo('hoje',this)">Hoje</button>
-        <button class="ranking-periodo-btn" onclick="setRankingPeriodo('semana',this)">Esta Semana</button>
-        <button class="ranking-periodo-btn" onclick="setRankingPeriodo('mes',this)">Este Mês</button>
-        <button class="ranking-periodo-btn" onclick="setRankingPeriodo('tudo',this)">Tudo</button>
-      </div>
-      <div id="ranking-list"></div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL RELATÓRIO MENSAL -->
-<div class="modal-backdrop" id="modal-relatorio-mensal">
-  <div class="modal" style="max-width:680px;">
-    <div class="modal-header">
-      <h2>📊 Relatório Mensal</h2>
-      <button class="btn-close" onclick="closeModal('modal-relatorio-mensal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="relatorio-mes-controls">
-        <input type="month" id="relatorio-mes-input" />
-        <button class="btn btn-primary btn-sm" onclick="renderRelatorioMensal()">📊 Gerar</button>
-        <button class="btn btn-outline btn-sm" onclick="exportarCSV()">⬇ Exportar CSV</button>
-      </div>
-      <div id="relatorio-mensal-body">
-        <div class="consulta-empty">Selecione o mês e clique em Gerar.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL CONSULTA POR DATA -->
-<div class="modal-backdrop" id="modal-consulta">
-  <div class="modal" style="max-width:660px;">
-    <div class="modal-header">
-      <h2>📅 Consultar O.S. por Data</h2>
-      <button class="btn-close" onclick="closeModal('modal-consulta')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="consulta-date-bar">
-        <input type="date" id="consulta-data-inicio" />
-        <span style="color:var(--text3);font-size:14px;">até</span>
-        <input type="date" id="consulta-data-fim" />
-        <button class="btn btn-primary btn-sm" onclick="filtrarConsulta()">🔍 Buscar</button>
-        <button class="btn btn-outline btn-sm" onclick="consultaHoje()">Hoje</button>
-        <button class="btn btn-outline btn-sm" onclick="consultaSemana()">Esta Semana</button>
-      </div>
-      <div class="consulta-summary" id="consulta-summary" style="display:none;">
-        <div class="consulta-stat">
-          <div class="consulta-stat-val" id="cstat-total" style="color:var(--text);">0</div>
-          <div class="consulta-stat-lbl">Total</div>
-        </div>
-        <div class="consulta-stat">
-          <div class="consulta-stat-val" id="cstat-andamento" style="color:var(--amber);">0</div>
-          <div class="consulta-stat-lbl">Em Aberto</div>
-        </div>
-        <div class="consulta-stat">
-          <div class="consulta-stat-val" id="cstat-concluido" style="color:var(--green);">0</div>
-          <div class="consulta-stat-lbl">Concluídas</div>
-        </div>
-      </div>
-      <div class="consulta-list" id="consulta-list">
-        <div class="consulta-empty">Selecione um período e clique em Buscar.</div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL CONCLUIR O.S. -->
 <div class="modal-backdrop" id="modal-concluir">
@@ -802,36 +993,10 @@
     <div class="modal-body">
       <div id="concluir-os-info" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:16px;font-size:14px;"></div>
 
-      <!-- COLAR TEXTO DO TÉCNICO -->
-      <div style="background:var(--bg3);border:1px dashed var(--cyan);border-radius:10px;padding:12px 14px;margin-bottom:16px;">
-        <div style="font-size:12px;color:var(--cyan);font-weight:700;letter-spacing:0.5px;margin-bottom:6px;">⚡ COLAR TEXTO — preenche materiais e OBS automaticamente</div>
-        <textarea id="concluir-paste-text" rows="4" placeholder="Cole o relatório do técnico aqui. Ex:&#10;METROS DE DROP: ( 30 )&#10;CONECTOR RJ45: ( 4 )&#10;CABO LAN: ( 17 )&#10;OBS( cabo danificado, passou cabo novo )" style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-family:var(--font);font-size:13px;resize:vertical;outline:none;"></textarea>
-        <div style="display:flex;gap:6px;margin-top:8px;">
-          <button class="btn btn-primary btn-sm" onclick="parsearTextoConcluir()">⚡ Preencher campos</button>
-          <button class="btn btn-outline btn-sm" onclick="document.getElementById('concluir-paste-text').value=''">✕ Limpar</button>
-        </div>
-      </div>
-
       <div class="concluir-section-title">🔧 Materiais Utilizados</div>
       <div id="concluir-materiais-list" style="margin-bottom:8px;"></div>
       <div class="add-material" style="flex-wrap:wrap;">
-        <select id="cmat-tipo" style="flex:1;min-width:160px;">
-          <option value="">Selecionar material...</option>
-          <option>Acoplador</option>
-          <option>RJ45</option>
-          <option>ONT</option>
-          <option>Roteador</option>
-          <option>Drop</option>
-          <option>Cabo de Rede</option>
-          <option>Splitter</option>
-          <option>Conector SC/APC</option>
-          <option>Conector SC/UPC</option>
-          <option>Patch Cord</option>
-          <option>Switch</option>
-          <option>ONU</option>
-          <option>Fonte POE</option>
-          <option>Outro</option>
-        </select>
+        <select id="cmat-tipo" style="flex:1;min-width:160px;"></select>
         <input type="number" id="cmat-qty" placeholder="Qtd" min="1" value="1" style="width:70px;" />
         <input type="text" id="cmat-unidade" placeholder="Un/m" style="width:70px;" />
         <button class="btn btn-amber btn-sm" onclick="addConcluirMaterial()">+ Add</button>
@@ -847,6 +1012,26 @@
   </div>
 </div>
 
+<!-- MODAL CONFIRMAR EXCLUSÃO -->
+<div class="modal-backdrop" id="modal-confirm-delete">
+  <div class="modal confirm-modal">
+    <div class="modal-header">
+      <h2 style="color:var(--red);">⚠ Confirmar Exclusão</h2>
+      <button class="btn-close" onclick="closeModal('modal-confirm-delete')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center; padding: 32px 24px;">
+      <div class="confirm-icon">🗑</div>
+      <div class="confirm-msg">Tem certeza que deseja excluir esta O.S.?</div>
+      <div class="confirm-detail" id="confirm-delete-label" style="margin-top:8px;"></div>
+      <div style="color:var(--red); font-size:13px; margin-top:12px;">Esta ação não pode ser desfeita.</div>
+    </div>
+    <div class="modal-footer" style="justify-content:center; gap:16px;">
+      <button class="btn btn-outline" style="min-width:120px;" onclick="closeModal('modal-confirm-delete')">Cancelar</button>
+      <button class="btn btn-danger" style="min-width:120px;" id="btn-confirm-delete-ok" onclick="executarExclusao()">🗑 Excluir</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -854,7 +1039,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, where, serverTimestamp, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, where, serverTimestamp, setDoc, getDoc, orderBy, limit, startAfter, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAjt7naEW-amQoBFyVm80MPAKnUiC6pBkQ",
@@ -972,11 +1157,19 @@ window.saveOS = async () => {
   }
 };
 
-window.deleteCurrentOS = async () => {
+window.deleteCurrentOS = () => {
   if (!currentOSId) return;
-  if (!confirm('Excluir esta O.S.?')) return;
+  const os = allOS.find(o => o.id === currentOSId);
+  const num = os ? `OS #${String(os.numero || '?').padStart(4,'0')} — ${os.cliente || ''}` : '';
+  document.getElementById('confirm-delete-label').textContent = num;
+  openModal('modal-confirm-delete');
+};
+
+window.executarExclusao = async () => {
+  if (!currentOSId) return;
   try {
     await deleteDoc(doc(db, 'ordens', currentOSId));
+    closeModal('modal-confirm-delete');
     closeModal('modal-detail');
     showToast('O.S. excluída.', 'success');
   } catch (e) {
@@ -1130,16 +1323,53 @@ window.concluirCurrentOS = () => {
   abrirConcluir(currentOSId);
 };
 
-window.openConsultaData = () => {
-  // Default to today
-  const hoje = new Date().toISOString().split('T')[0];
-  document.getElementById('consulta-data-inicio').value = hoje;
-  document.getElementById('consulta-data-fim').value = hoje;
-  document.getElementById('consulta-summary').style.display = 'none';
-  document.getElementById('consulta-list').innerHTML = '<div class="consulta-empty">Selecione um período e clique em Buscar.</div>';
-  openModal('modal-consulta');
-  filtrarConsulta();
+// ===== NAVEGAÇÃO POR ABAS =====
+window.switchTab = (tab, btn) => {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  // Inicializar conteúdo da aba ao abrir
+  if (tab === 'dashboard') {
+    renderDashboard();
+  } else if (tab === 'consulta') {
+    const hoje = new Date().toISOString().split('T')[0];
+    if (!document.getElementById('consulta-data-inicio').value) {
+      document.getElementById('consulta-data-inicio').value = hoje;
+      document.getElementById('consulta-data-fim').value = hoje;
+      filtrarConsulta();
+    }
+  } else if (tab === 'estoque') {
+    document.getElementById('estoque-data-label').textContent =
+      new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long'});
+    carregarEstoque();
+  } else if (tab === 'ranking') {
+    renderRanking();
+  } else if (tab === 'relatorio') {
+    _initRelatorioMensal();
+  }
 };
+
+// Redirecionar funções antigas que abriam modais para abas
+window.openConsultaData = () => {
+  const navBtns = document.querySelectorAll('.nav-tab');
+  switchTab('consulta', navBtns[2]);
+};
+window.openEstoque = () => {
+  const navBtns = document.querySelectorAll('.nav-tab');
+  switchTab('estoque', navBtns[3]);
+};
+window.openRanking = () => {
+  const navBtns = document.querySelectorAll('.nav-tab');
+  switchTab('ranking', navBtns[4]);
+};
+window.openRelatorioMensal = () => {
+  const navBtns = document.querySelectorAll('.nav-tab');
+  switchTab('relatorio', navBtns[5]);
+};
+
+
 
 window.consultaHoje = () => {
   const hoje = new Date().toISOString().split('T')[0];
@@ -1197,7 +1427,7 @@ window.filtrarConsulta = () => {
     const hora = os.createdAt?.toDate ? os.createdAt.toDate().toLocaleString('pt-BR') : '—';
     const mats = (os.materiais || []).length > 0
       ? `<span style="font-size:11px;color:var(--text3);">🔧 ${os.materiais.length} material(is)</span>` : '';
-    return `<div class="consulta-item" onclick="closeModal('modal-consulta'); openDetail('${os.id}')">
+    return `<div class="consulta-item" onclick="openDetail('${os.id}')">
       <span class="consulta-item-num">OS #${num}</span>
       <div class="consulta-item-info">
         <div class="consulta-item-cliente">${esc(os.cliente)}</div>
@@ -1344,20 +1574,107 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ===== FIRESTORE =====
+const OS_PAGE_SIZE = 50;
+let osLastDoc = null;
+let osHasMore = false;
+let allOSArchive = []; // O.S. abertas fora dos 60 dias (sempre carregadas, pois podem estar em andamento)
+
 function subscribeOS() {
-  const q = query(
+  // Busca O.S. abertas (não concluídas) sem limite — garante que nenhuma ativa suma
+  const qAbertas = query(
     collection(db, 'ordens'),
-    where('userId', '==', currentUser.uid)
+    where('userId', '==', currentUser.uid),
+    where('status', 'in', ['aguardando', 'andamento'])
   );
-  unsubscribeOS = onSnapshot(q, (snap) => {
-    allOS = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // Busca O.S. concluídas dos últimos 60 dias com limite
+  const limite60d = new Date();
+  limite60d.setDate(limite60d.getDate() - 60);
+
+  const qConcluidas = query(
+    collection(db, 'ordens'),
+    where('userId', '==', currentUser.uid),
+    where('status', '==', 'concluido'),
+    where('createdAt', '>=', limite60d),
+    orderBy('createdAt', 'desc'),
+    limit(OS_PAGE_SIZE)
+  );
+
+  let abertas = [];
+  let concluidas = [];
+
+  // Listener para abertas
+  const unsubAbertas = onSnapshot(qAbertas, (snap) => {
+    abertas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    allOS = [...abertas, ...concluidas];
     renderKanbanFn();
     updateStats();
+    triggerDashboardUpdate();
   }, (err) => {
-    console.error(err);
     showToast('Erro ao carregar O.S.: ' + err.message, 'error');
   });
+
+  // Listener para concluídas recentes
+  const unsubConcluidas = onSnapshot(qConcluidas, (snap) => {
+    concluidas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    osLastDoc = snap.docs[snap.docs.length - 1] || null;
+    osHasMore = snap.docs.length === OS_PAGE_SIZE;
+    allOS = [...abertas, ...concluidas];
+    renderKanbanFn();
+    updateStats();
+    atualizarBannerPaginacao();
+    triggerDashboardUpdate();
+  }, (err) => {
+    showToast('Erro ao carregar O.S.: ' + err.message, 'error');
+  });
+
+  unsubscribeOS = () => { unsubAbertas(); unsubConcluidas(); };
 }
+
+window.carregarMaisOS = async () => {
+  if (!osLastDoc || !osHasMore) return;
+  const btn = document.getElementById('btn-carregar-mais');
+  if (btn) { btn.disabled = true; btn.textContent = 'Carregando...'; }
+  try {
+    const limite60d = new Date();
+    limite60d.setDate(limite60d.getDate() - 60);
+    const q = query(
+      collection(db, 'ordens'),
+      where('userId', '==', currentUser.uid),
+      where('status', '==', 'concluido'),
+      where('createdAt', '>=', limite60d),
+      orderBy('createdAt', 'desc'),
+      startAfter(osLastDoc),
+      limit(OS_PAGE_SIZE)
+    );
+    const snap = await getDocs(q);
+    const mais = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    osLastDoc = snap.docs[snap.docs.length - 1] || null;
+    osHasMore = snap.docs.length === OS_PAGE_SIZE;
+    allOS = [...allOS, ...mais];
+    renderKanbanFn();
+    updateStats();
+    atualizarBannerPaginacao();
+  } catch(e) {
+    showToast('Erro ao carregar mais: ' + e.message, 'error');
+  }
+};
+
+function atualizarBannerPaginacao() {
+  let banner = document.getElementById('paginacao-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'paginacao-banner';
+    banner.style.cssText = 'text-align:center;padding:16px;color:var(--text3);font-size:13px;margin-top:16px;';
+    document.getElementById('tab-kanban')?.appendChild(banner);
+  }
+  if (osHasMore) {
+    banner.innerHTML = `<button id="btn-carregar-mais" class="btn btn-outline btn-sm" onclick="carregarMaisOS()">⬇ Carregar mais O.S. concluídas</button>`;
+  } else {
+    banner.innerHTML = `<span style="color:var(--text3);font-size:12px;">✓ Todas as O.S. dos últimos 60 dias carregadas (${allOS.length} registros)</span>`;
+  }
+}
+
 
 function getNextNum() {
   if (allOS.length === 0) return 1;
@@ -1555,12 +1872,11 @@ function getEstoqueDocId() {
   return `estoque_${equipeSlug}_${hoje}`;
 }
 
-window.openEstoque = async () => {
+window._openEstoqueInterno = async () => {
   estoqueEquipeAtual = 'Equipe 01';
   document.querySelectorAll('.estoque-equipe-tab').forEach((b,i) => b.classList.toggle('active', i===0));
   document.getElementById('estoque-data-label').textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long'});
   await carregarEstoque();
-  openModal('modal-estoque');
 };
 
 window.setEstoqueEquipe = async (equipe, btn) => {
@@ -1740,12 +2056,11 @@ function formatTempo(min) {
 // ===== RANKING DE TÉCNICOS =====
 let rankingPeriodoAtual = 'hoje';
 
-window.openRanking = () => {
+window._openRankingLegado = () => {
   rankingPeriodoAtual = 'hoje';
   document.querySelectorAll('.ranking-periodo-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.ranking-periodo-btn')[0].classList.add('active');
   renderRanking();
-  openModal('modal-ranking');
 };
 
 window.setRankingPeriodo = (periodo, btn) => {
@@ -1823,14 +2138,14 @@ function renderRanking() {
   }).join('');
 }
 
-// ===== RELATÓRIO MENSAL =====
-window.openRelatorioMensal = () => {
+// openRelatorioMensal now handled by switchTab above
+window._initRelatorioMensal = () => {
   const hoje = new Date();
-  document.getElementById('relatorio-mes-input').value =
-    `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
-  document.getElementById('relatorio-mensal-body').innerHTML = '<div class="consulta-empty">Clique em Gerar para carregar.</div>';
-  openModal('modal-relatorio-mensal');
-  renderRelatorioMensal();
+  const input = document.getElementById('relatorio-mes-input');
+  if (!input.value) {
+    input.value = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}`;
+    renderRelatorioMensal();
+  }
 };
 
 window.renderRelatorioMensal = () => {
@@ -1997,15 +2312,6 @@ window.copiarNome = (nome, btn) => {
 };
 
 // ===== AUTO-PARSE TEXTO OS =====
-// Extrai valor numérico de dentro de parênteses: "(  17  )" → 17, "()" → null
-function extrairQtd(str) {
-  if (!str) return null;
-  const m = str.match(/\(\s*([\d.,]+)\s*\)/);
-  if (!m) return null;
-  const v = parseFloat(m[1].replace(',', '.'));
-  return isNaN(v) || v <= 0 ? null : v;
-}
-
 window.parsearTextoOS = () => {
   const texto = document.getElementById('os-paste-text').value.trim();
   if (!texto) { showToast('Cole um texto primeiro.', 'error'); return; }
@@ -2019,104 +2325,30 @@ window.parsearTextoOS = () => {
   // Endereço — linhas com rua, av, travessa, passagem, conjunto, bairro
   const endMatch = texto.match(/((rua|av\.?|avenida|travessa|trav\.?|passagem|psg\.?|conjunto|conj\.?|qd|quadra|vila|residencial)[^\n,]{3,})/i);
   if (endMatch) {
+    // pega do match até fim da linha
     const startIdx = texto.toLowerCase().indexOf(endMatch[1].toLowerCase());
     const trecho = texto.substring(startIdx);
     endereco = trecho.split('\n')[0].trim();
   }
 
-  // Cliente — heurística: linha com CLIENTE(...) ou primeira linha não especial
-  const clienteMatch = texto.match(/cliente\s*[:\-]?\s*\(([^)]+)\)/i)
-                    || texto.match(/cliente\s*[:\-]\s*(.+)/i);
-  if (clienteMatch) {
-    cliente = clienteMatch[1].trim();
-  } else {
-    const linhas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 1);
-    for (const linha of linhas) {
-      const ehEndereco = /rua|av\.|avenida|travessa|passagem|conjunto|quadra|qd|bairro|cep|\d{5}-?\d{3}/i.test(linha);
-      const ehTelefone = /^\(?\d{2}\)?\s?9?\d{4}/.test(linha);
-      const ehNumeroOS = /^os\s*#?\d+|^ordem\s+de\s+servi/i.test(linha);
-      if (!ehEndereco && !ehTelefone && !ehNumeroOS && linha.length >= 3) {
-        cliente = linha.replace(/^(cliente|nome|sr\.?|sra\.?)[:\s]*/i, '').trim();
-        break;
-      }
+  // Cliente — heurística: primeira linha que não parece endereço nem telefone
+  const linhas = texto.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+  for (const linha of linhas) {
+    const ehEndereco = /rua|av\.|avenida|travessa|passagem|conjunto|quadra|qd|bairro|cep|\d{5}-?\d{3}/i.test(linha);
+    const ehTelefone = /^\(?\d{2}\)?\s?9?\d{4}/.test(linha);
+    const ehNumeroOS = /^os\s*#?\d+|^ordem\s+de\s+servi/i.test(linha);
+    if (!ehEndereco && !ehTelefone && !ehNumeroOS && linha.length >= 3) {
+      cliente = linha.replace(/^(cliente|nome|sr\.?|sra\.?)[:\s]*/i, '').trim();
+      break;
     }
   }
 
-  // ===== MATERIAIS DO TÉCNICO =====
-  // Mapeamento: regex de reconhecimento → { tipo, unidade }
-  const matRules = [
-    { re: /metros?\s*de?\s*drop\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,      tipo: 'Drop',            unidade: 'm'  },
-    { re: /drop\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                        tipo: 'Drop',            unidade: 'm'  },
-    { re: /conector\s*(sc[\s\/]?)?apc\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i, tipo: 'Conector SC/APC', unidade: 'un', grp: 2 },
-    { re: /conector\s*(sc[\s\/]?)?upc\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i, tipo: 'Conector SC/UPC', unidade: 'un', grp: 2 },
-    { re: /conector\s*upc[\s\/]apc\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,   tipo: 'Conector SC/APC', unidade: 'un' },
-    { re: /acoplador\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                   tipo: 'Acoplador',       unidade: 'un' },
-    { re: /cabo\s*l[ae]n\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,              tipo: 'Cabo de Rede',    unidade: 'm'  },
-    { re: /cabo\s*de?\s*rede\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,          tipo: 'Cabo de Rede',    unidade: 'm'  },
-    { re: /conector\s*rj\s*45\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,         tipo: 'RJ45',            unidade: 'un' },
-    { re: /rj\s*45\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                     tipo: 'RJ45',            unidade: 'un' },
-    { re: /fixa\s*fio\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                  tipo: 'Outro',           unidade: 'un', nome: 'Fixa Fio' },
-    { re: /patch\s*cord\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                tipo: 'Patch Cord',      unidade: 'un' },
-    { re: /splitter\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                    tipo: 'Splitter',        unidade: 'un' },
-    { re: /ont\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                         tipo: 'ONT',             unidade: 'un' },
-    { re: /onu\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                         tipo: 'ONU',             unidade: 'un' },
-    { re: /roteador\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                    tipo: 'Roteador',        unidade: 'un' },
-  ];
-
-  const materiaisEncontrados = [];
-  for (const rule of matRules) {
-    const m = texto.match(rule.re);
-    if (!m) continue;
-    const captura = m[rule.grp || 1];
-    const qty = extrairQtd(captura);
-    if (!qty) continue;
-    const tipoFinal = rule.nome || rule.tipo;
-    // Evita duplicata do mesmo tipo
-    if (!materiaisEncontrados.find(x => x.tipo === tipoFinal)) {
-      materiaisEncontrados.push({ tipo: tipoFinal, qty, unidade: rule.unidade });
-    }
-  }
-
-  // ===== OBS =====
-  let obs = '';
-  const obsMatch = texto.match(/obs\s*[:\-\(]?\s*(.+?)(?:\)|$)/is)
-                || texto.match(/observa[çc][aã]o\s*[:\-]?\s*(.+)/is);
-  if (obsMatch) {
-    obs = obsMatch[1].replace(/\)$/, '').trim();
-  }
-
-  // ===== PREENCHE OS CAMPOS =====
+  // Preenche os campos
   if (cliente) document.getElementById('os-cliente').value = cliente;
   if (contato) document.getElementById('os-contato').value = contato;
   if (endereco) document.getElementById('os-endereco').value = endereco;
 
-  // OBS → campo descrição (acumula com o que já tiver)
-  if (obs) {
-    const descEl = document.getElementById('os-descricao');
-    descEl.value = obs;
-  }
-
-  // Materiais → adiciona à lista atual sem duplicar por tipo
-  if (materiaisEncontrados.length > 0) {
-    for (const mat of materiaisEncontrados) {
-      const jaTem = currentMateriais.findIndex(x => x.tipo === mat.tipo);
-      if (jaTem >= 0) {
-        currentMateriais[jaTem].qty = mat.qty; // atualiza quantidade
-      } else {
-        currentMateriais.push(mat);
-      }
-    }
-    renderMateriais();
-  }
-
-  const preenchidos = [
-    cliente && 'Cliente',
-    contato && 'Contato',
-    endereco && 'Endereço',
-    obs && 'OBS',
-    materiaisEncontrados.length > 0 && `${materiaisEncontrados.length} material(is)`
-  ].filter(Boolean);
-
+  const preenchidos = [cliente && 'Cliente', contato && 'Contato', endereco && 'Endereço'].filter(Boolean);
   if (preenchidos.length > 0) {
     showToast(`Preenchido: ${preenchidos.join(', ')}`, 'success');
   } else {
@@ -2124,77 +2356,277 @@ window.parsearTextoOS = () => {
   }
 };
 
-// ===== PARSE TEXTO NO MODAL CONCLUIR =====
-// Reutiliza as mesmas regras de extração, mas preenche concluirMateriais e concluir-obs
-window.parsearTextoConcluir = () => {
-  const texto = document.getElementById('concluir-paste-text').value.trim();
-  if (!texto) { showToast('Cole um texto primeiro.', 'error'); return; }
+// ===== DASHBOARD =====
+let dashPeriodo = 'hoje';
+let dashLineChart = null;
+let dashDonutChart = null;
+let chartJsLoaded = false;
 
-  const matRules = [
-    { re: /metros?\s*de?\s*drop\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,      tipo: 'Drop',            unidade: 'm'  },
-    { re: /drop\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                        tipo: 'Drop',            unidade: 'm'  },
-    { re: /conector\s*(sc[\s\/]?)?apc\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i, tipo: 'Conector SC/APC', unidade: 'un', grp: 2 },
-    { re: /conector\s*(sc[\s\/]?)?upc\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i, tipo: 'Conector SC/UPC', unidade: 'un', grp: 2 },
-    { re: /conector\s*upc[\s\/]apc\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,   tipo: 'Conector SC/APC', unidade: 'un' },
-    { re: /acoplador\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                   tipo: 'Acoplador',       unidade: 'un' },
-    { re: /cabo\s*l[ae]n\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,              tipo: 'Cabo de Rede',    unidade: 'm'  },
-    { re: /cabo\s*de?\s*rede\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,          tipo: 'Cabo de Rede',    unidade: 'm'  },
-    { re: /conector\s*rj\s*45\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,         tipo: 'RJ45',            unidade: 'un' },
-    { re: /rj\s*45\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                     tipo: 'RJ45',            unidade: 'un' },
-    { re: /fixa\s*fio\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                  tipo: 'Outro',           unidade: 'un', nome: 'Fixa Fio' },
-    { re: /patch\s*cord\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                tipo: 'Patch Cord',      unidade: 'un' },
-    { re: /splitter\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                    tipo: 'Splitter',        unidade: 'un' },
-    { re: /ont\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                         tipo: 'ONT',             unidade: 'un' },
-    { re: /onu\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                         tipo: 'ONU',             unidade: 'un' },
-    { re: /roteador\s*[:\-]?\s*(\(\s*[\d.,]*\s*\))/i,                    tipo: 'Roteador',        unidade: 'un' },
-  ];
+window.setDashPeriod = (p, btn) => {
+  dashPeriodo = p;
+  document.querySelectorAll('.dash-period-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderDashboard();
+};
 
-  const materiaisEncontrados = [];
-  for (const rule of matRules) {
-    const m = texto.match(rule.re);
-    if (!m) continue;
-    const captura = m[rule.grp || 1];
-    const qty = extrairQtd(captura);
-    if (!qty) continue;
-    const tipoFinal = rule.nome || rule.tipo;
-    if (!materiaisEncontrados.find(x => x.tipo === tipoFinal)) {
-      materiaisEncontrados.push({ tipo: tipoFinal, qty, unidade: rule.unidade });
+function getDashOS() {
+  const agora = new Date();
+  return allOS.filter(os => {
+    const ts = os.createdAt?.toDate ? os.createdAt.toDate() : null;
+    if (!ts) return false;
+    if (dashPeriodo === 'hoje') return ts.toDateString() === agora.toDateString();
+    if (dashPeriodo === 'semana') {
+      const ini = new Date(agora); ini.setDate(agora.getDate() - 6); ini.setHours(0,0,0,0);
+      return ts >= ini;
     }
+    if (dashPeriodo === 'mes') {
+      const ini = new Date(agora); ini.setDate(agora.getDate() - 29); ini.setHours(0,0,0,0);
+      return ts >= ini;
+    }
+    return true;
+  });
+}
+
+function getPrevOS() {
+  const agora = new Date();
+  return allOS.filter(os => {
+    const ts = os.createdAt?.toDate ? os.createdAt.toDate() : null;
+    if (!ts) return false;
+    if (dashPeriodo === 'hoje') {
+      const ontem = new Date(agora); ontem.setDate(agora.getDate() - 1);
+      return ts.toDateString() === ontem.toDateString();
+    }
+    if (dashPeriodo === 'semana') {
+      const ini = new Date(agora); ini.setDate(agora.getDate() - 13); ini.setHours(0,0,0,0);
+      const fim = new Date(agora); fim.setDate(agora.getDate() - 7); fim.setHours(23,59,59,999);
+      return ts >= ini && ts <= fim;
+    }
+    if (dashPeriodo === 'mes') {
+      const ini = new Date(agora); ini.setDate(agora.getDate() - 59); ini.setHours(0,0,0,0);
+      const fim = new Date(agora); fim.setDate(agora.getDate() - 30); fim.setHours(23,59,59,999);
+      return ts >= ini && ts <= fim;
+    }
+    return [];
+  });
+}
+
+function renderSparkline(svgId, data, color) {
+  const svg = document.getElementById(svgId);
+  if (!svg || data.length < 2) { if (svg) svg.innerHTML = ''; return; }
+  const max = Math.max(...data, 1);
+  const w = 160, h = 48, pad = 4;
+  const xs = data.map((_, i) => pad + (i / (data.length - 1)) * (w - pad * 2));
+  const ys = data.map(v => h - pad - (v / max) * (h - pad * 2));
+  const pts = xs.map((x, i) => `${x},${ys[i]}`).join(' ');
+  const area = `M${xs[0]},${ys[0]} ` + xs.slice(1).map((x, i) => `L${x},${ys[i+1]}`).join(' ') + ` L${xs[xs.length-1]},${h} L${xs[0]},${h} Z`;
+  svg.innerHTML = `
+    <defs><linearGradient id="sg-${svgId}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${color}" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#sg-${svgId})"/>
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+}
+
+function buildDeltaHtml(curr, prev, elId) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (prev === 0 && curr === 0) { el.className = 'dash-metric-delta neutral'; el.textContent = '— sem dados anteriores'; return; }
+  const diff = curr - prev;
+  const pct = prev > 0 ? Math.round(Math.abs(diff) / prev * 100) : 100;
+  if (diff > 0) { el.className = 'dash-metric-delta up'; el.innerHTML = `▲ ${pct}% a mais que o período anterior`; }
+  else if (diff < 0) { el.className = 'dash-metric-delta down'; el.innerHTML = `▼ ${pct}% a menos que o período anterior`; }
+  else { el.className = 'dash-metric-delta neutral'; el.textContent = '— igual ao período anterior'; }
+}
+
+function buildDailyData(osList) {
+  const days = dashPeriodo === 'hoje' ? 1 : dashPeriodo === 'semana' ? 7 : dashPeriodo === 'mes' ? 30 : 30;
+  const labels = [], abertas = [], concluidas = [];
+  const agora = new Date();
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date(agora); d.setDate(agora.getDate() - i); d.setHours(0,0,0,0);
+    const dStr = d.toDateString();
+    const label = d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'});
+    labels.push(label);
+    abertas.push(osList.filter(os => { const t = os.createdAt?.toDate?.(); return t && t.toDateString() === dStr; }).length);
+    concluidas.push(osList.filter(os => { const t = os.concluidoEm?.toDate?.() || os.updatedAt?.toDate?.(); return t && t.toDateString() === dStr && os.status === 'concluido'; }).length);
   }
+  return { labels, abertas, concluidas };
+}
 
-  // OBS
-  let obs = '';
-  const obsMatch = texto.match(/obs\s*[:\-\(]?\s*(.+?)(?:\)|$)/is)
-                || texto.match(/observa[çc][aã]o\s*[:\-]?\s*(.+)/is);
-  if (obsMatch) obs = obsMatch[1].replace(/\)$/, '').trim();
+function renderActivityFeed() {
+  const feed = document.getElementById('activity-feed');
+  if (!feed) return;
+  const recent = [...allOS].sort((a, b) => {
+    const ta = a.updatedAt?.toMillis ? a.updatedAt.toMillis() : 0;
+    const tb = b.updatedAt?.toMillis ? b.updatedAt.toMillis() : 0;
+    return tb - ta;
+  }).slice(0, 6);
 
-  // Preenche materiais no concluirMateriais
-  if (materiaisEncontrados.length > 0) {
-    for (const mat of materiaisEncontrados) {
-      const jaTem = concluirMateriais.findIndex(x => x.tipo === mat.tipo);
-      if (jaTem >= 0) {
-        concluirMateriais[jaTem].qty = mat.qty;
-      } else {
-        concluirMateriais.push(mat);
+  if (recent.length === 0) { feed.innerHTML = '<div class="empty" style="padding:20px 0;">Nenhuma atividade.</div>'; return; }
+
+  const statusIcon = { aguardando: { icon: '⏳', cls: 'criada' }, andamento: { icon: '▶', cls: 'andamento' }, concluido: { icon: '✓', cls: 'concluida' } };
+  const statusMsg = { aguardando: 'aguardando atendimento', andamento: 'em andamento', concluido: 'concluída' };
+
+  feed.innerHTML = recent.map(os => {
+    const num = String(os.numero || '?').padStart(4, '0');
+    const s = statusIcon[os.status] || { icon: '•', cls: 'criada' };
+    const msg = statusMsg[os.status] || os.status;
+    const ts = os.updatedAt?.toDate ? os.updatedAt.toDate() : null;
+    const tempo = ts ? tempoRelativo(ts) : '—';
+    return `<div class="activity-item" onclick="openDetail('${os.id}')" style="cursor:pointer;">
+      <div class="activity-icon ${s.cls}">${s.icon}</div>
+      <div class="activity-body">
+        <div class="activity-msg"><strong>OS #${num}</strong> — ${esc(os.cliente)} está ${msg}</div>
+        <div class="activity-time">${tempo}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function tempoRelativo(date) {
+  const diff = Date.now() - date.getTime();
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return 'agora mesmo';
+  if (min < 60) return `há ${min} min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `há ${h}h`;
+  const d = Math.floor(h / 24);
+  return `há ${d} dia${d > 1 ? 's' : ''}`;
+}
+
+function renderDashboard() {
+  if (!document.getElementById('tab-dashboard')?.classList.contains('active')) return;
+  const osList = getDashOS();
+  const prevList = dashPeriodo !== 'tudo' ? getPrevOS() : [];
+
+  const abertas = osList.filter(o => o.status !== 'concluido').length;
+  const andamento = osList.filter(o => o.status === 'andamento').length;
+  const concluido = osList.filter(o => o.status === 'concluido').length;
+  const aguardando = osList.filter(o => o.status === 'aguardando').length;
+
+  const prevAbertas = prevList.filter(o => o.status !== 'concluido').length;
+  const prevAndamento = prevList.filter(o => o.status === 'andamento').length;
+  const prevConcluido = prevList.filter(o => o.status === 'concluido').length;
+  const prevAguardando = prevList.filter(o => o.status === 'aguardando').length;
+
+  document.getElementById('dm-abertas').textContent = abertas;
+  document.getElementById('dm-andamento').textContent = andamento;
+  document.getElementById('dm-concluido').textContent = concluido;
+  document.getElementById('dm-aguardando').textContent = aguardando;
+
+  buildDeltaHtml(abertas, prevAbertas, 'dm-abertas-delta');
+  buildDeltaHtml(andamento, prevAndamento, 'dm-andamento-delta');
+  buildDeltaHtml(concluido, prevConcluido, 'dm-concluido-delta');
+  buildDeltaHtml(aguardando, prevAguardando, 'dm-aguardando-delta');
+
+  // Sparklines (use daily data)
+  const daily = buildDailyData(osList);
+  renderSparkline('spark-abertas', daily.abertas, '#4d9fff');
+  renderSparkline('spark-andamento', daily.abertas.map((a,i) => Math.round(a * 0.4)), '#00d4ff');
+  renderSparkline('spark-concluido', daily.concluidas, '#00c896');
+  renderSparkline('spark-aguardando', daily.abertas.map((a,i) => Math.round(a * 0.6)), '#ffb020');
+
+  // Charts via Chart.js
+  loadChartJs(() => {
+    renderLineChart(daily);
+    renderDonutChart(osList);
+  });
+
+  // Activity feed
+  renderActivityFeed();
+}
+
+function loadChartJs(cb) {
+  if (window.Chart) { cb(); return; }
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js';
+  s.onload = cb;
+  document.head.appendChild(s);
+}
+
+function renderLineChart(daily) {
+  const canvas = document.getElementById('dash-line-chart');
+  if (!canvas) return;
+  if (dashLineChart) { dashLineChart.destroy(); dashLineChart = null; }
+  dashLineChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: daily.labels,
+      datasets: [
+        {
+          label: 'Abertas', data: daily.abertas,
+          borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.08)',
+          borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#00d4ff',
+          fill: true, tension: 0.4,
+          borderDash: [], pointStyle: 'circle'
+        },
+        {
+          label: 'Concluídas', data: daily.concluidas,
+          borderColor: '#00c896', backgroundColor: 'rgba(0,200,150,0.08)',
+          borderWidth: 2, pointRadius: 3, pointBackgroundColor: '#00c896',
+          fill: true, tension: 0.4,
+          borderDash: [4,3], pointStyle: 'triangle'
+        }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#5a5a72', font: { size: 11 }, maxTicksLimit: 8 }, grid: { color: '#2e2e38' } },
+        y: { ticks: { color: '#5a5a72', font: { size: 11 }, stepSize: 1 }, grid: { color: '#2e2e38' }, beginAtZero: true }
       }
     }
-    renderConcluirMateriais();
+  });
+}
+
+function renderDonutChart(osList) {
+  const canvas = document.getElementById('dash-donut-chart');
+  if (!canvas) return;
+  if (dashDonutChart) { dashDonutChart.destroy(); dashDonutChart = null; }
+  const alta = osList.filter(o => o.prioridade === 'alta').length;
+  const media = osList.filter(o => o.prioridade === 'media').length;
+  const baixa = osList.filter(o => o.prioridade === 'baixa').length;
+  const total = alta + media + baixa;
+  document.getElementById('donut-total').textContent = total;
+  const pct = v => total > 0 ? Math.round(v / total * 100) : 0;
+
+  const donutColors = ['#ff4d6a', '#ffb020', '#00c896'];
+  dashDonutChart = new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      labels: ['Alta','Média','Baixa'],
+      datasets: [{
+        data: [alta, media, baixa],
+        backgroundColor: donutColors,
+        borderColor: '#16161a', borderWidth: 3,
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: false, cutout: '70%',
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw} (${pct(ctx.raw)}%)` } } }
+    }
+  });
+
+  document.getElementById('donut-legend').innerHTML = [
+    { label:'Alta', count:alta, color:'#ff4d6a' },
+    { label:'Média', count:media, color:'#ffb020' },
+    { label:'Baixa', count:baixa, color:'#00c896' }
+  ].map(r => `
+    <div class="donut-legend-row">
+      <div class="donut-legend-name"><span class="donut-legend-dot" style="background:${r.color}"></span>${r.label}</div>
+      <div><span class="donut-legend-count">${r.count}</span><span class="donut-legend-pct">(${pct(r.count)}%)</span></div>
+    </div>`).join('');
+}
+
+// Atualizar dashboard automaticamente quando os dados mudam
+function triggerDashboardUpdate() {
+  if (document.getElementById('tab-dashboard')?.classList.contains('active')) {
+    renderDashboard();
   }
-
-  // Preenche OBS
-  if (obs) document.getElementById('concluir-obs').value = obs;
-
-  const preenchidos = [
-    obs && 'OBS',
-    materiaisEncontrados.length > 0 && `${materiaisEncontrados.length} material(is)`
-  ].filter(Boolean);
-
-  if (preenchidos.length > 0) {
-    showToast(`Preenchido: ${preenchidos.join(', ')}`, 'success');
-  } else {
-    showToast('Nenhum material ou OBS encontrado no texto.', 'error');
-  }
-};
+}
 
 // ===== UTILS =====
 function esc(s) {
