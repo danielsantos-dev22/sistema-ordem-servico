@@ -1333,7 +1333,7 @@ window.saveOS = async () => {
 window.deleteCurrentOS = () => {
   if (!currentOSId) return;
   const os = allOS.find(o => o.id === currentOSId);
-  const num = os ? `OS #${String(os.numero || '?').padStart(4,'0')} — ${os.cliente || ''}` : '';
+  const num = os ? 'OS #' + String(os.numero || '?').padStart(4,'0') + ' \u2014 ' + (os.cliente || '') : '';
   document.getElementById('confirm-delete-label').textContent = num;
   openModal('modal-confirm-delete');
 };
@@ -1915,6 +1915,11 @@ function subscribeOS() {
     updateStats();
     triggerDashboardUpdate();
     triggerTecnicosUpdate();
+  }, (err) => {
+    showToast('Erro ao carregar O.S.: ' + err.message, 'error');
+  });
+
+  // Listener para concluídas recentes
   const unsubConcluidas = onSnapshot(qConcluidas, (snap) => {
     concluidas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     osLastDoc = snap.docs[snap.docs.length - 1] || null;
@@ -2492,6 +2497,43 @@ window.renderRelatorioMensal = () => {
   const tempoMedio = temposMed.length ? Math.round(temposMed.reduce((a,b)=>a+b,0)/temposMed.length) : null;
   const nomeMes = new Date(ano, mes-1, 1).toLocaleDateString('pt-BR', {month:'long', year:'numeric'});
 
+  // Build técnico bars HTML separately to avoid nested backtick issue
+  const tecBarsHtml = tecList.map(function(entry, i) {
+    const nome = entry[0], cnt = entry[1];
+    const pct = Math.round((cnt / maxTec) * 100);
+    const cor = tecColors[i % tecColors.length];
+    return '<div style="margin-bottom:10px;">'
+      + '<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">'
+      + '<span>' + esc(nome) + '</span>'
+      + '<span style="font-family:var(--font2);color:' + cor + '">' + cnt + '</span>'
+      + '</div>'
+      + '<div style="height:8px;background:var(--bg4);border-radius:4px;">'
+      + '<div style="height:8px;width:' + pct + '%;background:' + cor + ';border-radius:4px;transition:width .4s;"></div>'
+      + '</div></div>';
+  }).join('');
+  const tecSectionHtml = tecList.length > 0
+    ? '<div class="chart-section"><div class="chart-title">O.S. por T&eacute;cnico</div>' + tecBarsHtml + '</div>'
+    : '';
+
+  // Build serviço pie HTML separately
+  const svcItemsHtml = svcList.map(function(entry, i) {
+    const svc = entry[0], cnt = entry[1];
+    const cor = tecColors[i % tecColors.length];
+    return '<div class="pie-stat">'
+      + '<div class="pie-stat-dot" style="background:' + cor + '"></div>'
+      + '<div>'
+      + '<div class="pie-stat-val" style="color:' + cor + '">' + cnt + '</div>'
+      + '<div class="pie-stat-lbl">' + esc(svc) + '</div>'
+      + '</div></div>';
+  }).join('');
+  const svcSectionHtml = svcList.length > 0
+    ? '<div class="chart-section"><div class="chart-title">Por Tipo de Servi&ccedil;o</div><div class="pie-row">' + svcItemsHtml + '</div></div>'
+    : '';
+
+  const tempoHtml = tempoMedio != null
+    ? '<div style="text-align:center;margin-bottom:20px;"><span class="tempo-badge" style="font-size:14px;padding:6px 14px;">&#9201; Tempo m&eacute;dio de atendimento: <strong>' + formatTempo(tempoMedio) + '</strong></span></div>'
+    : '';
+
   document.getElementById('relatorio-mensal-body').innerHTML = `
     <!-- Resumo -->
     <div class="consulta-summary" style="display:grid;margin-bottom:20px;">
@@ -2499,7 +2541,7 @@ window.renderRelatorioMensal = () => {
       <div class="consulta-stat"><div class="consulta-stat-val" style="color:var(--green)">${concluidas}</div><div class="consulta-stat-lbl">Concluídas</div></div>
       <div class="consulta-stat"><div class="consulta-stat-val" style="color:var(--amber)">${abertas}</div><div class="consulta-stat-lbl">Em Aberto</div></div>
     </div>
-    ${tempoMedio != null ? `<div style="text-align:center;margin-bottom:20px;"><span class="tempo-badge" style="font-size:14px;padding:6px 14px;">⏱ Tempo médio de atendimento: <strong>${formatTempo(tempoMedio)}</strong></span></div>` : ''}
+    ${tempoHtml}
 
     <!-- Gráfico por dia -->
     <div class="chart-section">
@@ -2507,47 +2549,17 @@ window.renderRelatorioMensal = () => {
       <div class="bar-chart">
         ${porDia.map(d => {
           const h = Math.max(4, Math.round((d.count / maxDia) * 100));
-          return `<div class="bar-wrap">
-            <span class="bar-val">${d.count > 0 ? d.count : ''}</span>
-            <div class="bar" style="height:${h}px;background:${d.count>0?'var(--cyan)':'var(--bg4)'};" title="Dia ${d.dia}: ${d.count} O.S."></div>
-            <span class="bar-lbl">${d.dia}</span>
-          </div>`;
+          return '<div class="bar-wrap">'
+            + '<span class="bar-val">' + (d.count > 0 ? d.count : '') + '</span>'
+            + '<div class="bar" style="height:' + h + 'px;background:' + (d.count>0?'var(--cyan)':'var(--bg4)') + ';" title="Dia ' + d.dia + ': ' + d.count + ' O.S."></div>'
+            + '<span class="bar-lbl">' + d.dia + '</span>'
+            + '</div>';
         }).join('')}
       </div>
     </div>
 
-    <!-- Gráfico por técnico -->
-    ${tecList.length > 0 ? `<div class="chart-section">
-      <div class="chart-title">O.S. por Técnico</div>
-      ${tecList.map(([nome, cnt], i) => {
-        const pct = Math.round((cnt / maxTec) * 100);
-        const cor = tecColors[i % tecColors.length];
-        return `<div style="margin-bottom:10px;">
-          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;">
-            <span>${esc(nome)}</span>
-            <span style="font-family:var(--font2);color:${cor}">${cnt}</span>
-          </div>
-          <div style="height:8px;background:var(--bg4);border-radius:4px;">
-            <div style="height:8px;width:${pct}%;background:${cor};border-radius:4px;transition:width .4s;"></div>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>` : ''}
-
-    <!-- Por tipo de serviço -->
-    ${svcList.length > 0 ? `<div class="chart-section">
-      <div class="chart-title">Por Tipo de Serviço</div>
-      <div class="pie-row">
-        ${svcList.map(([svc, cnt], i) => `
-          <div class="pie-stat">
-            <div class="pie-stat-dot" style="background:${tecColors[i % tecColors.length]}"></div>
-            <div>
-              <div class="pie-stat-val" style="color:${tecColors[i % tecColors.length]}">${cnt}</div>
-              <div class="pie-stat-lbl">${esc(svc)}</div>
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>` : ''}
+    ${tecSectionHtml}
+    ${svcSectionHtml}
   `;
 };
 
@@ -3219,6 +3231,7 @@ function triggerTecnicosUpdate() {
 }
 
 
+function triggerDashboardUpdate() {
   if (document.getElementById('tab-dashboard')?.classList.contains('active')) {
     renderDashboard();
   }
