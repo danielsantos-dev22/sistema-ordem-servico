@@ -463,6 +463,42 @@
   /* Chart area */
   .chart-canvas-wrap { position:relative; width:100%; height:200px; }
 
+  /* ======= TÉCNICOS ======= */
+  .tec-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-top:20px; }
+  .tec-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:10px; transition:border-color .2s; }
+  .tec-card:hover { border-color:var(--cyan); }
+  .tec-avatar { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; font-weight:700; color:#fff; flex-shrink:0; }
+  .tec-header { display:flex; align-items:center; gap:12px; }
+  .tec-name { font-size:16px; font-weight:700; color:var(--text); }
+  .tec-equipe { font-size:12px; color:var(--text3); font-family:var(--font2); }
+  .tec-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:4px; }
+  .tec-stat { background:var(--bg3); border-radius:8px; padding:8px; text-align:center; }
+  .tec-stat-val { font-size:18px; font-weight:700; font-family:var(--font2); color:var(--cyan); }
+  .tec-stat-lbl { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; }
+  .tec-actions { display:flex; gap:8px; margin-top:4px; }
+
+  /* META DIÁRIA */
+  .meta-bar-wrap { background:var(--bg3); border-radius:8px; padding:10px 14px; margin-top:6px; }
+  .meta-bar-top { display:flex; justify-content:space-between; font-size:12px; color:var(--text3); margin-bottom:6px; }
+  .meta-bar { height:8px; background:var(--bg4); border-radius:4px; overflow:hidden; }
+  .meta-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--cyan),var(--green)); transition:width .5s ease; }
+
+  /* ======= CLIENTES ======= */
+  .cli-search-bar { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+  .cli-search-bar input { flex:1; min-width:200px; }
+  .cli-list { display:flex; flex-direction:column; gap:10px; }
+  .cli-card { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:16px 20px; cursor:pointer; transition:border-color .2s; }
+  .cli-card:hover { border-color:var(--cyan); }
+  .cli-card-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+  .cli-name { font-size:15px; font-weight:700; color:var(--text); }
+  .cli-badge { font-size:11px; background:var(--cyan)22; color:var(--cyan); border-radius:20px; padding:3px 10px; font-family:var(--font2); font-weight:700; }
+  .cli-info { font-size:13px; color:var(--text3); display:flex; gap:16px; flex-wrap:wrap; }
+  .cli-historico { margin-top:12px; padding-top:12px; border-top:1px solid var(--border); display:none; }
+  .cli-historico.open { display:block; }
+  .cli-os-item { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; cursor:pointer; }
+  .cli-os-item:last-child { border-bottom:none; }
+  .cli-os-num { font-family:var(--font2); color:var(--cyan); font-weight:700; min-width:70px; }
+
   /* ======= CONFIRM DELETE ======= */
   .confirm-modal { max-width: 400px; }
   .confirm-icon { font-size: 40px; text-align: center; margin-bottom: 12px; }
@@ -572,6 +608,8 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
     <button class="nav-tab" onclick="switchTab('consulta', this)">📅 Consultar por Data</button>
     <button class="nav-tab" onclick="switchTab('estoque', this)">📦 Estoque do Dia</button>
     <button class="nav-tab" onclick="switchTab('ranking', this)">🏆 Ranking</button>
+    <button class="nav-tab" onclick="switchTab('tecnicos', this)">👷 Técnicos</button>
+    <button class="nav-tab" onclick="switchTab('clientes', this)">👥 Clientes</button>
     <button class="nav-tab" onclick="switchTab('relatorio', this)">📊 Relatório Mensal</button>
     <button class="nav-tab" onclick="switchTab('relatorio-diario', this)">📄 Relatório Diário</button>
   </nav>
@@ -831,6 +869,74 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
       <div id="ranking-list"></div>
     </div>
 
+    <!-- ===== PAINEL: TÉCNICOS ===== -->
+    <div id="tab-tecnicos" class="tab-panel">
+      <div class="top-bar">
+        <div class="page-title">👷 Gestão de <span>Técnicos</span></div>
+        <button class="btn btn-primary btn-sm" onclick="abrirModalNovoTecnico()">+ Novo Técnico</button>
+      </div>
+
+      <!-- META DIÁRIA POR EQUIPE -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-bottom:24px;">
+        <div class="dash-panel">
+          <div class="dash-panel-title">🎯 Meta Diária — Equipe 01</div>
+          <div class="meta-bar-wrap">
+            <div class="meta-bar-top">
+              <span id="meta-e1-label">0 / 0 O.S. concluídas</span>
+              <span id="meta-e1-pct" style="color:var(--cyan);font-weight:700;">0%</span>
+            </div>
+            <div class="meta-bar"><div class="meta-bar-fill" id="meta-e1-fill" style="width:0%"></div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+            <span style="font-size:13px;color:var(--text3);">Meta:</span>
+            <input type="number" id="meta-e1-input" value="5" min="1" max="99" style="width:60px;padding:4px 8px;font-size:13px;" onchange="salvarMeta('Equipe 01',this.value)" />
+            <span style="font-size:13px;color:var(--text3);">O.S./dia</span>
+          </div>
+        </div>
+        <div class="dash-panel">
+          <div class="dash-panel-title">🎯 Meta Diária — Equipe 02</div>
+          <div class="meta-bar-wrap">
+            <div class="meta-bar-top">
+              <span id="meta-e2-label">0 / 0 O.S. concluídas</span>
+              <span id="meta-e2-pct" style="color:var(--cyan);font-weight:700;">0%</span>
+            </div>
+            <div class="meta-bar"><div class="meta-bar-fill" id="meta-e2-fill" style="width:0%"></div></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;">
+            <span style="font-size:13px;color:var(--text3);">Meta:</span>
+            <input type="number" id="meta-e2-input" value="5" min="1" max="99" style="width:60px;padding:4px 8px;font-size:13px;" onchange="salvarMeta('Equipe 02',this.value)" />
+            <span style="font-size:13px;color:var(--text3);">O.S./dia</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tec-grid" id="tec-grid">
+        <div class="consulta-empty">Nenhum técnico cadastrado.</div>
+      </div>
+    </div>
+
+    <!-- ===== PAINEL: CLIENTES ===== -->
+    <div id="tab-clientes" class="tab-panel">
+      <div class="top-bar">
+        <div class="page-title">👥 Controle de <span>Clientes</span></div>
+      </div>
+      <div class="cli-search-bar">
+        <input type="text" id="cli-busca" placeholder="Buscar cliente por nome, contato ou endereço..." oninput="renderClientes()" />
+        <select id="cli-filtro-servico" onchange="renderClientes()" style="min-width:180px;">
+          <option value="">Todos os serviços</option>
+          <option>Instalação de Internet</option>
+          <option>ONU/ONT Vermelha</option>
+          <option>Troca de Equipamento</option>
+          <option>Visita Técnica</option>
+          <option>Fusão de Fibra</option>
+        </select>
+        <span id="cli-total-label" style="font-size:13px;color:var(--text3);align-self:center;white-space:nowrap;"></span>
+      </div>
+      <div class="cli-list" id="cli-list">
+        <div class="consulta-empty">Carregando clientes...</div>
+      </div>
+    </div>
+
     <!-- ===== PAINEL: RELATÓRIO MENSAL ===== -->
     <div id="tab-relatorio" class="tab-panel">
       <div class="top-bar">
@@ -1018,6 +1124,63 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('modal-concluir')">Cancelar</button>
       <button class="btn btn-green" onclick="confirmarConclusao()" style="font-size:15px;padding:10px 24px;">✅ Confirmar Conclusão</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NOVO/EDITAR TÉCNICO -->
+<div class="modal-backdrop" id="modal-tecnico">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-header">
+      <h2 id="modal-tecnico-title">👷 Novo Técnico</h2>
+      <button class="btn-close" onclick="closeModal('modal-tecnico')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="tec-id" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome completo *</label>
+          <input type="text" id="tec-nome" placeholder="Ex: João Silva" />
+        </div>
+        <div class="form-group">
+          <label>Apelido / Iniciais</label>
+          <input type="text" id="tec-apelido" placeholder="Ex: JS" maxlength="3" style="text-transform:uppercase;" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Equipe *</label>
+          <select id="tec-equipe">
+            <option value="Equipe 01">Equipe 01</option>
+            <option value="Equipe 02">Equipe 02</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Contato / WhatsApp</label>
+          <input type="text" id="tec-contato" placeholder="(91) 9 0000-0000" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cor do avatar</label>
+          <select id="tec-cor">
+            <option value="#00d4ff">Ciano</option>
+            <option value="#4d9fff">Azul</option>
+            <option value="#00c896">Verde</option>
+            <option value="#ffb020">Âmbar</option>
+            <option value="#ff4d6a">Vermelho</option>
+            <option value="#a855f7">Roxo</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Meta diária (O.S.)</label>
+          <input type="number" id="tec-meta" value="5" min="1" max="99" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-tecnico')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarTecnico()">💾 Salvar Técnico</button>
     </div>
   </div>
 </div>
@@ -1480,6 +1643,11 @@ window.switchTab = (tab, btn) => {
     carregarEstoque();
   } else if (tab === 'ranking') {
     renderRanking();
+  } else if (tab === 'tecnicos') {
+    renderTecnicos();
+    renderMetaDiaria();
+  } else if (tab === 'clientes') {
+    renderClientes();
   } else if (tab === 'relatorio') {
     _initRelatorioMensal();
   }
@@ -1698,11 +1866,13 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('app-screen').style.display = 'flex';
     document.getElementById('user-name-display').textContent = user.displayName || user.email;
     subscribeOS();
+    subscribeTecnicos();
   } else {
     currentUser = null;
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('app-screen').style.display = 'none';
     if (unsubscribeOS) { unsubscribeOS(); unsubscribeOS = null; }
+    if (unsubTecnicos) { unsubTecnicos(); unsubTecnicos = null; }
     allOS = [];
   }
 });
@@ -1744,11 +1914,7 @@ function subscribeOS() {
     renderKanbanFn();
     updateStats();
     triggerDashboardUpdate();
-  }, (err) => {
-    showToast('Erro ao carregar O.S.: ' + err.message, 'error');
-  });
-
-  // Listener para concluídas recentes
+    triggerTecnicosUpdate();
   const unsubConcluidas = onSnapshot(qConcluidas, (snap) => {
     concluidas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     osLastDoc = snap.docs[snap.docs.length - 1] || null;
@@ -1758,6 +1924,7 @@ function subscribeOS() {
     updateStats();
     atualizarBannerPaginacao();
     triggerDashboardUpdate();
+    triggerTecnicosUpdate();
   }, (err) => {
     showToast('Erro ao carregar O.S.: ' + err.message, 'error');
   });
@@ -2490,6 +2657,291 @@ window.parsearTextoOS = () => {
   }
 };
 
+// ===== TÉCNICOS =====
+let allTecnicos = [];
+let unsubTecnicos = null;
+
+function subscribeTecnicos() {
+  if (unsubTecnicos) unsubTecnicos();
+  const q = query(collection(db, 'tecnicos'), where('userId', '==', currentUser.uid));
+  unsubTecnicos = onSnapshot(q, snap => {
+    allTecnicos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    populateResponsavelSelect();
+    if (document.getElementById('tab-tecnicos').classList.contains('active')) renderTecnicos();
+    if (document.getElementById('tab-clientes').classList.contains('active')) renderClientes();
+  });
+}
+
+function populateResponsavelSelect() {
+  const sel = document.getElementById('os-responsavel');
+  if (!sel) return;
+  const atual = sel.value;
+  const opcoes = allTecnicos.length > 0
+    ? allTecnicos.map(t => `<option value="${esc(t.nome)}">${esc(t.nome)} — ${esc(t.equipe)}</option>`).join('')
+    : `<option value="Equipe 01">Equipe 01</option><option value="Equipe 02">Equipe 02</option>`;
+  sel.innerHTML = opcoes;
+  if (atual) sel.value = atual;
+}
+
+window.abrirModalNovoTecnico = () => {
+  document.getElementById('modal-tecnico-title').textContent = '👷 Novo Técnico';
+  document.getElementById('tec-id').value = '';
+  document.getElementById('tec-nome').value = '';
+  document.getElementById('tec-apelido').value = '';
+  document.getElementById('tec-equipe').value = 'Equipe 01';
+  document.getElementById('tec-contato').value = '';
+  document.getElementById('tec-cor').value = '#00d4ff';
+  document.getElementById('tec-meta').value = '5';
+  openModal('modal-tecnico');
+};
+
+window.editarTecnico = (id) => {
+  const t = allTecnicos.find(t => t.id === id);
+  if (!t) return;
+  document.getElementById('modal-tecnico-title').textContent = '✏ Editar Técnico';
+  document.getElementById('tec-id').value = id;
+  document.getElementById('tec-nome').value = t.nome || '';
+  document.getElementById('tec-apelido').value = t.apelido || '';
+  document.getElementById('tec-equipe').value = t.equipe || 'Equipe 01';
+  document.getElementById('tec-contato').value = t.contato || '';
+  document.getElementById('tec-cor').value = t.cor || '#00d4ff';
+  document.getElementById('tec-meta').value = t.meta || 5;
+  openModal('modal-tecnico');
+};
+
+window.salvarTecnico = async () => {
+  const nome = document.getElementById('tec-nome').value.trim();
+  if (!nome) { showToast('Informe o nome do técnico.', 'error'); return; }
+  const id = document.getElementById('tec-id').value;
+  const data = {
+    nome,
+    apelido: document.getElementById('tec-apelido').value.trim().toUpperCase() || nome.slice(0,2).toUpperCase(),
+    equipe: document.getElementById('tec-equipe').value,
+    contato: document.getElementById('tec-contato').value.trim(),
+    cor: document.getElementById('tec-cor').value,
+    meta: parseInt(document.getElementById('tec-meta').value) || 5,
+    userId: currentUser.uid,
+  };
+  try {
+    if (id) {
+      await updateDoc(doc(db, 'tecnicos', id), data);
+      showToast('Técnico atualizado!', 'success');
+    } else {
+      await addDoc(collection(db, 'tecnicos'), data);
+      showToast('Técnico cadastrado!', 'success');
+    }
+    closeModal('modal-tecnico');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+};
+
+window.excluirTecnico = async (id) => {
+  if (!confirm('Excluir este técnico?')) return;
+  try {
+    await deleteDoc(doc(db, 'tecnicos', id));
+    showToast('Técnico removido.', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+};
+
+function renderTecnicos() {
+  const grid = document.getElementById('tec-grid');
+  if (!grid) return;
+  if (allTecnicos.length === 0) {
+    grid.innerHTML = '<div class="consulta-empty">Nenhum técnico cadastrado. Clique em "+ Novo Técnico".</div>';
+    return;
+  }
+  const hoje = new Date().toDateString();
+  grid.innerHTML = allTecnicos.map(function(t) {
+    const osDoTec = allOS.filter(function(o) { return o.responsavel === t.nome; });
+    const hojeTotal = osDoTec.filter(function(o) {
+      const d = o.createdAt && o.createdAt.toDate ? o.createdAt.toDate() : null;
+      return d && d.toDateString() === hoje;
+    }).length;
+    const hojeConcluidas = osDoTec.filter(function(o) {
+      const d = (o.updatedAt && o.updatedAt.toDate ? o.updatedAt.toDate() : null)
+             || (o.createdAt && o.createdAt.toDate ? o.createdAt.toDate() : null);
+      return d && d.toDateString() === hoje && o.status === 'concluido';
+    }).length;
+    const totalGeral = osDoTec.length;
+    const tempoMedioMin = calcularTempoMedio(osDoTec);
+    const meta = t.meta || 5;
+    const pct = Math.min(100, Math.round(hojeConcluidas / meta * 100));
+    const whatsapp = t.contato ? t.contato.replace(/\D/g,'') : null;
+    const cor = t.cor || '#00d4ff';
+    const metaCor = pct >= 100 ? 'var(--green)' : 'var(--cyan)';
+    const barBg = pct >= 100 ? 'var(--green)' : 'linear-gradient(90deg,var(--cyan),var(--green))';
+    const tempoHtml = tempoMedioMin
+      ? '<div style="font-size:12px;color:var(--text3);">&#9201; Tempo médio: <span style="color:var(--text2);font-weight:600;">' + formatTempo(tempoMedioMin) + '</span></div>'
+      : '';
+    const waBtn = whatsapp
+      ? '<a href="https://wa.me/55' + whatsapp + '" target="_blank" class="btn btn-outline btn-sm" style="font-size:12px;">&#128172; WhatsApp</a>'
+      : '';
+    return '<div class="tec-card">'
+      + '<div class="tec-header">'
+      + '<div class="tec-avatar" style="background:' + cor + '">' + esc(t.apelido || t.nome.slice(0,2).toUpperCase()) + '</div>'
+      + '<div><div class="tec-name">' + esc(t.nome) + '</div>'
+      + '<div class="tec-equipe">' + esc(t.equipe) + (t.contato ? ' &middot; ' + esc(t.contato) : '') + '</div></div>'
+      + '</div>'
+      + '<div class="tec-stats">'
+      + '<div class="tec-stat"><div class="tec-stat-val">' + hojeTotal + '</div><div class="tec-stat-lbl">Hoje</div></div>'
+      + '<div class="tec-stat"><div class="tec-stat-val" style="color:var(--green)">' + hojeConcluidas + '</div><div class="tec-stat-lbl">Conclu&iacute;das</div></div>'
+      + '<div class="tec-stat"><div class="tec-stat-val" style="color:var(--amber)">' + totalGeral + '</div><div class="tec-stat-lbl">Total</div></div>'
+      + '</div>'
+      + '<div class="meta-bar-wrap" style="margin-top:0;">'
+      + '<div class="meta-bar-top"><span style="font-size:11px;">Meta di&aacute;ria: ' + hojeConcluidas + '/' + meta + '</span>'
+      + '<span style="color:' + metaCor + ';font-weight:700;font-size:11px;">' + pct + '%</span></div>'
+      + '<div class="meta-bar"><div class="meta-bar-fill" style="width:' + pct + '%;background:' + barBg + '"></div></div>'
+      + '</div>'
+      + tempoHtml
+      + '<div class="tec-actions">'
+      + waBtn
+      + '<button class="btn btn-outline btn-sm" style="font-size:12px;" onclick="editarTecnico(\'' + t.id + '\')">&#9999; Editar</button>'
+      + '<button class="btn btn-danger btn-sm" style="font-size:12px;" onclick="excluirTecnico(\'' + t.id + '\')">&#128465;</button>'
+      + '</div></div>';
+  }).join('');
+  renderMetaDiaria();
+}
+
+function calcularTempoMedio(osList) {
+  const comTempo = osList.filter(o => o.tempoAtendimentoMin > 0);
+  if (comTempo.length === 0) return null;
+  return Math.round(comTempo.reduce((s, o) => s + o.tempoAtendimentoMin, 0) / comTempo.length);
+}
+
+// ===== META DIÁRIA =====
+window.salvarMeta = (equipe, valor) => {
+  localStorage.setItem('meta_' + equipe, valor);
+  renderMetaDiaria();
+};
+
+function renderMetaDiaria() {
+  const hoje = new Date().toDateString();
+  ['Equipe 01', 'Equipe 02'].forEach((eq, i) => {
+    const sfx = i === 0 ? 'e1' : 'e2';
+    const meta = parseInt(localStorage.getItem('meta_' + eq) || '5');
+    const input = document.getElementById(`meta-${sfx}-input`);
+    if (input && !input.matches(':focus')) input.value = meta;
+    const concluidas = allOS.filter(o => {
+      const d = o.updatedAt?.toDate?.() || o.createdAt?.toDate?.();
+      const responsavelNaEquipe = allTecnicos.find(t => t.nome === o.responsavel && t.equipe === eq) || o.responsavel === eq;
+      return d && d.toDateString() === hoje && o.status === 'concluido' && responsavelNaEquipe;
+    }).length;
+    const pct = Math.min(100, Math.round(concluidas / meta * 100));
+    const lbl = document.getElementById(`meta-${sfx}-label`);
+    const pctEl = document.getElementById(`meta-${sfx}-pct`);
+    const fill = document.getElementById(`meta-${sfx}-fill`);
+    if (lbl) lbl.textContent = `${concluidas} / ${meta} O.S. concluídas hoje`;
+    if (pctEl) { pctEl.textContent = `${pct}%`; pctEl.style.color = pct >= 100 ? 'var(--green)' : 'var(--cyan)'; }
+    if (fill) { fill.style.width = pct + '%'; fill.style.background = pct >= 100 ? 'var(--green)' : 'linear-gradient(90deg,var(--cyan),var(--green))'; }
+  });
+}
+
+// ===== CLIENTES =====
+function buildClientesMap() {
+  const map = new Map();
+  allOS.forEach(os => {
+    const nome = (os.cliente || '').trim();
+    if (!nome) return;
+    if (!map.has(nome)) {
+      map.set(nome, { nome, contato: os.contato || '', endereco: os.endereco || '', os: [] });
+    }
+    const cli = map.get(nome);
+    cli.os.push(os);
+    if (!cli.contato && os.contato) cli.contato = os.contato;
+    if (!cli.endereco && os.endereco) cli.endereco = os.endereco;
+  });
+  return [...map.values()].sort((a,b) => a.nome.localeCompare(b.nome));
+}
+
+window.renderClientes = () => {
+  const lista = document.getElementById('cli-list');
+  const busca = (document.getElementById('cli-busca')?.value || '').toLowerCase();
+  const filtroServico = document.getElementById('cli-filtro-servico')?.value || '';
+  if (!lista) return;
+
+  let clientes = buildClientesMap();
+  if (busca) clientes = clientes.filter(function(c) {
+    return c.nome.toLowerCase().includes(busca) ||
+      c.contato.toLowerCase().includes(busca) ||
+      c.endereco.toLowerCase().includes(busca);
+  });
+  if (filtroServico) clientes = clientes.filter(function(c) {
+    return c.os.some(function(o) { return o.servico === filtroServico; });
+  });
+
+  const label = document.getElementById('cli-total-label');
+  if (label) label.textContent = clientes.length + ' cliente(s) encontrado(s)';
+
+  if (clientes.length === 0) {
+    lista.innerHTML = '<div class="consulta-empty">Nenhum cliente encontrado.</div>';
+    return;
+  }
+
+  lista.innerHTML = clientes.map(function(c, idx) {
+    const total = c.os.length;
+    const concluidas = c.os.filter(function(o) { return o.status === 'concluido'; }).length;
+    const osSorted = c.os.slice().sort(function(a,b) {
+      return (b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0) -
+             (a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0);
+    });
+    const ultima = osSorted[0];
+    const ultimaData = ultima && ultima.createdAt && ultima.createdAt.toDate
+      ? ultima.createdAt.toDate().toLocaleDateString('pt-BR') : '—';
+    const whatsapp = c.contato ? c.contato.replace(/\D/g,'') : null;
+    const waBtn = whatsapp
+      ? '<a href="https://wa.me/55' + whatsapp + '" target="_blank" class="btn btn-outline btn-sm" style="font-size:11px;" onclick="event.stopPropagation()">💬</a>'
+      : '';
+    const contatoSpan = c.contato ? '<span>📞 ' + esc(c.contato) + '</span>' : '';
+    const endSpan = c.endereco ? '<span>📍 ' + esc(c.endereco) + '</span>' : '';
+
+    const osItems = osSorted.map(function(o) {
+      const num = String(o.numero || '?').padStart(4,'0');
+      const data = o.createdAt && o.createdAt.toDate
+        ? o.createdAt.toDate().toLocaleDateString('pt-BR') : '—';
+      const badgeCor = o.status === 'concluido' ? 'var(--green)'
+        : o.status === 'andamento' ? 'var(--cyan)' : 'var(--amber)';
+      const tempo = o.tempoAtendimentoMin
+        ? ' &middot; &#9201; ' + formatTempo(o.tempoAtendimentoMin) : '';
+      return '<div class="cli-os-item" onclick="openDetail(\'' + o.id + '\')">'
+        + '<span class="cli-os-num">OS #' + num + '</span>'
+        + '<span style="flex:1;color:var(--text2);">' + esc(o.servico || '—') + '</span>'
+        + '<span style="color:var(--text3);font-size:12px;">' + data + tempo + '</span>'
+        + '<span style="width:8px;height:8px;border-radius:50%;background:' + badgeCor + ';flex-shrink:0;"></span>'
+        + '</div>';
+    }).join('');
+
+    return '<div class="cli-card" id="cli-card-' + idx + '">'
+      + '<div class="cli-card-header" onclick="toggleHistorico(' + idx + ')">'
+      + '<div>'
+      + '<div class="cli-name">' + esc(c.nome) + '</div>'
+      + '<div class="cli-info">' + contatoSpan + endSpan
+      + '<span>📅 Última O.S.: ' + ultimaData + '</span></div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px;">'
+      + waBtn
+      + '<span class="cli-badge">' + total + ' O.S.</span>'
+      + '<span style="color:var(--text3);font-size:18px;" id="cli-arrow-' + idx + '">&#9658;</span>'
+      + '</div></div>'
+      + '<div class="cli-historico" id="cli-historico-' + idx + '">'
+      + '<div style="display:flex;gap:16px;font-size:12px;color:var(--text3);margin-bottom:10px;flex-wrap:wrap;">'
+      + '<span>Total: <strong style="color:var(--text)">' + total + '</strong></span>'
+      + '<span>Concluídas: <strong style="color:var(--green)">' + concluidas + '</strong></span>'
+      + '<span>Em aberto: <strong style="color:var(--amber)">' + (total - concluidas) + '</strong></span>'
+      + '</div>'
+      + osItems
+      + '</div></div>';
+  }).join('');
+};
+
+window.toggleHistorico = (idx) => {
+  const h = document.getElementById('cli-historico-' + idx);
+  const a = document.getElementById('cli-arrow-' + idx);
+  const aberto = h.classList.toggle('open');
+  if (a) a.textContent = aberto ? '▾' : '▸';
+};
+
+// ===== TEMPO DE ATENDIMENTO no card =====
+// (já implementado em confirmarConclusao via tempoAtendimentoMin)
+
 // ===== DASHBOARD =====
 let dashPeriodo = 'hoje';
 let dashLineChart = null;
@@ -2756,7 +3208,17 @@ function renderDonutChart(osList) {
 }
 
 // Atualizar dashboard automaticamente quando os dados mudam
-function triggerDashboardUpdate() {
+function triggerTecnicosUpdate() {
+  if (document.getElementById('tab-tecnicos')?.classList.contains('active')) {
+    renderTecnicos();
+    renderMetaDiaria();
+  }
+  if (document.getElementById('tab-clientes')?.classList.contains('active')) {
+    renderClientes();
+  }
+}
+
+
   if (document.getElementById('tab-dashboard')?.classList.contains('active')) {
     renderDashboard();
   }
