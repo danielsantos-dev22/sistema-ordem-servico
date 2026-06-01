@@ -543,6 +543,47 @@
   .cli-os-item:last-child { border-bottom:none; }
   .cli-os-num { font-family:var(--font2); color:var(--cyan); font-weight:700; min-width:70px; }
 
+  /* ======= CLIENTES MELHORADO ======= */
+  .cli-recorrencia-badge {
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:11px; font-weight:700; border-radius:20px; padding:3px 10px;
+    letter-spacing:0.5px; white-space:nowrap;
+  }
+  .cli-recorrencia-badge.alta { background:#ff4d6a22; color:var(--red); border:1px solid #ff4d6a44; animation:pulseBadge 2s infinite; }
+  .cli-recorrencia-badge.media { background:#ffb02022; color:var(--amber); border:1px solid #ffb02044; }
+  .cli-recorrencia-badge.baixa { background:#00d4ff22; color:var(--cyan); border:1px solid #00d4ff44; }
+  @keyframes pulseBadge { 0%,100%{opacity:1} 50%{opacity:.65} }
+
+  .cli-servico-tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:6px; }
+  .cli-servico-tag { font-size:10px; background:var(--bg4); border:1px solid var(--border); border-radius:4px; padding:2px 7px; color:var(--text3); }
+
+  .cli-score-bar { display:flex; align-items:center; gap:8px; margin-top:8px; }
+  .cli-score-track { flex:1; height:5px; background:var(--bg4); border-radius:3px; overflow:hidden; }
+  .cli-score-fill { height:5px; border-radius:3px; transition:width .4s; }
+  .cli-score-lbl { font-size:10px; color:var(--text3); white-space:nowrap; }
+
+  .cli-aberto-badge { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:700; background:#ffb02022; color:var(--amber); border:1px solid #ffb02044; border-radius:20px; padding:2px 8px; }
+
+  .cli-card-actions { display:flex; gap:6px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); flex-wrap:wrap; }
+
+  .cli-sort-bar { display:flex; gap:6px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+  .cli-sort-btn { background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--text2); padding:5px 12px; font-size:12px; font-family:var(--font); font-weight:600; cursor:pointer; transition:all .2s; }
+  .cli-sort-btn.active { border-color:var(--cyan); color:var(--cyan); background:#00d4ff15; }
+
+  .cli-aviso-recorrente {
+    background: linear-gradient(135deg, #ff4d6a12, #ffb02008);
+    border: 1px solid #ff4d6a44; border-left: 3px solid var(--red);
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 13px; color: var(--text2);
+    margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px;
+  }
+  .cli-aviso-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .cli-aviso-body { flex: 1; }
+  .cli-aviso-titulo { font-weight: 700; color: var(--red); font-size: 13px; margin-bottom: 3px; }
+
+  .cli-periodo-tab { background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--text2); padding:4px 12px; font-size:12px; font-family:var(--font); font-weight:600; cursor:pointer; transition:all .2s; }
+  .cli-periodo-tab.active { border-color:var(--purple); color:var(--purple); background:#9d6fff15; }
+
   /* ======= CONFIRM DELETE ======= */
   .confirm-modal { max-width: 400px; }
   .confirm-icon { font-size: 40px; text-align: center; margin-bottom: 12px; }
@@ -1001,7 +1042,20 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
           <option>Visita Técnica</option>
           <option>Fusão de Fibra</option>
         </select>
+        <select id="cli-filtro-recorrencia" onchange="renderClientes()" style="min-width:160px;">
+          <option value="">Todas recorrências</option>
+          <option value="3">⚠ Alta (3+ O.S.)</option>
+          <option value="2">⚡ Média (2 O.S.)</option>
+        </select>
         <span id="cli-total-label" style="font-size:13px;color:var(--text3);align-self:center;white-space:nowrap;"></span>
+      </div>
+      <!-- Ordenação -->
+      <div class="cli-sort-bar">
+        <span style="font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:1px;">Ordenar:</span>
+        <button class="cli-sort-btn active" onclick="setCliSort('recorrencia',this)">🔥 Recorrência</button>
+        <button class="cli-sort-btn" onclick="setCliSort('nome',this)">🔤 Nome</button>
+        <button class="cli-sort-btn" onclick="setCliSort('recente',this)">📅 Mais Recente</button>
+        <button class="cli-sort-btn" onclick="setCliSort('aberto',this)">⚠ Com O.S. Aberta</button>
       </div>
       <div class="cli-list" id="cli-list">
         <div class="consulta-empty">Carregando clientes...</div>
@@ -3061,7 +3115,16 @@ function renderMetaDiaria() {
   });
 }
 
-// ===== CLIENTES =====
+// ===== CLIENTES (MELHORADO) =====
+let cliSortAtual = 'recorrencia';
+
+window.setCliSort = (tipo, btn) => {
+  cliSortAtual = tipo;
+  document.querySelectorAll('.cli-sort-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderClientes();
+};
+
 function buildClientesMap() {
   const map = new Map();
   allOS.forEach(os => {
@@ -3075,87 +3138,182 @@ function buildClientesMap() {
     if (!cli.contato && os.contato) cli.contato = os.contato;
     if (!cli.endereco && os.endereco) cli.endereco = os.endereco;
   });
-  return [...map.values()].sort((a,b) => a.nome.localeCompare(b.nome));
+  return [...map.values()];
+}
+
+function getRecorrenciaNivel(total) {
+  if (total >= 3) return 'alta';
+  if (total >= 2) return 'media';
+  return 'baixa';
+}
+
+function getUltimaOS(osList) {
+  return osList.slice().sort((a,b) =>
+    (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)
+  )[0];
 }
 
 window.renderClientes = () => {
   const lista = document.getElementById('cli-list');
   const busca = (document.getElementById('cli-busca')?.value || '').toLowerCase();
   const filtroServico = document.getElementById('cli-filtro-servico')?.value || '';
+  const filtroRecorrencia = parseInt(document.getElementById('cli-filtro-recorrencia')?.value || '0');
   if (!lista) return;
 
   let clientes = buildClientesMap();
-  if (busca) clientes = clientes.filter(function(c) {
-    return c.nome.toLowerCase().includes(busca) ||
-      c.contato.toLowerCase().includes(busca) ||
-      c.endereco.toLowerCase().includes(busca);
-  });
-  if (filtroServico) clientes = clientes.filter(function(c) {
-    return c.os.some(function(o) { return o.servico === filtroServico; });
+
+  if (busca) clientes = clientes.filter(c =>
+    c.nome.toLowerCase().includes(busca) ||
+    c.contato.toLowerCase().includes(busca) ||
+    c.endereco.toLowerCase().includes(busca)
+  );
+  if (filtroServico) clientes = clientes.filter(c => c.os.some(o => o.servico === filtroServico));
+  if (filtroRecorrencia) clientes = clientes.filter(c => c.os.length >= filtroRecorrencia);
+
+  // Ordenação
+  clientes.sort((a, b) => {
+    if (cliSortAtual === 'recorrencia') return b.os.length - a.os.length;
+    if (cliSortAtual === 'nome') return a.nome.localeCompare(b.nome);
+    if (cliSortAtual === 'recente') {
+      const ua = getUltimaOS(a.os)?.createdAt?.toMillis?.() || 0;
+      const ub = getUltimaOS(b.os)?.createdAt?.toMillis?.() || 0;
+      return ub - ua;
+    }
+    if (cliSortAtual === 'aberto') {
+      const aa = a.os.filter(o => o.status !== 'concluido').length;
+      const ba = b.os.filter(o => o.status !== 'concluido').length;
+      return ba - aa;
+    }
+    return 0;
   });
 
   const label = document.getElementById('cli-total-label');
-  if (label) label.textContent = clientes.length + ' cliente(s) encontrado(s)';
+  if (label) label.textContent = clientes.length + ' cliente(s)';
 
   if (clientes.length === 0) {
     lista.innerHTML = '<div class="consulta-empty">Nenhum cliente encontrado.</div>';
     return;
   }
 
-  lista.innerHTML = clientes.map(function(c, idx) {
+  lista.innerHTML = clientes.map((c, idx) => {
     const total = c.os.length;
-    const concluidas = c.os.filter(function(o) { return o.status === 'concluido'; }).length;
-    const osSorted = c.os.slice().sort(function(a,b) {
-      return (b.createdAt && b.createdAt.toMillis ? b.createdAt.toMillis() : 0) -
-             (a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : 0);
-    });
-    const ultima = osSorted[0];
-    const ultimaData = ultima && ultima.createdAt && ultima.createdAt.toDate
+    const concluidas = c.os.filter(o => o.status === 'concluido').length;
+    const abertas = total - concluidas;
+    const nivel = getRecorrenciaNivel(total);
+    const ultima = getUltimaOS(c.os);
+    const ultimaData = ultima?.createdAt?.toDate
       ? ultima.createdAt.toDate().toLocaleDateString('pt-BR') : '—';
+    const ultimoServico = ultima?.servico || '';
     const whatsapp = c.contato ? c.contato.replace(/\D/g,'') : null;
-    const waBtn = whatsapp
-      ? '<a href="https://wa.me/55' + whatsapp + '" target="_blank" class="btn btn-outline btn-sm" style="font-size:11px;" onclick="event.stopPropagation()">💬</a>'
-      : '';
-    const contatoSpan = c.contato ? '<span>📞 ' + esc(c.contato) + '</span>' : '';
-    const endSpan = c.endereco ? '<span>📍 ' + esc(c.endereco) + '</span>' : '';
 
-    const osItems = osSorted.map(function(o) {
+    // Serviços únicos como tags
+    const servicosUnicos = [...new Set(c.os.map(o => o.servico).filter(Boolean))];
+    const tagsHtml = servicosUnicos.slice(0, 4).map(s => `<span class="cli-servico-tag">${esc(s)}</span>`).join('')
+      + (servicosUnicos.length > 4 ? `<span class="cli-servico-tag">+${servicosUnicos.length-4}</span>` : '');
+
+    // Badge de recorrência
+    const recLabel = nivel === 'alta' ? `⚠ Recorrente (${total}x)` : nivel === 'media' ? `⚡ 2 visitas` : `✓ 1 visita`;
+    const recBadge = `<span class="cli-recorrencia-badge ${nivel}">${recLabel}</span>`;
+
+    // Badge de O.S. aberta
+    const abertoBadge = abertas > 0
+      ? `<span class="cli-aberto-badge">⏳ ${abertas} em aberto</span>` : '';
+
+    // Aviso de recorrência expandida
+    const avisoRecorrente = nivel === 'alta' ? `
+      <div class="cli-aviso-recorrente">
+        <div class="cli-aviso-icon">🔁</div>
+        <div class="cli-aviso-body">
+          <div class="cli-aviso-titulo">Cliente Recorrente — ${total} ordens de serviço</div>
+          <div>Última visita: ${ultimaData}${ultimoServico ? ' · ' + esc(ultimoServico) : ''}. Verifique o histórico antes de atender.</div>
+        </div>
+      </div>` : nivel === 'media' ? `
+      <div class="cli-aviso-recorrente" style="border-left-color:var(--amber);background:linear-gradient(135deg,#ffb02012,transparent);">
+        <div class="cli-aviso-icon">⚡</div>
+        <div class="cli-aviso-body">
+          <div class="cli-aviso-titulo" style="color:var(--amber);">Segunda visita ao cliente</div>
+          <div>Última O.S.: ${ultimaData}${ultimoServico ? ' · ' + esc(ultimoServico) : ''}.</div>
+        </div>
+      </div>` : '';
+
+    // Score visual (baseado em concluídas / total)
+    const scorePct = total > 0 ? Math.round((concluidas / total) * 100) : 0;
+    const scoreColor = scorePct >= 80 ? 'var(--green)' : scorePct >= 50 ? 'var(--amber)' : 'var(--red)';
+    const scoreHtml = total > 1 ? `
+      <div class="cli-score-bar">
+        <span class="cli-score-lbl">Resol.:</span>
+        <div class="cli-score-track"><div class="cli-score-fill" style="width:${scorePct}%;background:${scoreColor};"></div></div>
+        <span class="cli-score-lbl" style="color:${scoreColor};font-weight:700;">${scorePct}%</span>
+      </div>` : '';
+
+    // Botões de ação
+    const waBtn = whatsapp
+      ? `<a href="https://wa.me/55${whatsapp}" target="_blank" class="btn btn-outline btn-sm" style="font-size:12px;" onclick="event.stopPropagation()">💬 WhatsApp</a>` : '';
+    const novaOsBtn = `<button class="btn btn-outline btn-sm" style="font-size:12px;" onclick="event.stopPropagation(); novaOSParaCliente('${esc(c.nome)}','${esc(c.contato)}','${esc(c.endereco)}')">+ Nova O.S.</button>`;
+
+    const osSorted = c.os.slice().sort((a,b) =>
+      (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)
+    );
+    const osItems = osSorted.map(o => {
       const num = String(o.numero || '?').padStart(4,'0');
-      const data = o.createdAt && o.createdAt.toDate
-        ? o.createdAt.toDate().toLocaleDateString('pt-BR') : '—';
-      const badgeCor = o.status === 'concluido' ? 'var(--green)'
-        : o.status === 'andamento' ? 'var(--cyan)' : 'var(--amber)';
-      const tempo = o.tempoAtendimentoMin
-        ? ' &middot; &#9201; ' + formatTempo(o.tempoAtendimentoMin) : '';
-      return '<div class="cli-os-item" onclick="openDetail(\'' + o.id + '\')">'
-        + '<span class="cli-os-num">OS #' + num + '</span>'
-        + '<span style="flex:1;color:var(--text2);">' + esc(o.servico || '—') + '</span>'
-        + '<span style="color:var(--text3);font-size:12px;">' + data + tempo + '</span>'
-        + '<span style="width:8px;height:8px;border-radius:50%;background:' + badgeCor + ';flex-shrink:0;"></span>'
-        + '</div>';
+      const data = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleDateString('pt-BR') : '—';
+      const badgeCor = o.status === 'concluido' ? 'var(--green)' : o.status === 'andamento' ? 'var(--cyan)' : 'var(--amber)';
+      const tempo = o.tempoAtendimentoMin ? ` · ⏱ ${formatTempo(o.tempoAtendimentoMin)}` : '';
+      return `<div class="cli-os-item" onclick="openDetail('${o.id}')">
+        <span class="cli-os-num">OS #${num}</span>
+        <span style="flex:1;color:var(--text2);">${esc(o.servico || '—')}</span>
+        <span style="color:var(--text3);font-size:12px;">${data}${tempo}</span>
+        <span style="width:8px;height:8px;border-radius:50%;background:${badgeCor};flex-shrink:0;"></span>
+      </div>`;
     }).join('');
 
-    return '<div class="cli-card" id="cli-card-' + idx + '">'
-      + '<div class="cli-card-header" onclick="toggleHistorico(' + idx + ')">'
-      + '<div>'
-      + '<div class="cli-name">' + esc(c.nome) + '</div>'
-      + '<div class="cli-info">' + contatoSpan + endSpan
-      + '<span>📅 Última O.S.: ' + ultimaData + '</span></div>'
-      + '</div>'
-      + '<div style="display:flex;align-items:center;gap:8px;">'
-      + waBtn
-      + '<span class="cli-badge">' + total + ' O.S.</span>'
-      + '<span style="color:var(--text3);font-size:18px;" id="cli-arrow-' + idx + '">&#9658;</span>'
-      + '</div></div>'
-      + '<div class="cli-historico" id="cli-historico-' + idx + '">'
-      + '<div style="display:flex;gap:16px;font-size:12px;color:var(--text3);margin-bottom:10px;flex-wrap:wrap;">'
-      + '<span>Total: <strong style="color:var(--text)">' + total + '</strong></span>'
-      + '<span>Concluídas: <strong style="color:var(--green)">' + concluidas + '</strong></span>'
-      + '<span>Em aberto: <strong style="color:var(--amber)">' + (total - concluidas) + '</strong></span>'
-      + '</div>'
-      + osItems
-      + '</div></div>';
+    return `<div class="cli-card" id="cli-card-${idx}">
+      <div class="cli-card-header" onclick="toggleHistorico(${idx})" style="cursor:pointer;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+            <div class="cli-name">${esc(c.nome)}</div>
+            ${recBadge} ${abertoBadge}
+          </div>
+          <div class="cli-info">
+            ${c.contato ? `<span>📞 ${esc(c.contato)}</span>` : ''}
+            ${c.endereco ? `<span>📍 ${esc(c.endereco)}</span>` : ''}
+            <span>📅 Última O.S.: ${ultimaData}</span>
+          </div>
+          <div class="cli-servico-tags">${tagsHtml}</div>
+          ${scoreHtml}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:12px;">
+          <span class="cli-badge">${total} O.S.</span>
+          <span style="color:var(--text3);font-size:18px;" id="cli-arrow-${idx}">▸</span>
+        </div>
+      </div>
+      <div class="cli-historico" id="cli-historico-${idx}">
+        ${avisoRecorrente}
+        <div style="display:flex;gap:16px;font-size:12px;color:var(--text3);margin-bottom:10px;flex-wrap:wrap;">
+          <span>Total: <strong style="color:var(--text)">${total}</strong></span>
+          <span>Concluídas: <strong style="color:var(--green)">${concluidas}</strong></span>
+          <span>Em aberto: <strong style="color:var(--amber)">${abertas}</strong></span>
+        </div>
+        ${osItems}
+        <div class="cli-card-actions">
+          ${waBtn}
+          ${novaOsBtn}
+        </div>
+      </div>
+    </div>`;
   }).join('');
+};
+
+window.novaOSParaCliente = (nome, contato, endereco) => {
+  openNewOS();
+  setTimeout(() => {
+    const el = document.getElementById('os-cliente');
+    if (el) el.value = nome;
+    const ec = document.getElementById('os-contato');
+    if (ec) ec.value = contato;
+    const ee = document.getElementById('os-endereco');
+    if (ee) ee.value = endereco;
+  }, 100);
 };
 
 window.toggleHistorico = (idx) => {
