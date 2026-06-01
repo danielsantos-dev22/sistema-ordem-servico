@@ -318,6 +318,50 @@
   .estoque-table th { background:var(--bg3); color:var(--text3); font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
   .estoque-table td { padding:10px 12px; border-bottom:1px solid var(--border); font-size:14px; vertical-align:middle; }
   .estoque-table tr:last-child td { border-bottom:none; }
+
+  /* ESTOQUE — novas melhorias */
+  .estoque-table tr.row-alerta-low td { background: #ffb02008; }
+  .estoque-table tr.row-alerta-zero td { background: #ff4d6a08; }
+  .estoque-table tr.row-alerta-zero { animation: pulseRow 2s infinite; }
+  @keyframes pulseRow { 0%,100%{border-left:3px solid transparent} 50%{border-left:3px solid var(--red)} }
+  .alerta-badge { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:700; border-radius:4px; padding:2px 6px; margin-left:6px; }
+  .alerta-badge.low { background:#ffb02022; color:var(--amber); border:1px solid #ffb02044; }
+  .alerta-badge.zero { background:#ff4d6a22; color:var(--red); border:1px solid #ff4d6a44; }
+
+  /* Edição inline do nome */
+  .nome-material-edit { background:transparent; border:none; border-bottom:1px dashed var(--border); color:var(--text); font-family:var(--font); font-size:14px; font-weight:700; outline:none; width:100%; cursor:text; padding:2px 0; transition:border-color .2s; }
+  .nome-material-edit:focus { border-bottom-color:var(--cyan); background:var(--bg4); padding:2px 6px; border-radius:4px 4px 0 0; }
+
+  /* Campo de observação */
+  .obs-inline { font-size:12px; color:var(--text3); margin-top:3px; cursor:pointer; display:flex; align-items:center; gap:4px; }
+  .obs-inline-input { background:var(--bg4); border:1px solid var(--border); border-radius:6px; padding:4px 8px; color:var(--text); font-family:var(--font); font-size:12px; outline:none; width:100%; margin-top:4px; display:none; }
+  .obs-inline-input:focus { border-color:var(--cyan); }
+  .obs-inline-input.open { display:block; }
+
+  /* Histórico de dias */
+  .estoque-hist-bar { display:flex; gap:6px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+  .estoque-hist-bar input[type=date] { background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:7px 12px; color:var(--text); font-family:var(--font); font-size:14px; outline:none; }
+  .estoque-hist-bar input[type=date]:focus { border-color:var(--cyan); }
+  .estoque-modo-badge { font-size:11px; font-weight:700; border-radius:20px; padding:3px 10px; letter-spacing:0.5px; }
+  .estoque-modo-badge.historico { background:#9d6fff22; color:var(--purple); border:1px solid #9d6fff44; }
+  .estoque-modo-badge.hoje { background:#00d4ff22; color:var(--cyan); border:1px solid #00d4ff44; }
+
+  /* Filtro de materiais */
+  .estoque-filtro-row { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
+  .estoque-filtro-row input { flex:1; min-width:180px; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:7px 12px; color:var(--text); font-family:var(--font); font-size:14px; outline:none; }
+  .estoque-filtro-row input:focus { border-color:var(--cyan); }
+  .estoque-filtro-info { font-size:12px; color:var(--text3); white-space:nowrap; }
+
+  /* Gráfico de consumo */
+  .estoque-grafico-wrap { background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:20px; }
+  .estoque-grafico-title { font-size:12px; font-weight:700; color:var(--text3); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:14px; }
+  .estoque-grafico-bars { display:flex; flex-direction:column; gap:10px; }
+  .eg-row { display:flex; align-items:center; gap:10px; }
+  .eg-label { font-size:13px; color:var(--text2); width:160px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .eg-bar-track { flex:1; background:var(--bg4); border-radius:4px; height:12px; overflow:hidden; position:relative; }
+  .eg-bar-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--cyan),var(--green)); transition:width .6s ease; }
+  .eg-bar-used { height:100%; border-radius:4px; background:var(--amber); transition:width .6s ease; position:absolute; left:0; top:0; }
+  .eg-vals { font-size:12px; font-family:var(--font2); color:var(--text3); width:90px; text-align:right; flex-shrink:0; }
   .estoque-qty-ctrl { display:flex; align-items:center; gap:6px; }
   .estoque-qty-btn { background:var(--bg3); border:1px solid var(--border); border-radius:5px; color:var(--text); width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; font-weight:700; transition:background .15s; }
   .estoque-qty-btn:hover { background:var(--border); }
@@ -827,32 +871,59 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
         <button class="btn btn-outline btn-sm" onclick="carregarEstoque()">🔄 Recarregar</button>
         <button class="btn btn-outline btn-sm" onclick="exportarEstoqueCSV()">⬇ Exportar CSV</button>
       </div>
+
+      <!-- Cabeçalho: equipes + seletor de data (histórico) -->
       <div class="estoque-header">
         <div class="estoque-equipe-tabs">
           <button class="estoque-equipe-tab active" onclick="setEstoqueEquipe('Equipe 01',this)">Equipe 01</button>
           <button class="estoque-equipe-tab" onclick="setEstoqueEquipe('Equipe 02',this)">Equipe 02</button>
         </div>
+        <div class="estoque-hist-bar">
+          <input type="date" id="estoque-data-seletor" title="Ver histórico de outro dia" onchange="onEstoqueDateChange(this.value)" />
+          <button class="btn btn-outline btn-sm" onclick="voltarEstoqueHoje()">Hoje</button>
+          <span id="estoque-modo-badge" class="estoque-modo-badge hoje">● Hoje</span>
+        </div>
         <span id="estoque-data-label" style="font-size:13px;color:var(--text3);margin-left:auto;"></span>
       </div>
-      <div class="estoque-add-row">
-        <select id="est-mat-tipo" style="flex:1;min-width:160px;"></select>
-        <input type="number" id="est-mat-qty" placeholder="Qtd inicial" min="1" value="1" style="width:120px;" />
-        <input type="text" id="est-mat-un" placeholder="Un" style="width:70px;" value="un" />
-        <button class="btn btn-primary btn-sm" onclick="adicionarItemEstoque()">+ Adicionar</button>
+
+      <!-- Adicionar item (só no modo hoje) -->
+      <div id="estoque-add-section">
+        <div class="estoque-add-row">
+          <select id="est-mat-tipo" style="flex:1;min-width:160px;"></select>
+          <input type="number" id="est-mat-qty" placeholder="Qtd inicial" min="1" value="1" style="width:120px;" />
+          <input type="text" id="est-mat-un" placeholder="Un" style="width:70px;" value="un" />
+          <button class="btn btn-primary btn-sm" onclick="adicionarItemEstoque()">+ Adicionar</button>
+        </div>
       </div>
+
+      <!-- Filtro de materiais -->
+      <div class="estoque-filtro-row">
+        <input type="text" id="estoque-busca" placeholder="🔍 Filtrar materiais..." oninput="renderEstoque()" />
+        <span id="estoque-filtro-info" class="estoque-filtro-info"></span>
+      </div>
+
+      <!-- Gráfico de consumo -->
+      <div class="estoque-grafico-wrap" id="estoque-grafico-wrap" style="display:none;">
+        <div class="estoque-grafico-title">📊 Consumo por Material</div>
+        <div class="estoque-grafico-bars" id="estoque-grafico-bars"></div>
+      </div>
+
+      <!-- Cards de resumo -->
       <div class="estoque-summary" id="estoque-summary"></div>
+
+      <!-- Tabela -->
       <div style="overflow-x:auto;">
         <table class="estoque-table">
           <thead>
             <tr>
-              <th>Material</th><th>Inicial ±</th><th>Usado nas O.S.</th>
+              <th>Material / Obs</th><th>Inicial ±</th><th>Usado nas O.S.</th>
               <th>Ajuste Manual</th><th>Saldo</th><th></th>
             </tr>
           </thead>
           <tbody id="estoque-tbody"></tbody>
         </table>
       </div>
-      <div id="estoque-empty" style="display:none;" class="consulta-empty">Nenhum item cadastrado para esta equipe hoje.</div>
+      <div id="estoque-empty" style="display:none;" class="consulta-empty">Nenhum item cadastrado para esta equipe nesta data.</div>
     </div>
 
     <!-- ===== PAINEL: RANKING ===== -->
@@ -2168,20 +2239,54 @@ function updateStats() {
   document.getElementById('stat-concluido').textContent = allOS.filter(o => o.status === 'concluido').length;
 }
 
-// ===== ESTOQUE DIÁRIO =====
+// ===== ESTOQUE DIÁRIO (MELHORADO) =====
 let estoqueEquipeAtual = 'Equipe 01';
-let estoqueData = {}; // { itemId: { tipo, unidade, inicial, ajuste } }
+let estoqueData = {}; // { itemId: { tipo, unidade, inicial, ajuste, obs } }
+let estoqueDateAtual = null; // null = hoje
+let estoqueIsReadOnly = false;
 
-function getEstoqueDocId() {
-  const hoje = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-  const equipeSlug = estoqueEquipeAtual.replace(' ', '_');
-  return `estoque_${equipeSlug}_${hoje}`;
+function getHojeStr() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function getEstoqueDocId(dateStr, equipe) {
+  const d = dateStr || getHojeStr();
+  const equipeSlug = (equipe || estoqueEquipeAtual).replace(' ', '_');
+  return `estoque_${equipeSlug}_${d}`;
+}
+
+function setEstoqueUI() {
+  const dateStr = estoqueDateAtual || getHojeStr();
+  const isHoje = !estoqueDateAtual || estoqueDateAtual === getHojeStr();
+  estoqueIsReadOnly = !isHoje;
+
+  // Badge modo
+  const badge = document.getElementById('estoque-modo-badge');
+  if (badge) {
+    badge.textContent = isHoje ? '● Hoje' : '● Histórico';
+    badge.className = 'estoque-modo-badge ' + (isHoje ? 'hoje' : 'historico');
+  }
+
+  // Seção de adição (só no modo hoje)
+  const addSection = document.getElementById('estoque-add-section');
+  if (addSection) addSection.style.display = isHoje ? '' : 'none';
+
+  // Data label
+  const dateParts = dateStr.split('-');
+  const dateObj = new Date(parseInt(dateParts[0]), parseInt(dateParts[1])-1, parseInt(dateParts[2]));
+  const opts = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
+  document.getElementById('estoque-data-label').textContent = dateObj.toLocaleDateString('pt-BR', opts);
+
+  // Seletor de data
+  const sel = document.getElementById('estoque-data-seletor');
+  if (sel) sel.value = dateStr;
 }
 
 window._openEstoqueInterno = async () => {
   estoqueEquipeAtual = 'Equipe 01';
+  estoqueDateAtual = null;
   document.querySelectorAll('.estoque-equipe-tab').forEach((b,i) => b.classList.toggle('active', i===0));
-  document.getElementById('estoque-data-label').textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long'});
+  setEstoqueUI();
   await carregarEstoque();
 };
 
@@ -2192,12 +2297,26 @@ window.setEstoqueEquipe = async (equipe, btn) => {
   await carregarEstoque();
 };
 
+window.onEstoqueDateChange = async (val) => {
+  if (!val) return;
+  estoqueDateAtual = val === getHojeStr() ? null : val;
+  setEstoqueUI();
+  await carregarEstoque();
+};
+
+window.voltarEstoqueHoje = async () => {
+  estoqueDateAtual = null;
+  setEstoqueUI();
+  await carregarEstoque();
+};
+
 async function carregarEstoque() {
   document.getElementById('estoque-empty').textContent = 'Carregando...';
   document.getElementById('estoque-empty').style.display = '';
   document.getElementById('estoque-tbody').innerHTML = '';
+  document.getElementById('estoque-grafico-wrap').style.display = 'none';
   try {
-    const docId = getEstoqueDocId();
+    const docId = getEstoqueDocId(estoqueDateAtual);
     const snap = await getDoc(doc(db, 'estoque', docId));
     estoqueData = snap.exists() ? (snap.data().itens || {}) : {};
   } catch(e) {
@@ -2205,16 +2324,18 @@ async function carregarEstoque() {
     showToast('Erro ao carregar estoque: ' + e.message, 'error');
     estoqueData = {};
   }
-  document.getElementById('estoque-empty').textContent = 'Nenhum item cadastrado para esta equipe hoje.';
+  document.getElementById('estoque-empty').textContent = 'Nenhum item cadastrado para esta equipe nesta data.';
+  document.getElementById('estoque-busca').value = '';
   renderEstoque();
 }
 
 async function salvarEstoque() {
+  if (estoqueIsReadOnly) return;
   try {
     const docId = getEstoqueDocId();
     const payload = {
       equipe: estoqueEquipeAtual,
-      data: new Date().toISOString().split('T')[0],
+      data: getHojeStr(),
       itens: estoqueData,
       userId: currentUser.uid,
       updatedAt: serverTimestamp()
@@ -2232,7 +2353,7 @@ window.adicionarItemEstoque = async () => {
   const un = document.getElementById('est-mat-un').value.trim() || 'un';
   if (!tipo) { showToast('Selecione o material.', 'error'); return; }
   const id = tipo.replace(/[^a-z0-9]/gi,'_').toLowerCase() + '_' + Date.now();
-  estoqueData[id] = { tipo, unidade: un, inicial: qty, ajuste: 0 };
+  estoqueData[id] = { tipo, unidade: un, inicial: qty, ajuste: 0, obs: '' };
   await salvarEstoque();
   document.getElementById('est-mat-tipo').value = '';
   document.getElementById('est-mat-qty').value = '1';
@@ -2241,14 +2362,14 @@ window.adicionarItemEstoque = async () => {
 };
 
 window.ajustarEstoque = async (id, delta) => {
-  if (!estoqueData[id]) return;
+  if (!estoqueData[id] || estoqueIsReadOnly) return;
   estoqueData[id].ajuste = (estoqueData[id].ajuste || 0) + delta;
   await salvarEstoque();
   renderEstoque();
 };
 
 window.editarInicialEstoque = async (id, delta) => {
-  if (!estoqueData[id]) return;
+  if (!estoqueData[id] || estoqueIsReadOnly) return;
   const novo = (estoqueData[id].inicial || 0) + delta;
   if (novo < 0) return;
   estoqueData[id].inicial = novo;
@@ -2257,20 +2378,43 @@ window.editarInicialEstoque = async (id, delta) => {
 };
 
 window.removerItemEstoque = async (id) => {
+  if (estoqueIsReadOnly) return;
   delete estoqueData[id];
   await salvarEstoque();
   renderEstoque();
 };
 
-function calcUsadoPorOS(tipo) {
-  // Soma materiais usados nas O.S. da equipe atual hoje
-  const hoje = new Date().toDateString();
+window.salvarNomeMaterial = async (id, novoNome) => {
+  if (!estoqueData[id] || estoqueIsReadOnly) return;
+  const nome = novoNome.trim();
+  if (!nome) return;
+  estoqueData[id].tipo = nome;
+  await salvarEstoque();
+};
+
+window.salvarObsEstoque = async (id, obs) => {
+  if (!estoqueData[id] || estoqueIsReadOnly) return;
+  estoqueData[id].obs = obs.trim();
+  await salvarEstoque();
+};
+
+window.toggleObsEstoque = (id) => {
+  const inp = document.getElementById('obs-input-' + id);
+  if (!inp) return;
+  inp.classList.toggle('open');
+  if (inp.classList.contains('open')) inp.focus();
+};
+
+function calcUsadoPorOS(tipo, dateStr) {
+  const targetDate = dateStr || (estoqueDateAtual || getHojeStr());
+  const targetDateObj = new Date(targetDate + 'T00:00:00');
+  const targetDateStr = targetDateObj.toDateString();
   let total = 0;
   allOS.forEach(os => {
     if (os.responsavel !== estoqueEquipeAtual) return;
     const tsConc = os.concluidoEm?.toDate ? os.concluidoEm.toDate() :
                    os.updatedAt?.toDate ? os.updatedAt.toDate() : null;
-    if (!tsConc || tsConc.toDateString() !== hoje) return;
+    if (!tsConc || tsConc.toDateString() !== targetDateStr) return;
     (os.materiais || []).forEach(m => {
       if (m.tipo === tipo) total += (parseFloat(m.qty) || 0);
     });
@@ -2281,17 +2425,33 @@ function calcUsadoPorOS(tipo) {
 function renderEstoque() {
   const tbody = document.getElementById('estoque-tbody');
   const empty = document.getElementById('estoque-empty');
-  const ids = Object.keys(estoqueData);
+  const busca = (document.getElementById('estoque-busca')?.value || '').toLowerCase().trim();
+  const allIds = Object.keys(estoqueData);
 
-  if (ids.length === 0) {
+  // Filtro por busca
+  const ids = busca
+    ? allIds.filter(id => (estoqueData[id].tipo || '').toLowerCase().includes(busca))
+    : allIds;
+
+  // Info de filtro
+  const infoEl = document.getElementById('estoque-filtro-info');
+  if (infoEl) {
+    infoEl.textContent = busca
+      ? `${ids.length} de ${allIds.length} item(s)`
+      : allIds.length > 0 ? `${allIds.length} item(s)` : '';
+  }
+
+  if (allIds.length === 0) {
     tbody.innerHTML = '';
     empty.style.display = '';
     document.getElementById('estoque-summary').innerHTML = '';
+    document.getElementById('estoque-grafico-wrap').style.display = 'none';
     return;
   }
   empty.style.display = 'none';
 
   let totalInicial = 0, totalUsado = 0, totalSaldo = 0;
+  const graficoDados = [];
 
   tbody.innerHTML = ids.map(id => {
     const item = estoqueData[id];
@@ -2301,10 +2461,37 @@ function renderEstoque() {
     totalInicial += item.inicial;
     totalUsado += usadoOS;
     totalSaldo += saldo;
+    graficoDados.push({ tipo: item.tipo, inicial: item.inicial, usado: usadoOS, saldo });
     const saldoCls = saldo <= 0 ? 'zero' : saldo <= 2 ? 'low' : 'ok';
-    return `<tr>
-      <td><strong>${esc(item.tipo)}</strong> <span style="color:var(--text3);font-size:12px;">${esc(item.unidade)}</span></td>
+    const rowAlerta = saldo <= 0 ? 'row-alerta-zero' : saldo <= 2 ? 'row-alerta-low' : '';
+    const alertaBadge = saldo <= 0
+      ? `<span class="alerta-badge zero">⚠ Zerado</span>`
+      : saldo <= 2
+        ? `<span class="alerta-badge low">⚡ Baixo</span>`
+        : '';
+    const obs = item.obs || '';
+    const obsPreview = obs ? `<div class="obs-inline" onclick="toggleObsEstoque('${id}')">📝 ${esc(obs)}</div>` : `<div class="obs-inline" onclick="toggleObsEstoque('${id}')">+ obs</div>`;
+    const ctrlStyle = estoqueIsReadOnly ? 'pointer-events:none;opacity:.5;' : '';
+    return `<tr class="${rowAlerta}">
       <td>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <input class="nome-material-edit" value="${esc(item.tipo)}"
+            title="Clique para editar o nome"
+            onblur="salvarNomeMaterial('${id}', this.value)"
+            onkeydown="if(event.key==='Enter'){this.blur();}"
+            ${estoqueIsReadOnly ? 'readonly' : ''} />
+          ${alertaBadge}
+        </div>
+        <span style="color:var(--text3);font-size:12px;">${esc(item.unidade)}</span>
+        ${obsPreview}
+        <input class="obs-inline-input" id="obs-input-${id}"
+          placeholder="Observação..."
+          value="${esc(obs)}"
+          onblur="salvarObsEstoque('${id}', this.value); document.getElementById('obs-input-${id}').classList.remove('open'); renderEstoque();"
+          onkeydown="if(event.key==='Enter'){this.blur();}"
+          ${estoqueIsReadOnly ? 'readonly' : ''} />
+      </td>
+      <td style="${ctrlStyle}">
         <div class="estoque-qty-ctrl">
           <button class="estoque-qty-btn" onclick="editarInicialEstoque('${id}',-1)">−</button>
           <span class="estoque-qty-val">${item.inicial}</span>
@@ -2312,7 +2499,7 @@ function renderEstoque() {
         </div>
       </td>
       <td><span class="estoque-usado">${usadoOS > 0 ? '-'+usadoOS : '0'}</span></td>
-      <td>
+      <td style="${ctrlStyle}">
         <div class="estoque-qty-ctrl">
           <button class="estoque-qty-btn" onclick="ajustarEstoque('${id}',-1)">−</button>
           <span class="estoque-qty-val" style="color:${ajuste>=0?'var(--green)':'var(--red)'};">${ajuste>=0?'+'+ajuste:ajuste}</span>
@@ -2320,7 +2507,7 @@ function renderEstoque() {
         </div>
       </td>
       <td><span class="estoque-saldo ${saldoCls}">${saldo}</span></td>
-      <td><button class="btn btn-danger btn-sm" style="padding:3px 8px;" onclick="removerItemEstoque('${id}')">✕</button></td>
+      <td>${estoqueIsReadOnly ? '' : `<button class="btn btn-danger btn-sm" style="padding:3px 8px;" onclick="removerItemEstoque('${id}')">✕</button>`}</td>
     </tr>`;
   }).join('');
 
@@ -2329,24 +2516,51 @@ function renderEstoque() {
     <div class="estoque-sum-card"><div class="estoque-sum-val" style="color:var(--amber);">${totalUsado}</div><div class="estoque-sum-lbl">Usado nas O.S.</div></div>
     <div class="estoque-sum-card"><div class="estoque-sum-val" style="color:${totalSaldo<=0?'var(--red)':totalSaldo<=5?'var(--amber)':'var(--green)'};">${totalSaldo}</div><div class="estoque-sum-lbl">Saldo Final</div></div>
   `;
+
+  // Gráfico de consumo
+  renderGraficoEstoque(graficoDados);
+}
+
+function renderGraficoEstoque(dados) {
+  const wrap = document.getElementById('estoque-grafico-wrap');
+  const bars = document.getElementById('estoque-grafico-bars');
+  if (!wrap || !bars) return;
+  const comUso = dados.filter(d => d.usado > 0 || d.inicial > 0);
+  if (comUso.length === 0) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  const maxVal = Math.max(...comUso.map(d => d.inicial), 1);
+  bars.innerHTML = comUso.map(d => {
+    const pctInicial = Math.round((d.inicial / maxVal) * 100);
+    const pctUsado = d.inicial > 0 ? Math.round((d.usado / d.inicial) * 100) : 0;
+    return `<div class="eg-row">
+      <div class="eg-label" title="${esc(d.tipo)}">${esc(d.tipo)}</div>
+      <div class="eg-bar-track">
+        <div class="eg-bar-fill" style="width:${pctInicial}%"></div>
+        <div class="eg-bar-used" style="width:${Math.min(pctUsado, 100) * pctInicial / 100}%"></div>
+      </div>
+      <div class="eg-vals"><span style="color:var(--cyan)">${d.inicial}</span> <span style="color:var(--text3)">/ -${d.usado}</span></div>
+    </div>`;
+  }).join('');
 }
 
 window.exportarEstoqueCSV = () => {
   const ids = Object.keys(estoqueData);
   if (ids.length === 0) { showToast('Nenhum item para exportar.', 'error'); return; }
-  const hoje = new Date().toLocaleDateString('pt-BR');
-  const header = ['Material','Unidade','Inicial','Usado nas O.S.','Ajuste Manual','Saldo'];
+  const dateStr = estoqueDateAtual || getHojeStr();
+  const dateParts = dateStr.split('-');
+  const dateLabel = new Date(parseInt(dateParts[0]), parseInt(dateParts[1])-1, parseInt(dateParts[2])).toLocaleDateString('pt-BR');
+  const header = ['Material','Unidade','Inicial','Usado nas O.S.','Ajuste Manual','Saldo','Observação'];
   const rows = ids.map(id => {
     const item = estoqueData[id];
     const usadoOS = calcUsadoPorOS(item.tipo);
     const saldo = item.inicial - usadoOS + (item.ajuste || 0);
-    return [item.tipo, item.unidade, item.inicial, usadoOS, item.ajuste||0, saldo].map(v => `"${v}"`);
+    return [item.tipo, item.unidade, item.inicial, usadoOS, item.ajuste||0, saldo, item.obs||''].map(v => `"${v}"`);
   });
-  const csv = [`"Estoque Diário — ${estoqueEquipeAtual} — ${hoje}"`, header.join(','), ...rows.map(r=>r.join(','))].join('\n');
+  const csv = [`"Estoque Diário — ${estoqueEquipeAtual} — ${dateLabel}"`, header.join(','), ...rows.map(r=>r.join(','))].join('\n');
   const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `Estoque_${estoqueEquipeAtual.replace(' ','')}_${hoje.replace(/\//g,'-')}.csv`;
+  a.download = `Estoque_${estoqueEquipeAtual.replace(' ','')}_${dateStr}.csv`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   showToast('Estoque exportado!', 'success');
 };
