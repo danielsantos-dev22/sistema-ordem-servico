@@ -184,7 +184,8 @@
 
   /* KANBAN */
   .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .kanban-col { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .kanban-col { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color .2s; }
+  .kanban-col.drag-over { border-color: var(--cyan); background: #00d4ff08; }
   .kanban-header {
     padding: 14px 16px; display: flex; align-items: center; gap: 10px;
     border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700;
@@ -196,11 +197,27 @@
   .kanban-count { background: var(--bg4); border-radius: 20px; padding: 2px 8px; font-size: 12px; margin-left: auto; color: var(--text2); }
   .kanban-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 200px; }
 
+  /* Filtro equipe no kanban */
+  .kanban-equipe-filter { display:flex; gap:6px; align-items:center; }
+  .kanban-equipe-btn { background:transparent; border:1px solid var(--border); border-radius:20px; color:var(--text3); padding:4px 12px; font-size:12px; font-family:var(--font); font-weight:600; cursor:pointer; transition:all .2s; }
+  .kanban-equipe-btn.active { border-color:var(--cyan); color:var(--cyan); background:#00d4ff15; }
+
+  /* Stats por equipe */
+  .stat-equipe-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
+  .stat-equipe-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; }
+  .stat-equipe-title { font-size:11px; font-weight:700; color:var(--text3); letter-spacing:1px; text-transform:uppercase; margin-bottom:8px; }
+  .stat-equipe-nums { display:flex; gap:12px; flex-wrap:wrap; }
+  .stat-eq-num { display:flex; flex-direction:column; align-items:center; min-width:44px; }
+  .stat-eq-val { font-size:22px; font-weight:700; font-family:var(--font2); line-height:1; }
+  .stat-eq-lbl { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; margin-top:3px; }
+
   /* O.S. CARD */
   .os-card {
     background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
-    padding: 14px; cursor: pointer; transition: all .2s;
+    padding: 14px; cursor: grab; transition: all .2s; user-select: none;
   }
+  .os-card:active { cursor: grabbing; }
+  .os-card.dragging { opacity: .4; transform: scale(.97); }
   .os-card:hover { border-color: var(--cyan); transform: translateY(-1px); }
   .os-card-top { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
   .os-num { font-family: var(--font2); font-size: 12px; color: var(--cyan); background: #00d4ff15; border: 1px solid #00d4ff30; border-radius: 4px; padding: 2px 6px; white-space: nowrap; }
@@ -214,6 +231,34 @@
   .os-footer { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text3); }
   .os-resp { display: flex; align-items: center; gap: 4px; }
   .avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--cyan); color: #000; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+  /* Timer ao vivo */
+  .os-timer-live {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--font2); font-size: 12px; color: var(--cyan);
+    background: #00d4ff15; border: 1px solid #00d4ff30; border-radius: 6px;
+    padding: 3px 8px; margin-bottom: 8px;
+    animation: timerPulse 2s ease-in-out infinite;
+  }
+  @keyframes timerPulse { 0%,100%{border-color:#00d4ff30} 50%{border-color:#00d4ff90} }
+
+  /* Indicador de tempo parado */
+  .os-parado-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10px; font-weight: 700; border-radius: 4px;
+    padding: 2px 7px; white-space: nowrap;
+  }
+  .os-parado-badge.critico { background: #ff4d6a22; color: var(--red); border: 1px solid #ff4d6a44; }
+  .os-parado-badge.alerta  { background: #ffb02022; color: var(--amber); border: 1px solid #ffb02044; }
+  .os-parado-badge.ok      { background: #00c89622; color: var(--green); border: 1px solid #00c89644; }
+
+  /* Badge recorrente no card */
+  .os-recorrente-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 10px; font-weight: 700; color: var(--red);
+    background: #ff4d6a15; border: 1px solid #ff4d6a30;
+    border-radius: 4px; padding: 2px 6px; white-space: nowrap;
+  }
 
   /* MODAL */
   .modal-backdrop {
@@ -625,6 +670,11 @@ function populateAllMaterialSelects() {
 }
 
 document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
+
+// Stubs globais — delegam para as funções do módulo quando disponíveis
+function doLogin()    { window.doLogin?.();    }
+function doRegister() { window.doRegister?.(); }
+function showTab(t)   { window.showTab?.(t);   }
 </script>
 
 <!-- AUTH SCREEN -->
@@ -813,7 +863,7 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
         <button class="btn btn-primary btn-sm" onclick="openNewOS()">+ Nova O.S.</button>
       </div>
 
-      <!-- STATS -->
+      <!-- STATS GERAIS -->
       <div class="stats-row">
         <div class="stat-card">
           <div class="stat-label">Total</div>
@@ -833,6 +883,26 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
         </div>
       </div>
 
+      <!-- STATS POR EQUIPE -->
+      <div class="stat-equipe-row">
+        <div class="stat-equipe-card">
+          <div class="stat-equipe-title">📋 Equipe 01</div>
+          <div class="stat-equipe-nums">
+            <div class="stat-eq-num"><span class="stat-eq-val" id="eq1-aguardando" style="color:var(--amber)">0</span><span class="stat-eq-lbl">Aguard.</span></div>
+            <div class="stat-eq-num"><span class="stat-eq-val" id="eq1-andamento" style="color:var(--cyan)">0</span><span class="stat-eq-lbl">Andamento</span></div>
+            <div class="stat-eq-num"><span class="stat-eq-val" id="eq1-concluido" style="color:var(--green)">0</span><span class="stat-eq-lbl">Concluid.</span></div>
+          </div>
+        </div>
+        <div class="stat-equipe-card">
+          <div class="stat-equipe-title">📋 Equipe 02</div>
+          <div class="stat-equipe-nums">
+            <div class="stat-eq-num"><span class="stat-eq-val" id="eq2-aguardando" style="color:var(--amber)">0</span><span class="stat-eq-lbl">Aguard.</span></div>
+            <div class="stat-eq-num"><span class="stat-eq-val" id="eq2-andamento" style="color:var(--cyan)">0</span><span class="stat-eq-lbl">Andamento</span></div>
+            <div class="stat-eq-num"><span class="stat-eq-val" id="eq2-concluido" style="color:var(--green)">0</span><span class="stat-eq-lbl">Concluid.</span></div>
+          </div>
+        </div>
+      </div>
+
       <!-- FILTERS -->
       <div class="filters">
         <input type="text" id="search-input" placeholder="Buscar cliente, serviço, número..." oninput="renderKanban()" />
@@ -849,24 +919,31 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
           <option value="baixa">Baixa</option>
         </select>
       </div>
-      <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
         <span class="sort-label">Ordenar:</span>
         <button class="sort-btn active" onclick="setSort('chegada')">⏱ Chegada</button>
         <button class="sort-btn" onclick="setSort('prioridade')">🔥 Prioridade</button>
         <button class="sort-btn" onclick="setSort('antigo')">⌛ Mais Antigo</button>
+        <div style="flex:1;"></div>
+        <div class="kanban-equipe-filter">
+          <span style="font-size:12px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Equipe:</span>
+          <button class="kanban-equipe-btn active" onclick="setKanbanEquipe('',this)">Todas</button>
+          <button class="kanban-equipe-btn" onclick="setKanbanEquipe('Equipe 01',this)">Equipe 01</button>
+          <button class="kanban-equipe-btn" onclick="setKanbanEquipe('Equipe 02',this)">Equipe 02</button>
+        </div>
       </div>
 
       <!-- KANBAN -->
       <div class="kanban">
-        <div class="kanban-col">
+        <div class="kanban-col" id="kanban-col-aguardando" ondragover="onDragOver(event,'aguardando')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'aguardando')">
           <div class="kanban-header aguardando">⏳ Aguardando <span class="kanban-count" id="count-aguardando">0</span></div>
           <div class="kanban-body" id="col-aguardando"><div class="empty">Nenhuma O.S.</div></div>
         </div>
-        <div class="kanban-col">
+        <div class="kanban-col" id="kanban-col-andamento" ondragover="onDragOver(event,'andamento')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'andamento')">
           <div class="kanban-header andamento">✏ Em Andamento <span class="kanban-count" id="count-andamento">0</span></div>
           <div class="kanban-body" id="col-andamento"><div class="empty">Nenhuma O.S.</div></div>
         </div>
-        <div class="kanban-col">
+        <div class="kanban-col" id="kanban-col-concluido" ondragover="onDragOver(event,'concluido')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'concluido')">
           <div class="kanban-header concluido">✅ Concluído <span class="kanban-count" id="count-concluido">0</span></div>
           <div class="kanban-body" id="col-concluido"><div class="empty">Nenhuma O.S.</div></div>
         </div>
@@ -2112,6 +2189,58 @@ function getNextNum() {
   return Math.max(...allOS.map(o => o.numero || 0)) + 1;
 }
 
+// ===== KANBAN MELHORADO =====
+let kanbanEquipeFiltro = '';
+let dragOSId = null;
+let liveTimerInterval = null;
+
+window.setKanbanEquipe = (equipe, btn) => {
+  kanbanEquipeFiltro = equipe;
+  document.querySelectorAll('.kanban-equipe-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderKanbanFn();
+};
+
+// Drag & Drop
+window.onDragOver = (e, status) => {
+  e.preventDefault();
+  document.getElementById('kanban-col-' + status)?.classList.add('drag-over');
+};
+window.onDragLeave = (e) => {
+  e.currentTarget?.classList.remove('drag-over');
+};
+window.onDrop = async (e, novoStatus) => {
+  e.preventDefault();
+  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
+  if (!dragOSId) return;
+  const os = allOS.find(o => o.id === dragOSId);
+  if (!os || os.status === novoStatus) return;
+  if (novoStatus === 'concluido') { abrirConcluir(dragOSId); return; }
+  if (novoStatus === 'andamento' && os.status === 'aguardando') { await iniciarOS(dragOSId); return; }
+  try {
+    await updateDoc(doc(db, 'ordens', dragOSId), { status: novoStatus, updatedAt: serverTimestamp() });
+    showToast('Status atualizado!', 'success');
+  } catch(err) { showToast('Erro: ' + err.message, 'error'); }
+};
+
+function startLiveTimerKanban() {
+  if (liveTimerInterval) clearInterval(liveTimerInterval);
+  liveTimerInterval = setInterval(() => {
+    document.querySelectorAll('[data-timer-start]').forEach(el => {
+      const start = parseInt(el.dataset.timerStart);
+      const diffMin = Math.round((Date.now() - start) / 60000);
+      el.textContent = '▶ ' + formatTempo(diffMin);
+    });
+    document.querySelectorAll('[data-parado-since]').forEach(el => {
+      const since = parseInt(el.dataset.paradoSince);
+      const diffMin = Math.round((Date.now() - since) / 60000);
+      const cls = diffMin >= 120 ? 'critico' : diffMin >= 60 ? 'alerta' : 'ok';
+      el.className = 'os-parado-badge ' + cls;
+      el.textContent = '⏸ ' + formatTempo(diffMin);
+    });
+  }, 30000);
+}
+
 // ===== RENDER =====
 function renderKanbanFn() {
   const search = (document.getElementById('search-input')?.value || '').toLowerCase();
@@ -2123,16 +2252,14 @@ function renderKanbanFn() {
     const matchSearch = !search || [os.cliente, os.servico, String(os.numero), os.responsavel].some(v => (v||'').toLowerCase().includes(search));
     const matchStatus = !fStatus || os.status === fStatus;
     const matchPriority = !fPriority || os.prioridade === fPriority;
+    const matchEquipe = !kanbanEquipeFiltro || (os.responsavel || '').includes(kanbanEquipeFiltro);
 
-    // Concluídas: mostrar apenas as de hoje no kanban
     if (os.status === 'concluido' && !fStatus) {
       const tsConc = os.concluidoEm?.toDate ? os.concluidoEm.toDate() :
                      os.updatedAt?.toDate ? os.updatedAt.toDate() : null;
-      const ehHoje = tsConc && tsConc.toDateString() === hojeStr;
-      if (!ehHoje) return false;
+      if (!tsConc || tsConc.toDateString() !== hojeStr) return false;
     }
-
-    return matchSearch && matchStatus && matchPriority;
+    return matchSearch && matchStatus && matchPriority && matchEquipe;
   });
 
   const prioOrder = { alta: 0, media: 1, baixa: 2 };
@@ -2149,16 +2276,25 @@ function renderKanbanFn() {
     const col = document.getElementById('col-' + status);
     const count = document.getElementById('count-' + status);
     count.textContent = cols[status].length;
-    if (cols[status].length === 0) {
-      col.innerHTML = '<div class="empty">Nenhuma O.S.</div>';
-    } else {
-      col.innerHTML = cols[status].map(os => renderOSCard(os)).join('');
-    }
+    col.innerHTML = cols[status].length === 0
+      ? '<div class="empty">Nenhuma O.S.</div>'
+      : cols[status].map(os => renderOSCard(os)).join('');
   });
+
+  startLiveTimerKanban();
 }
 
 function getTs(os) {
   return os.createdAt?.toMillis ? os.createdAt.toMillis() : 0;
+}
+
+function getRecorrentesMap() {
+  const map = {};
+  allOS.forEach(os => {
+    const n = (os.cliente || '').trim();
+    if (n) map[n] = (map[n] || 0) + 1;
+  });
+  return map;
 }
 
 function renderOSCard(os) {
@@ -2168,6 +2304,29 @@ function renderOSCard(os) {
   const date = os.createdAt?.toDate ? os.createdAt.toDate().toLocaleDateString('pt-BR') : '—';
   const tempoBadge = os.tempoAtendimentoMin != null
     ? `<span class="tempo-badge" title="Tempo de atendimento">⏱ ${formatTempo(os.tempoAtendimentoMin)}</span>` : '';
+
+  // Timer ao vivo (em andamento)
+  let timerHtml = '';
+  if (os.status === 'andamento' && os.iniciadoEm?.toDate) {
+    const start = os.iniciadoEm.toDate().getTime();
+    const diffMin = Math.round((Date.now() - start) / 60000);
+    timerHtml = `<div class="os-timer-live" data-timer-start="${start}">▶ ${formatTempo(diffMin)}</div>`;
+  }
+
+  // Indicador tempo parado (aguardando)
+  let paradoBadge = '';
+  if (os.status === 'aguardando' && os.createdAt?.toDate) {
+    const since = os.createdAt.toDate().getTime();
+    const diffMin = Math.round((Date.now() - since) / 60000);
+    const cls = diffMin >= 120 ? 'critico' : diffMin >= 60 ? 'alerta' : 'ok';
+    paradoBadge = `<span class="os-parado-badge ${cls}" data-parado-since="${since}" title="Aguardando há...">⏸ ${formatTempo(diffMin)}</span>`;
+  }
+
+  // Badge cliente recorrente
+  const recMap = getRecorrentesMap();
+  const totalCliente = recMap[(os.cliente || '').trim()] || 0;
+  const recBadge = totalCliente >= 2
+    ? `<span class="os-recorrente-badge" title="${totalCliente} visitas a este cliente">🔁 ${totalCliente}x</span>` : '';
 
   const actionBtns = os.status === 'aguardando'
     ? `<div class="os-card-actions">
@@ -2181,16 +2340,24 @@ function renderOSCard(os) {
     : '';
 
   return `
-    <div class="os-card" onclick="openDetail('${os.id}')">
+    <div class="os-card" draggable="true"
+      ondragstart="dragOSId='${os.id}'; this.classList.add('dragging')"
+      ondragend="dragOSId=null; this.classList.remove('dragging')"
+      onclick="openDetail('${os.id}')">
       <div class="os-card-top">
         <span class="os-num">OS #${num}</span>
         <span class="os-title">${esc(os.cliente)}</span>
         <span class="priority-badge ${os.prioridade}">${prioLabel}</span>
       </div>
+      ${timerHtml}
       <div class="os-client">📋 ${esc(os.servico || '—')}</div>
       <div class="os-service">${esc(os.descricao || 'Sem descrição')}</div>
       <div class="os-footer">
-        <span>${date}</span>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span>${date}</span>
+          ${paradoBadge}
+          ${recBadge}
+        </div>
         <div style="display:flex;align-items:center;gap:8px;">
           ${tempoBadge}
           <button class="copy-name-btn" title="Copiar nome do cliente" onclick="event.stopPropagation(); copiarNome('${esc(os.cliente)}', this)">📋</button>
@@ -2202,6 +2369,28 @@ function renderOSCard(os) {
       </div>
       ${actionBtns}
     </div>`;
+}
+
+function updateStats() {
+  const hoje = new Date().toDateString();
+  document.getElementById('stat-total').textContent = allOS.length;
+  document.getElementById('stat-aguardando').textContent = allOS.filter(o => o.status === 'aguardando').length;
+  document.getElementById('stat-andamento').textContent = allOS.filter(o => o.status === 'andamento').length;
+  document.getElementById('stat-concluido').textContent = allOS.filter(o => o.status === 'concluido').length;
+
+  ['Equipe 01', 'Equipe 02'].forEach((eq, i) => {
+    const pfx = i === 0 ? 'eq1' : 'eq2';
+    const osEq = allOS.filter(o => (o.responsavel || '').includes(eq));
+    const elA = document.getElementById(pfx + '-aguardando');
+    const elAnd = document.getElementById(pfx + '-andamento');
+    const elC = document.getElementById(pfx + '-concluido');
+    if (elA) elA.textContent = osEq.filter(o => o.status === 'aguardando').length;
+    if (elAnd) elAnd.textContent = osEq.filter(o => o.status === 'andamento').length;
+    if (elC) elC.textContent = osEq.filter(o => {
+      const ts = o.concluidoEm?.toDate?.() || o.updatedAt?.toDate?.();
+      return o.status === 'concluido' && ts && ts.toDateString() === hoje;
+    }).length;
+  });
 }
 
 window.openDetail = (id) => {
@@ -2284,13 +2473,6 @@ function renderMateriais() {
       <span class="material-unit">${esc(m.unidade)}</span>
       <button class="btn btn-danger btn-sm" onclick="removeMaterial(${i})" style="padding:3px 8px;">✕</button>
     </div>`).join('');
-}
-
-function updateStats() {
-  document.getElementById('stat-total').textContent = allOS.length;
-  document.getElementById('stat-aguardando').textContent = allOS.filter(o => o.status === 'aguardando').length;
-  document.getElementById('stat-andamento').textContent = allOS.filter(o => o.status === 'andamento').length;
-  document.getElementById('stat-concluido').textContent = allOS.filter(o => o.status === 'concluido').length;
 }
 
 // ===== ESTOQUE DIÁRIO (MELHORADO) =====
