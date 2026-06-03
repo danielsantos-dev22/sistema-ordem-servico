@@ -935,15 +935,15 @@ function showTab(t)   { window.showTab?.(t);   }
 
       <!-- KANBAN -->
       <div class="kanban">
-        <div class="kanban-col" id="kanban-col-aguardando" ondragover="onDragOver(event,'aguardando')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'aguardando')">
+        <div class="kanban-col" id="kanban-col-aguardando">
           <div class="kanban-header aguardando">⏳ Aguardando <span class="kanban-count" id="count-aguardando">0</span></div>
           <div class="kanban-body" id="col-aguardando"><div class="empty">Nenhuma O.S.</div></div>
         </div>
-        <div class="kanban-col" id="kanban-col-andamento" ondragover="onDragOver(event,'andamento')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'andamento')">
+        <div class="kanban-col" id="kanban-col-andamento">
           <div class="kanban-header andamento">✏ Em Andamento <span class="kanban-count" id="count-andamento">0</span></div>
           <div class="kanban-body" id="col-andamento"><div class="empty">Nenhuma O.S.</div></div>
         </div>
-        <div class="kanban-col" id="kanban-col-concluido" ondragover="onDragOver(event,'concluido')" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'concluido')">
+        <div class="kanban-col" id="kanban-col-concluido">
           <div class="kanban-header concluido">✅ Concluído <span class="kanban-count" id="count-concluido">0</span></div>
           <div class="kanban-body" id="col-concluido"><div class="empty">Nenhuma O.S.</div></div>
         </div>
@@ -1011,6 +1011,31 @@ function showTab(t)   { window.showTab?.(t);   }
           <input type="number" id="est-mat-qty" placeholder="Qtd inicial" min="1" value="1" style="width:120px;" />
           <input type="text" id="est-mat-un" placeholder="Un" style="width:70px;" value="un" />
           <button class="btn btn-primary btn-sm" onclick="adicionarItemEstoque()">+ Adicionar</button>
+          <button class="btn btn-outline btn-sm" onclick="abrirModalExtrato()" title="Importar extrato de estoque em lote">📋 Extrato</button>
+        </div>
+      </div>
+
+      <!-- Modal Extrato -->
+      <div class="modal-backdrop" id="modal-extrato" style="display:none;">
+        <div class="modal" style="max-width:520px;">
+          <div class="modal-header">
+            <h2>📋 Importar Extrato de Estoque</h2>
+            <button class="btn-close" onclick="closeModal('modal-extrato')">✕</button>
+          </div>
+          <div class="modal-body">
+            <p style="font-size:13px;color:var(--text3);margin-bottom:12px;">Cole o extrato abaixo. Cada linha deve ser <strong style="color:var(--text)">NOME: QUANTIDADE UNIDADE</strong>. Exemplo:<br>
+              <code style="font-size:12px;color:var(--cyan);">DROP: 590 METROS<br>RJ45: 22<br>ONU: 4</code>
+            </p>
+            <textarea id="extrato-input" rows="12" placeholder="DROP: 590 METROS&#10;CABO LAN: 146 METROS&#10;APC: 20&#10;UPC: 4&#10;ACOPLADOR: 10&#10;RJ45: 22&#10;ONU: 4&#10;ONT: 4&#10;ROTEADOR: 4&#10;FONTE POE: 4" style="width:100%;background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:var(--font2);font-size:13px;resize:vertical;outline:none;line-height:1.7;"></textarea>
+            <div id="extrato-preview" style="margin-top:12px;display:none;">
+              <div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Prévia</div>
+              <div id="extrato-preview-list"></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="previewExtrato()">👁 Prévia</button>
+            <button class="btn btn-primary" onclick="importarExtrato()">✅ Importar Tudo</button>
+          </div>
         </div>
       </div>
 
@@ -2191,7 +2216,7 @@ function getNextNum() {
 
 // ===== KANBAN MELHORADO =====
 let kanbanEquipeFiltro = '';
-let dragOSId = null;
+window._dragOSId = null; // exposto no window para acesso inline
 let liveTimerInterval = null;
 
 window.setKanbanEquipe = (equipe, btn) => {
@@ -2201,27 +2226,37 @@ window.setKanbanEquipe = (equipe, btn) => {
   renderKanbanFn();
 };
 
-// Drag & Drop
-window.onDragOver = (e, status) => {
-  e.preventDefault();
-  document.getElementById('kanban-col-' + status)?.classList.add('drag-over');
-};
-window.onDragLeave = (e) => {
-  e.currentTarget?.classList.remove('drag-over');
-};
-window.onDrop = async (e, novoStatus) => {
-  e.preventDefault();
-  document.querySelectorAll('.kanban-col').forEach(c => c.classList.remove('drag-over'));
-  if (!dragOSId) return;
-  const os = allOS.find(o => o.id === dragOSId);
-  if (!os || os.status === novoStatus) return;
-  if (novoStatus === 'concluido') { abrirConcluir(dragOSId); return; }
-  if (novoStatus === 'andamento' && os.status === 'aguardando') { await iniciarOS(dragOSId); return; }
-  try {
-    await updateDoc(doc(db, 'ordens', dragOSId), { status: novoStatus, updatedAt: serverTimestamp() });
-    showToast('Status atualizado!', 'success');
-  } catch(err) { showToast('Erro: ' + err.message, 'error'); }
-};
+// Drag & Drop — usando addEventListener para evitar problema de escopo do módulo
+function setupKanbanDragDrop() {
+  ['aguardando','andamento','concluido'].forEach(status => {
+    const col = document.getElementById('kanban-col-' + status);
+    if (!col) return;
+    col.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      col.classList.add('drag-over');
+    });
+    col.addEventListener('dragleave', (e) => {
+      if (!col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+    });
+    col.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      col.classList.remove('drag-over');
+      const id = window._dragOSId;
+      if (!id) return;
+      const os = allOS.find(o => o.id === id);
+      if (!os || os.status === status) return;
+      if (status === 'concluido') { abrirConcluir(id); return; }
+      if (status === 'andamento' && os.status === 'aguardando') { await iniciarOS(id); return; }
+      try {
+        await updateDoc(doc(db, 'ordens', id), { status, updatedAt: serverTimestamp() });
+        showToast('Status atualizado!', 'success');
+      } catch(err) { showToast('Erro: ' + err.message, 'error'); }
+    });
+  });
+}
+
+// Chama setup depois do DOM estar pronto
+document.addEventListener('DOMContentLoaded', setupKanbanDragDrop);
 
 function startLiveTimerKanban() {
   if (liveTimerInterval) clearInterval(liveTimerInterval);
@@ -2341,8 +2376,8 @@ function renderOSCard(os) {
 
   return `
     <div class="os-card" draggable="true"
-      ondragstart="dragOSId='${os.id}'; this.classList.add('dragging')"
-      ondragend="dragOSId=null; this.classList.remove('dragging')"
+      ondragstart="window._dragOSId='${os.id}'; this.classList.add('dragging')"
+      ondragend="window._dragOSId=null; this.classList.remove('dragging')"
       onclick="openDetail('${os.id}')">
       <div class="os-card-top">
         <span class="os-num">OS #${num}</span>
@@ -2778,6 +2813,93 @@ function renderGraficoEstoque(dados) {
     </div>`;
   }).join('');
 }
+
+// ===== EXTRATO DE ESTOQUE =====
+// Mapa de unidades padrão por material (para sugestão automática)
+const EXTRATO_DEFAULTS = {
+  'DROP': { un: 'metros' }, 'CABO LAN': { un: 'metros' }, 'CABO': { un: 'metros' },
+  'APC': { un: 'un' }, 'UPC': { un: 'un' }, 'ACOPLADOR': { un: 'un' },
+  'RJ45': { un: 'un' }, 'ONU': { un: 'un' }, 'ONT': { un: 'un' },
+  'ROTEADOR': { un: 'un' }, 'FONTE POE': { un: 'un' }, 'FONTE': { un: 'un' },
+};
+
+function parseExtratoLinha(linha) {
+  // Aceita: "NOME: 590 METROS", "NOME: 590", "NOME:590"
+  const m = linha.match(/^([^:]+):\s*([\d.,]+)\s*(.*)$/i);
+  if (!m) return null;
+  const nome = m[1].trim().toUpperCase();
+  const qty = parseFloat(m[2].replace(',', '.'));
+  const unRaw = m[3].trim().toUpperCase();
+  // Descobre unidade: prioriza o que veio na linha, senão usa default
+  const unDefault = EXTRATO_DEFAULTS[nome]?.un || 'un';
+  const un = unRaw || unDefault;
+  if (!nome || isNaN(qty) || qty <= 0) return null;
+  return { nome, qty, un: un.toLowerCase() };
+}
+
+window.abrirModalExtrato = () => {
+  document.getElementById('extrato-input').value = '';
+  document.getElementById('extrato-preview').style.display = 'none';
+  document.getElementById('extrato-preview-list').innerHTML = '';
+  document.getElementById('modal-extrato').style.display = 'flex';
+};
+
+window.previewExtrato = () => {
+  const linhas = document.getElementById('extrato-input').value.split('\n');
+  const itens = linhas.map(l => parseExtratoLinha(l.trim())).filter(Boolean);
+  const prevEl = document.getElementById('extrato-preview');
+  const listEl = document.getElementById('extrato-preview-list');
+  if (itens.length === 0) {
+    listEl.innerHTML = '<div style="color:var(--red);font-size:13px;">Nenhum item reconhecido. Verifique o formato.</div>';
+    prevEl.style.display = '';
+    return;
+  }
+  listEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <thead><tr>
+      <th style="text-align:left;padding:6px 8px;color:var(--text3);font-size:11px;border-bottom:1px solid var(--border);">MATERIAL</th>
+      <th style="text-align:center;padding:6px 8px;color:var(--text3);font-size:11px;border-bottom:1px solid var(--border);">QTD</th>
+      <th style="text-align:left;padding:6px 8px;color:var(--text3);font-size:11px;border-bottom:1px solid var(--border);">UN</th>
+    </tr></thead>
+    <tbody>
+      ${itens.map(it => `<tr>
+        <td style="padding:6px 8px;font-weight:700;color:var(--text);">${esc(it.nome)}</td>
+        <td style="padding:6px 8px;text-align:center;color:var(--cyan);font-family:var(--font2);">${it.qty}</td>
+        <td style="padding:6px 8px;color:var(--text3);">${esc(it.un)}</td>
+      </tr>`).join('')}
+    </tbody>
+  </table>
+  <div style="margin-top:8px;font-size:12px;color:var(--green);">✅ ${itens.length} item(s) prontos para importar</div>`;
+  prevEl.style.display = '';
+};
+
+window.importarExtrato = async () => {
+  if (estoqueIsReadOnly) { showToast('Modo histórico — não é possível editar.', 'error'); return; }
+  const linhas = document.getElementById('extrato-input').value.split('\n');
+  const itens = linhas.map(l => parseExtratoLinha(l.trim())).filter(Boolean);
+  if (itens.length === 0) { showToast('Nenhum item reconhecido.', 'error'); return; }
+
+  let adicionados = 0, atualizados = 0;
+  itens.forEach(it => {
+    // Verifica se já existe item com mesmo nome
+    const existeId = Object.keys(estoqueData).find(
+      id => (estoqueData[id].tipo || '').toUpperCase() === it.nome
+    );
+    if (existeId) {
+      // Soma à quantidade inicial
+      estoqueData[existeId].inicial += it.qty;
+      atualizados++;
+    } else {
+      const id = it.nome.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_' + Date.now() + Math.random().toString(36).slice(2,5);
+      estoqueData[id] = { tipo: it.nome, unidade: it.un, inicial: it.qty, ajuste: 0, obs: '' };
+      adicionados++;
+    }
+  });
+
+  await salvarEstoque();
+  closeModal('modal-extrato');
+  renderEstoque();
+  showToast(`Extrato importado! ${adicionados} novo(s) + ${atualizados} atualizado(s).`, 'success');
+};
 
 window.exportarEstoqueCSV = () => {
   const ids = Object.keys(estoqueData);
