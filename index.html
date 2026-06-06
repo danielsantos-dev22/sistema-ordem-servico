@@ -629,6 +629,78 @@
   .cli-periodo-tab { background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--text2); padding:4px 12px; font-size:12px; font-family:var(--font); font-weight:600; cursor:pointer; transition:all .2s; }
   .cli-periodo-tab.active { border-color:var(--purple); color:var(--purple); background:#9d6fff15; }
 
+  /* ======= AGENDA DE MANUTENÇÃO ======= */
+  .agenda-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+  @media(max-width:900px){ .agenda-layout { grid-template-columns: 1fr; } }
+
+  /* Mini calendário */
+  .agenda-cal { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+  .agenda-cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .agenda-cal-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .agenda-cal-nav { background: transparent; border: 1px solid var(--border); border-radius: 6px; color: var(--text2); padding: 4px 10px; font-size: 14px; cursor: pointer; transition: all .2s; }
+  .agenda-cal-nav:hover { border-color: var(--cyan); color: var(--cyan); }
+  .agenda-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .agenda-cal-dow { text-align: center; font-size: 10px; font-weight: 700; color: var(--text3); text-transform: uppercase; padding: 4px 0; letter-spacing: 0.5px; }
+  .agenda-cal-day {
+    text-align: center; font-size: 13px; padding: 7px 4px; border-radius: 8px;
+    cursor: pointer; transition: all .15s; color: var(--text2); position: relative;
+    border: 1px solid transparent;
+  }
+  .agenda-cal-day:hover { background: var(--bg4); border-color: var(--border); }
+  .agenda-cal-day.outro-mes { color: var(--text3); opacity: .4; cursor: default; }
+  .agenda-cal-day.hoje { border-color: var(--cyan); color: var(--cyan); font-weight: 700; }
+  .agenda-cal-day.selecionado { background: var(--cyan); color: #000 !important; font-weight: 700; border-color: var(--cyan); }
+  .agenda-cal-day.tem-evento::after {
+    content: ''; position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+    width: 5px; height: 5px; border-radius: 50%; background: var(--amber);
+  }
+  .agenda-cal-day.selecionado.tem-evento::after { background: #000; }
+
+  /* Legenda urgência */
+  .agenda-legenda { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+  .agenda-leg-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text3); }
+  .agenda-leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Painel direito */
+  .agenda-painel { display: flex; flex-direction: column; gap: 16px; }
+  .agenda-painel-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .agenda-data-title { font-size: 16px; font-weight: 700; color: var(--text); }
+
+  /* Card de manutenção agendada */
+  .agenda-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px;
+    transition: border-color .2s;
+  }
+  .agenda-card:hover { border-color: var(--cyan); }
+  .agenda-card-urgencia { width: 4px; border-radius: 4px; align-self: stretch; flex-shrink: 0; }
+  .agenda-card-urgencia.alta { background: var(--red); }
+  .agenda-card-urgencia.media { background: var(--amber); }
+  .agenda-card-urgencia.baixa { background: var(--green); }
+  .agenda-card-body { flex: 1; min-width: 0; }
+  .agenda-card-titulo { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .agenda-card-info { font-size: 12px; color: var(--text3); display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+  .agenda-card-desc { font-size: 13px; color: var(--text2); }
+  .agenda-card-actions { display: flex; gap: 6px; margin-top: 10px; }
+  .agenda-status-badge { font-size: 10px; font-weight: 700; border-radius: 20px; padding: 2px 8px; white-space: nowrap; }
+  .agenda-status-badge.pendente { background: #ffb02022; color: var(--amber); border: 1px solid #ffb02044; }
+  .agenda-status-badge.concluido { background: #00c89622; color: var(--green); border: 1px solid #00c89644; }
+  .agenda-status-badge.cancelado { background: #ff4d6a22; color: var(--red); border: 1px solid #ff4d6a44; }
+
+  .agenda-empty { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 14px; }
+  .agenda-empty-icon { font-size: 40px; margin-bottom: 10px; }
+
+  /* Próximas manutenções (lista compacta) */
+  .agenda-proximas { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+  .agenda-proximas-title { font-size: 11px; font-weight: 700; color: var(--text3); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+  .agenda-proxima-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .agenda-proxima-item:last-child { border-bottom: none; }
+  .agenda-proxima-data { font-size: 11px; font-weight: 700; color: var(--text3); min-width: 45px; text-align: center; background: var(--bg4); border-radius: 6px; padding: 3px 6px; }
+  .agenda-proxima-data.atrasado { background: #ff4d6a22; color: var(--red); border: 1px solid #ff4d6a44; }
+  .agenda-proxima-data.hoje { background: #00d4ff22; color: var(--cyan); border: 1px solid #00d4ff44; }
+  .agenda-proxima-nome { flex: 1; font-size: 13px; color: var(--text); font-weight: 600; }
+  .agenda-proxima-urg { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
   /* ======= CONFIRM DELETE ======= */
   .confirm-modal { max-width: 400px; }
   .confirm-icon { font-size: 40px; text-align: center; margin-bottom: 12px; }
@@ -672,9 +744,11 @@ function populateAllMaterialSelects() {
 document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
 
 // Stubs globais — delegam para as funções do módulo quando disponíveis
-function doLogin()    { window.doLogin?.();    }
-function doRegister() { window.doRegister?.(); }
-function showTab(t)   { window.showTab?.(t);   }
+// Bridges para funções do módulo (evita recursão — nomes diferentes dos window.X)
+function doLogin()         { window._modDoLogin?.();        }
+function doRegister()      { window._modDoRegister?.();     }
+function switchTab(t, btn) { window._appSwitchTab?.(t, btn); }
+function showTab(t)        { window._modAuthTab?.(t);       }
 </script>
 
 <!-- AUTH SCREEN -->
@@ -694,11 +768,11 @@ function showTab(t)   { window.showTab?.(t);   }
     <div id="login-form">
       <div class="form-group">
         <label>E-mail</label>
-        <input type="email" id="login-email" placeholder="seu@email.com" />
+        <input type="email" id="login-email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter') doLogin()" />
       </div>
       <div class="form-group">
         <label>Senha</label>
-        <input type="password" id="login-password" placeholder="••••••••" />
+        <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()" />
       </div>
       <button class="btn btn-primary" onclick="doLogin()">ENTRAR</button>
     </div>
@@ -740,6 +814,7 @@ function showTab(t)   { window.showTab?.(t);   }
   <nav class="nav-tabs">
     <button class="nav-tab active" onclick="switchTab('dashboard', this)">📈 Dashboard</button>
     <button class="nav-tab" onclick="switchTab('kanban', this)">📋 Kanban</button>
+    <button class="nav-tab" onclick="switchTab('agenda', this)">📆 Agenda</button>
     <button class="nav-tab" onclick="switchTab('consulta', this)">📅 Consultar por Data</button>
     <button class="nav-tab" onclick="switchTab('estoque', this)">📦 Estoque do Dia</button>
     <button class="nav-tab" onclick="switchTab('ranking', this)">🏆 Ranking</button>
@@ -1179,6 +1254,127 @@ function showTab(t)   { window.showTab?.(t);   }
       </div>
     </div>
 
+    <!-- ===== PAINEL: AGENDA ===== -->
+    <div id="tab-agenda" class="tab-panel">
+      <div class="top-bar">
+        <div class="page-title">📆 Agenda de <span>Manutenção</span></div>
+        <button class="btn btn-primary btn-sm" onclick="abrirModalAgenda()">+ Agendar</button>
+      </div>
+
+      <div class="agenda-layout">
+        <!-- CALENDÁRIO -->
+        <div>
+          <div class="agenda-cal">
+            <div class="agenda-cal-header">
+              <button class="agenda-cal-nav" onclick="agendaMesAnterior()">‹</button>
+              <span class="agenda-cal-title" id="agenda-cal-titulo"></span>
+              <button class="agenda-cal-nav" onclick="agendaMesProximo()">›</button>
+            </div>
+            <div class="agenda-cal-grid" id="agenda-cal-grid"></div>
+            <div class="agenda-legenda">
+              <div class="agenda-leg-item"><div class="agenda-leg-dot" style="background:var(--red)"></div> Alta</div>
+              <div class="agenda-leg-item"><div class="agenda-leg-dot" style="background:var(--amber)"></div> Média</div>
+              <div class="agenda-leg-item"><div class="agenda-leg-dot" style="background:var(--green)"></div> Baixa</div>
+              <div class="agenda-leg-item"><div class="agenda-leg-dot" style="background:var(--amber)"></div> Com evento</div>
+            </div>
+          </div>
+
+          <!-- PRÓXIMAS -->
+          <div class="agenda-proximas" style="margin-top:16px;">
+            <div class="agenda-proximas-title">⏰ Próximas Manutenções</div>
+            <div id="agenda-proximas-list"><div style="color:var(--text3);font-size:13px;">Carregando...</div></div>
+          </div>
+        </div>
+
+        <!-- PAINEL DIREITO -->
+        <div class="agenda-painel">
+          <div class="agenda-painel-header">
+            <div class="agenda-data-title" id="agenda-data-selecionada-label">Selecione uma data</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <select id="agenda-filtro-status" onchange="renderAgendaDia()" style="font-size:12px;padding:5px 10px;">
+                <option value="">Todos</option>
+                <option value="pendente">Pendente</option>
+                <option value="concluido">Concluído</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+              <select id="agenda-filtro-equipe" onchange="renderAgendaDia()" style="font-size:12px;padding:5px 10px;">
+                <option value="">Todas equipes</option>
+                <option>Equipe 01</option>
+                <option>Equipe 02</option>
+              </select>
+            </div>
+          </div>
+          <div id="agenda-dia-lista"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL NOVA MANUTENÇÃO -->
+    <div class="modal-backdrop" id="modal-agenda" style="display:none;">
+      <div class="modal" style="max-width:540px;">
+        <div class="modal-header">
+          <h2 id="modal-agenda-titulo">📆 Agendar Manutenção</h2>
+          <button class="btn-close" onclick="closeModal('modal-agenda')">✕</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="agenda-edit-id" />
+          <div class="form-row">
+            <div class="form-group">
+              <label>Título / Descrição *</label>
+              <input type="text" id="agenda-titulo" placeholder="Ex: Fusão de fibra — Rua das Flores" />
+            </div>
+            <div class="form-group" style="max-width:160px;">
+              <label>Data *</label>
+              <input type="date" id="agenda-data" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Hora</label>
+              <input type="time" id="agenda-hora" />
+            </div>
+            <div class="form-group">
+              <label>Urgência</label>
+              <select id="agenda-urgencia">
+                <option value="media">Média</option>
+                <option value="alta">Alta</option>
+                <option value="baixa">Baixa</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Equipe Responsável</label>
+              <select id="agenda-equipe">
+                <option value="">Sem definir</option>
+                <option>Equipe 01</option>
+                <option>Equipe 02</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Cliente / Local</label>
+            <input type="text" id="agenda-cliente" placeholder="Nome do cliente ou endereço" />
+          </div>
+          <div class="form-group">
+            <label>Observações</label>
+            <textarea id="agenda-obs" rows="3" placeholder="Detalhes adicionais, materiais necessários..." style="width:100%;resize:vertical;"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="agenda-status">
+              <option value="pendente">Pendente</option>
+              <option value="concluido">Concluído</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" id="agenda-btn-excluir" style="display:none;margin-right:auto;" onclick="excluirAgendamento()">🗑 Excluir</button>
+          <button class="btn btn-outline" onclick="closeModal('modal-agenda')">Cancelar</button>
+          <button class="btn btn-primary" onclick="salvarAgendamento()">✅ Salvar</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ===== PAINEL: RELATÓRIO DIÁRIO ===== -->
     <div id="tab-relatorio-diario" class="tab-panel">
       <div class="top-bar">
@@ -1464,44 +1660,68 @@ let currentUser = null;
 let osCounter = 1;
 
 // ===== EXPOSED TO WINDOW =====
-window.doLogin = async () => {
+window._modDoLogin = async () => {
   const email = document.getElementById('login-email').value.trim();
   const password = document.getElementById('login-password').value;
-  clearError();
+  _clearError();
   try {
     await signInWithEmailAndPassword(auth, email, password);
   } catch (e) {
-    showError(translateAuthError(e.code));
+    _showError(_translateAuthError(e.code));
   }
 };
 
-window.doRegister = async () => {
+window._modDoRegister = async () => {
   const name = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
   const password = document.getElementById('reg-password').value;
-  clearError();
-  if (!name) { showError('Informe seu nome.'); return; }
+  _clearError();
+  if (!name) { _showError('Informe seu nome.'); return; }
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: name });
     showToast('Conta criada com sucesso!', 'success');
   } catch (e) {
-    showError(translateAuthError(e.code));
+    _showError(_translateAuthError(e.code));
   }
 };
+
+function _showError(msg) {
+  const el = document.getElementById('auth-error');
+  if (el) { el.textContent = msg; el.style.display = ''; }
+}
+function _clearError() {
+  const el = document.getElementById('auth-error');
+  if (el) el.style.display = 'none';
+}
+function _translateAuthError(code) {
+  const map = {
+    'auth/invalid-email': 'E-mail inválido.',
+    'auth/user-not-found': 'Usuário não encontrado.',
+    'auth/wrong-password': 'Senha incorreta.',
+    'auth/email-already-in-use': 'Este e-mail já está em uso.',
+    'auth/weak-password': 'Senha muito fraca (mínimo 6 caracteres).',
+    'auth/invalid-credential': 'E-mail ou senha incorretos.',
+    'auth/too-many-requests': 'Muitas tentativas. Tente novamente mais tarde.',
+  };
+  return map[code] || 'Erro: ' + code;
+}
 
 window.doLogout = async () => {
   if (unsubscribeOS) unsubscribeOS();
   await signOut(auth);
 };
 
-window.showTab = (tab) => {
+
+window._modAuthTab = (tab) => {
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.auth-tab')[tab === 'login' ? 0 : 1].classList.add('active');
   document.getElementById('login-form').style.display = tab === 'login' ? '' : 'none';
   document.getElementById('register-form').style.display = tab === 'register' ? '' : 'none';
-  clearError();
+  _clearError();
 };
+
+window._modShowTab = window._appSwitchTab;
 
 window.openNewOS = () => {
   currentOSId = null;
@@ -1610,8 +1830,18 @@ window.setSort = (s) => {
 
 window.renderKanban = () => renderKanbanFn();
 
-window.openModal = (id) => document.getElementById(id).classList.add('open');
-window.closeModal = (id) => document.getElementById(id).classList.remove('open');
+window.openModal = (id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'flex';
+  el.classList.add('open');
+};
+window.closeModal = (id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = 'none';
+  el.classList.remove('open');
+};
 
 window.iniciarCurrentOS = async () => {
   if (!currentOSId) return;
@@ -1848,7 +2078,7 @@ window.concluirCurrentOS = () => {
 };
 
 // ===== NAVEGAÇÃO POR ABAS =====
-window.switchTab = (tab, btn) => {
+window._appSwitchTab = (tab, btn) => {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
@@ -1875,6 +2105,8 @@ window.switchTab = (tab, btn) => {
     renderMetaDiaria();
   } else if (tab === 'clientes') {
     renderClientes();
+  } else if (tab === 'agenda') {
+    window._openAgendaInterno();
   } else if (tab === 'relatorio') {
     _initRelatorioMensal();
   }
@@ -1883,19 +2115,19 @@ window.switchTab = (tab, btn) => {
 // Redirecionar funções antigas que abriam modais para abas
 window.openConsultaData = () => {
   const navBtns = document.querySelectorAll('.nav-tab');
-  switchTab('consulta', navBtns[2]);
+  window._appSwitchTab('consulta', navBtns[2]);
 };
 window.openEstoque = () => {
   const navBtns = document.querySelectorAll('.nav-tab');
-  switchTab('estoque', navBtns[3]);
+  window._appSwitchTab('estoque', navBtns[3]);
 };
 window.openRanking = () => {
   const navBtns = document.querySelectorAll('.nav-tab');
-  switchTab('ranking', navBtns[4]);
+  window._appSwitchTab('ranking', navBtns[4]);
 };
 window.openRelatorioMensal = () => {
   const navBtns = document.querySelectorAll('.nav-tab');
-  switchTab('relatorio', navBtns[5]);
+  window._appSwitchTab('relatorio', navBtns[5]);
 };
 
 
@@ -1971,7 +2203,7 @@ window.filtrarConsulta = () => {
   }).join('');
 };
 
-window.gerarRelatorioDia = (equipeFiltro = '') => {
+window.gerarRelatorioDia = async (equipeFiltro = '') => {
   const hoje = new Date();
   const hojeStr = hoje.toLocaleDateString('pt-BR');
   const hojeISO = hoje.toISOString().split('T')[0];
@@ -2033,6 +2265,90 @@ window.gerarRelatorioDia = (equipeFiltro = '') => {
       </div>`;
   }).join('');
 
+  // ===== ESTOQUE DO DIA =====
+  // Carrega estoque das equipes para incluir no relatório
+  const carregarEstoqueRelatorio = async (equipes) => {
+    const hojeISO2 = hoje.toISOString().split('T')[0];
+    const result = {};
+    for (const eq of equipes) {
+      const slug = eq.replace(' ', '_');
+      const docId = `estoque_${slug}_${hojeISO2}`;
+      try {
+        const snap = await getDoc(doc(db, 'estoque', docId));
+        result[eq] = snap.exists() ? (snap.data().itens || {}) : {};
+      } catch(e) { result[eq] = {}; }
+    }
+    return result;
+  };
+
+  const equipesFiltro = equipeFiltro ? [equipeFiltro] : ['Equipe 01', 'Equipe 02'];
+  const estoqueRelatorio = await carregarEstoqueRelatorio(equipesFiltro);
+
+  const renderEstoqueSecao = (eq, itens) => {
+    const ids = Object.keys(itens);
+    if (ids.length === 0) return `<tr><td colspan="5" style="padding:8px 10px;color:#888;text-align:center;">Sem itens registrados</td></tr>`;
+    // Calcula usado nas OS concluídas da equipe hoje
+    const matUsadoMap = {};
+    concluidasDia.filter(o => o.responsavel === eq).forEach(os => {
+      (os.materiais||[]).forEach(m => {
+        matUsadoMap[m.tipo] = (matUsadoMap[m.tipo]||0) + parseFloat(m.qty||0);
+      });
+    });
+    return ids.map(id => {
+      const it = itens[id];
+      const usadoOS = matUsadoMap[it.tipo] || 0;
+      const ajuste = it.ajuste || 0;
+      const saldo = it.inicial - usadoOS + ajuste;
+      const saldoCor = saldo <= 0 ? '#cc0000' : saldo <= 2 ? '#cc8800' : '#009970';
+      const alerta = saldo <= 0 ? '⚠ ZERADO' : saldo <= 2 ? '⚡ Baixo' : '';
+      return `<tr>
+        <td style="padding:7px 10px;border-bottom:1px solid #eee;font-weight:600;">${it.tipo||'—'}</td>
+        <td style="padding:7px 10px;border-bottom:1px solid #eee;text-align:center;">${it.unidade||'un'}</td>
+        <td style="padding:7px 10px;border-bottom:1px solid #eee;text-align:center;">${it.inicial}</td>
+        <td style="padding:7px 10px;border-bottom:1px solid #eee;text-align:center;color:#cc8800;">${usadoOS > 0 ? '-'+usadoOS : '0'}</td>
+        <td style="padding:7px 10px;border-bottom:1px solid #eee;text-align:center;font-weight:800;color:${saldoCor};">${saldo} ${alerta}</td>
+      </tr>`;
+    }).join('');
+  };
+
+  const secoesEstoque = equipesFiltro.map(eq => {
+    const itens = estoqueRelatorio[eq] || {};
+    const totalItens = Object.keys(itens).length;
+    const matUsadoMap = {};
+    concluidasDia.filter(o => o.responsavel === eq).forEach(os => {
+      (os.materiais||[]).forEach(m => {
+        matUsadoMap[m.tipo] = (matUsadoMap[m.tipo]||0) + parseFloat(m.qty||0);
+      });
+    });
+    const itensZerados = Object.values(itens).filter(it => {
+      const u = matUsadoMap[it.tipo]||0;
+      return (it.inicial - u + (it.ajuste||0)) <= 0;
+    }).length;
+    const itensBaixos = Object.values(itens).filter(it => {
+      const u = matUsadoMap[it.tipo]||0;
+      const s = it.inicial - u + (it.ajuste||0);
+      return s > 0 && s <= 2;
+    }).length;
+    return `
+      <div style="margin-top:20px;">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px;flex-wrap:wrap;">
+          <div style="font-size:13px;font-weight:700;color:#00a8cc;">📦 ${eq}</div>
+          ${itensZerados > 0 ? `<span style="font-size:11px;font-weight:700;background:#ffeef0;color:#cc0000;border-radius:4px;padding:2px 8px;">⚠ ${itensZerados} zerado(s)</span>` : ''}
+          ${itensBaixos > 0 ? `<span style="font-size:11px;font-weight:700;background:#fff8e6;color:#cc8800;border-radius:4px;padding:2px 8px;">⚡ ${itensBaixos} baixo(s)</span>` : ''}
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead><tr>
+            <th style="background:#00a8cc;color:#fff;padding:8px 10px;text-align:left;">Material</th>
+            <th style="background:#00a8cc;color:#fff;padding:8px 10px;text-align:center;">Un</th>
+            <th style="background:#00a8cc;color:#fff;padding:8px 10px;text-align:center;">Inicial</th>
+            <th style="background:#00a8cc;color:#fff;padding:8px 10px;text-align:center;">Usado</th>
+            <th style="background:#00a8cc;color:#fff;padding:8px 10px;text-align:center;">Saldo</th>
+          </tr></thead>
+          <tbody>${renderEstoqueSecao(eq, itens)}</tbody>
+        </table>
+      </div>`;
+  }).join('');
+
   const tituloEquipe = equipeFiltro ? ` — ${equipeFiltro}` : ' — Todas as Equipes';
 
   const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
@@ -2074,7 +2390,9 @@ window.gerarRelatorioDia = (equipeFiltro = '') => {
   <div class="section-title">✅ Concluídas Hoje (${concluidasDia.length})</div>
   <table><thead><tr><th>Número</th><th>Cliente</th><th>Serviço</th><th>Status</th><th>Equipe</th><th>Materiais</th><th>Tempo</th></tr></thead>
   <tbody>${renderOS(concluidasDia)}</tbody></table>
-  ${secoesPorEquipe ? `<div class="section-title">🔧 Materiais por Equipe</div>${secoesPorEquipe}` : ''}
+  ${secoesPorEquipe ? `<div class="section-title">🔧 Materiais Usados por Equipe</div>${secoesPorEquipe}` : ''}
+  <div class="section-title">📦 Estoque do Dia — Saldo Final</div>
+  ${secoesEstoque}
   <div class="footer">OS 2.0 — Relatório gerado automaticamente em ${new Date().toLocaleString('pt-BR')}</div>
   <script>window.onload = () => window.print();<\/script>
   </body></html>`;
@@ -2841,7 +3159,7 @@ window.abrirModalExtrato = () => {
   document.getElementById('extrato-input').value = '';
   document.getElementById('extrato-preview').style.display = 'none';
   document.getElementById('extrato-preview-list').innerHTML = '';
-  document.getElementById('modal-extrato').style.display = 'flex';
+  openModal('modal-extrato');
 };
 
 window.previewExtrato = () => {
@@ -3419,6 +3737,302 @@ function renderMetaDiaria() {
   });
 }
 
+// ===== AGENDA DE MANUTENÇÃO =====
+let agendaAnoAtual = new Date().getFullYear();
+let agendaMesAtual = new Date().getMonth();
+let agendaDataSelecionada = new Date().toISOString().split('T')[0];
+let agendaItens = []; // cache local
+
+const MESES_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const DIAS_PT  = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+// Listener em tempo real para agendamentos
+let agendaUnsubscribe = null;
+function iniciarAgendaListener() {
+  if (agendaUnsubscribe) agendaUnsubscribe();
+  agendaUnsubscribe = onSnapshot(collection(db, 'agenda'), snap => {
+    agendaItens = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAgendaCalendario();
+    renderAgendaDia();
+    renderAgendaProximas();
+  });
+}
+
+window._openAgendaInterno = () => {
+  iniciarAgendaListener();
+  // pré-seleciona hoje
+  const hoje = new Date();
+  agendaAnoAtual  = hoje.getFullYear();
+  agendaMesAtual  = hoje.getMonth();
+  agendaDataSelecionada = hoje.toISOString().split('T')[0];
+  renderAgendaCalendario();
+  renderAgendaDia();
+  renderAgendaProximas();
+};
+
+window.agendaMesAnterior = () => {
+  agendaMesAtual--;
+  if (agendaMesAtual < 0) { agendaMesAtual = 11; agendaAnoAtual--; }
+  renderAgendaCalendario();
+};
+window.agendaMesProximo = () => {
+  agendaMesAtual++;
+  if (agendaMesAtual > 11) { agendaMesAtual = 0; agendaAnoAtual++; }
+  renderAgendaCalendario();
+};
+
+window.agendaClicarDia = (dateStr, outroMes) => {
+  if (outroMes) return;
+  agendaDataSelecionada = dateStr;
+  renderAgendaCalendario();
+  renderAgendaDia();
+};
+
+function renderAgendaCalendario() {
+  const tituloEl = document.getElementById('agenda-cal-titulo');
+  const gridEl   = document.getElementById('agenda-cal-grid');
+  if (!tituloEl || !gridEl) return;
+
+  tituloEl.textContent = `${MESES_PT[agendaMesAtual]} ${agendaAnoAtual}`;
+
+  const hoje = new Date().toISOString().split('T')[0];
+  // Dias com eventos
+  const diasComEvento = new Set(agendaItens.map(i => i.data));
+
+  // Cabeçalho dias da semana
+  let html = DIAS_PT.map(d => `<div class="agenda-cal-dow">${d}</div>`).join('');
+
+  // Primeiro dia do mês
+  const primeiroDia = new Date(agendaAnoAtual, agendaMesAtual, 1).getDay();
+  // Total de dias no mês
+  const totalDias = new Date(agendaAnoAtual, agendaMesAtual + 1, 0).getDate();
+  // Dias do mês anterior para preencher
+  const diasMesAnterior = new Date(agendaAnoAtual, agendaMesAtual, 0).getDate();
+
+  // Células do mês anterior
+  for (let i = primeiroDia - 1; i >= 0; i--) {
+    const d = diasMesAnterior - i;
+    const m = agendaMesAtual === 0 ? 11 : agendaMesAtual - 1;
+    const a = agendaMesAtual === 0 ? agendaAnoAtual - 1 : agendaAnoAtual;
+    const ds = `${a}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    html += `<div class="agenda-cal-day outro-mes${diasComEvento.has(ds)?' tem-evento':''}" onclick="agendaClicarDia('${ds}',true)">${d}</div>`;
+  }
+
+  // Células do mês atual
+  for (let d = 1; d <= totalDias; d++) {
+    const ds = `${agendaAnoAtual}-${String(agendaMesAtual+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isHoje = ds === hoje;
+    const isSel  = ds === agendaDataSelecionada;
+    const temEvento = diasComEvento.has(ds);
+    let cls = 'agenda-cal-day';
+    if (isHoje) cls += ' hoje';
+    if (isSel)  cls += ' selecionado';
+    if (temEvento) cls += ' tem-evento';
+    html += `<div class="${cls}" onclick="agendaClicarDia('${ds}',false)">${d}</div>`;
+  }
+
+  // Completar última linha
+  const totalCelulas = primeiroDia + totalDias;
+  const resto = totalCelulas % 7 === 0 ? 0 : 7 - (totalCelulas % 7);
+  for (let d = 1; d <= resto; d++) {
+    const m = agendaMesAtual === 11 ? 0 : agendaMesAtual + 1;
+    const a = agendaMesAtual === 11 ? agendaAnoAtual + 1 : agendaAnoAtual;
+    const ds = `${a}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    html += `<div class="agenda-cal-day outro-mes${diasComEvento.has(ds)?' tem-evento':''}" onclick="agendaClicarDia('${ds}',true)">${d}</div>`;
+  }
+
+  gridEl.innerHTML = html;
+}
+
+function renderAgendaDia() {
+  const label = document.getElementById('agenda-data-selecionada-label');
+  const lista = document.getElementById('agenda-dia-lista');
+  if (!label || !lista) return;
+
+  const [ano, mes, dia] = agendaDataSelecionada.split('-').map(Number);
+  const dataObj = new Date(ano, mes - 1, dia);
+  const opts = { weekday:'long', day:'2-digit', month:'long', year:'numeric' };
+  label.textContent = dataObj.toLocaleDateString('pt-BR', opts);
+
+  const filtroStatus = document.getElementById('agenda-filtro-status')?.value || '';
+  const filtroEquipe = document.getElementById('agenda-filtro-equipe')?.value || '';
+
+  let itens = agendaItens.filter(i => i.data === agendaDataSelecionada);
+  if (filtroStatus) itens = itens.filter(i => i.status === filtroStatus);
+  if (filtroEquipe) itens = itens.filter(i => i.equipe === filtroEquipe);
+
+  // Ordena por hora, depois por urgência
+  const urgOrd = { alta: 0, media: 1, baixa: 2 };
+  itens.sort((a, b) => {
+    if (a.hora && b.hora) return a.hora.localeCompare(b.hora);
+    return (urgOrd[a.urgencia]||1) - (urgOrd[b.urgencia]||1);
+  });
+
+  if (itens.length === 0) {
+    lista.innerHTML = `<div class="agenda-empty">
+      <div class="agenda-empty-icon">📅</div>
+      <div>Nenhuma manutenção para este dia.</div>
+      <button class="btn btn-outline btn-sm" style="margin-top:12px;" onclick="abrirModalAgenda()">+ Agendar nesta data</button>
+    </div>`;
+    return;
+  }
+
+  lista.innerHTML = itens.map(item => {
+    const urgLabel = { alta:'Alta', media:'Média', baixa:'Baixa' }[item.urgencia] || 'Média';
+    const statusLabel = { pendente:'Pendente', concluido:'Concluído', cancelado:'Cancelado' }[item.status] || 'Pendente';
+    return `<div class="agenda-card">
+      <div class="agenda-card-urgencia ${item.urgencia || 'media'}"></div>
+      <div class="agenda-card-body">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+          <div class="agenda-card-titulo">${esc(item.titulo)}</div>
+          <span class="agenda-status-badge ${item.status || 'pendente'}">${statusLabel}</span>
+        </div>
+        <div class="agenda-card-info">
+          ${item.hora ? `<span>🕐 ${esc(item.hora)}</span>` : ''}
+          ${item.equipe ? `<span>👷 ${esc(item.equipe)}</span>` : ''}
+          ${item.cliente ? `<span>📍 ${esc(item.cliente)}</span>` : ''}
+          <span>⚡ ${urgLabel}</span>
+        </div>
+        ${item.obs ? `<div class="agenda-card-desc">${esc(item.obs)}</div>` : ''}
+        <div class="agenda-card-actions">
+          <button class="btn btn-outline btn-sm" onclick="editarAgendamento('${item.id}')">✏ Editar</button>
+          ${item.status !== 'concluido'
+            ? `<button class="btn btn-outline btn-sm" style="color:var(--green);border-color:var(--green);" onclick="marcarAgendaConcluido('${item.id}')">✅ Concluir</button>`
+            : ''}
+          ${item.status !== 'cancelado'
+            ? `<button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red);" onclick="marcarAgendaCancelado('${item.id}')">✕ Cancelar</button>`
+            : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAgendaProximas() {
+  const lista = document.getElementById('agenda-proximas-list');
+  if (!lista) return;
+  const hoje = new Date().toISOString().split('T')[0];
+  const proximas = agendaItens
+    .filter(i => i.status === 'pendente' && i.data >= hoje)
+    .sort((a, b) => a.data.localeCompare(b.data) || (a.hora||'').localeCompare(b.hora||''))
+    .slice(0, 8);
+
+  if (proximas.length === 0) {
+    lista.innerHTML = '<div style="color:var(--text3);font-size:13px;padding:8px 0;">Nenhuma manutenção pendente.</div>';
+    return;
+  }
+
+  lista.innerHTML = proximas.map(item => {
+    const [ano, mes, dia] = item.data.split('-').map(Number);
+    const dataLabel = `${String(dia).padStart(2,'0')}/${String(mes).padStart(2,'0')}`;
+    const isHoje = item.data === hoje;
+    const isAtrasado = item.data < hoje;
+    const dataCls = isAtrasado ? 'atrasado' : isHoje ? 'hoje' : '';
+    const urgColor = { alta: 'var(--red)', media: 'var(--amber)', baixa: 'var(--green)' }[item.urgencia] || 'var(--amber)';
+    return `<div class="agenda-proxima-item" onclick="agendaClicarDia('${item.data}',false)" style="cursor:pointer;">
+      <span class="agenda-proxima-data ${dataCls}">${dataLabel}</span>
+      <span class="agenda-proxima-nome">${esc(item.titulo)}</span>
+      ${item.equipe ? `<span style="font-size:11px;color:var(--text3);">${esc(item.equipe)}</span>` : ''}
+      <div class="agenda-proxima-urg" style="background:${urgColor};"></div>
+    </div>`;
+  }).join('');
+}
+
+// ===== MODAL AGENDAR =====
+window.abrirModalAgenda = () => {
+  document.getElementById('agenda-edit-id').value = '';
+  document.getElementById('modal-agenda-titulo').textContent = '📆 Agendar Manutenção';
+  document.getElementById('agenda-titulo').value = '';
+  document.getElementById('agenda-data').value = agendaDataSelecionada;
+  document.getElementById('agenda-hora').value = '';
+  document.getElementById('agenda-urgencia').value = 'media';
+  document.getElementById('agenda-equipe').value = '';
+  document.getElementById('agenda-cliente').value = '';
+  document.getElementById('agenda-obs').value = '';
+  document.getElementById('agenda-status').value = 'pendente';
+  document.getElementById('agenda-btn-excluir').style.display = 'none';
+  openModal('modal-agenda');
+};
+
+window.editarAgendamento = (id) => {
+  const item = agendaItens.find(i => i.id === id);
+  if (!item) return;
+  document.getElementById('agenda-edit-id').value = id;
+  document.getElementById('modal-agenda-titulo').textContent = '✏ Editar Agendamento';
+  document.getElementById('agenda-titulo').value = item.titulo || '';
+  document.getElementById('agenda-data').value = item.data || '';
+  document.getElementById('agenda-hora').value = item.hora || '';
+  document.getElementById('agenda-urgencia').value = item.urgencia || 'media';
+  document.getElementById('agenda-equipe').value = item.equipe || '';
+  document.getElementById('agenda-cliente').value = item.cliente || '';
+  document.getElementById('agenda-obs').value = item.obs || '';
+  document.getElementById('agenda-status').value = item.status || 'pendente';
+  document.getElementById('agenda-btn-excluir').style.display = '';
+  openModal('modal-agenda');
+};
+
+window.salvarAgendamento = async () => {
+  const titulo = document.getElementById('agenda-titulo').value.trim();
+  const data   = document.getElementById('agenda-data').value;
+  if (!titulo) { showToast('Informe o título.', 'error'); return; }
+  if (!data)   { showToast('Informe a data.', 'error'); return; }
+
+  const payload = {
+    titulo,
+    data,
+    hora:      document.getElementById('agenda-hora').value || '',
+    urgencia:  document.getElementById('agenda-urgencia').value,
+    equipe:    document.getElementById('agenda-equipe').value,
+    cliente:   document.getElementById('agenda-cliente').value.trim(),
+    obs:       document.getElementById('agenda-obs').value.trim(),
+    status:    document.getElementById('agenda-status').value,
+    userId:    currentUser.uid,
+    updatedAt: serverTimestamp(),
+  };
+
+  const editId = document.getElementById('agenda-edit-id').value;
+  try {
+    if (editId) {
+      await updateDoc(doc(db, 'agenda', editId), payload);
+      showToast('Agendamento atualizado!', 'success');
+    } else {
+      payload.createdAt = serverTimestamp();
+      await addDoc(collection(db, 'agenda'), payload);
+      showToast('Manutenção agendada!', 'success');
+    }
+    // Navega para a data salva
+    const [ano, mes] = data.split('-').map(Number);
+    agendaAnoAtual = ano; agendaMesAtual = mes - 1;
+    agendaDataSelecionada = data;
+    closeModal('modal-agenda');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+};
+
+window.excluirAgendamento = async () => {
+  const id = document.getElementById('agenda-edit-id').value;
+  if (!id) return;
+  if (!confirm('Excluir este agendamento?')) return;
+  try {
+    await deleteDoc(doc(db, 'agenda', id));
+    showToast('Agendamento excluído.', 'success');
+    closeModal('modal-agenda');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+};
+
+window.marcarAgendaConcluido = async (id) => {
+  try {
+    await updateDoc(doc(db, 'agenda', id), { status: 'concluido', updatedAt: serverTimestamp() });
+    showToast('Marcado como concluído!', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+};
+
+window.marcarAgendaCancelado = async (id) => {
+  try {
+    await updateDoc(doc(db, 'agenda', id), { status: 'cancelado', updatedAt: serverTimestamp() });
+    showToast('Marcado como cancelado.', 'success');
+  } catch(e) { showToast('Erro: ' + e.message, 'error'); }
+};
+
 // ===== CLIENTES (MELHORADO) =====
 let cliSortAtual = 'recorrencia';
 
@@ -3925,14 +4539,18 @@ function showToast(msg, type = 'success') {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+</script>
+
+<script>
+/* Auth helpers (escopo global para acesso do módulo via window) */
 function showError(msg) {
   const el = document.getElementById('auth-error');
-  el.textContent = msg; el.style.display = '';
+  if (el) { el.textContent = msg; el.style.display = ''; }
 }
 function clearError() {
-  document.getElementById('auth-error').style.display = 'none';
+  const el = document.getElementById('auth-error');
+  if (el) el.style.display = 'none';
 }
-
 function translateAuthError(code) {
   const map = {
     'auth/invalid-email': 'E-mail inválido.',
@@ -3948,7 +4566,12 @@ function translateAuthError(code) {
 
 // Close modal on backdrop click
 document.querySelectorAll('.modal-backdrop').forEach(el => {
-  el.addEventListener('click', (e) => { if (e.target === el) el.classList.remove('open'); });
+  el.addEventListener('click', (e) => {
+    if (e.target === el) {
+      el.style.display = 'none';
+      el.classList.remove('open');
+    }
+  });
 });
 
 // ===== PWA SERVICE WORKER =====
