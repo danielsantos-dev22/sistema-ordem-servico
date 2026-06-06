@@ -829,6 +829,7 @@ function showTab(t)        { window._modAuthTab?.(t);       }
 
     <!-- ===== PAINEL: DASHBOARD ===== -->
     <div id="tab-dashboard" class="tab-panel active">
+      <!-- HEADER -->
       <div class="dash-period-bar">
         <div class="page-title" style="font-size:20px;">Dashboard <span>Geral</span></div>
         <div class="dash-period-pills">
@@ -839,7 +840,7 @@ function showTab(t)        { window._modAuthTab?.(t);       }
         </div>
       </div>
 
-      <!-- METRIC CARDS -->
+      <!-- ROW 1: METRIC CARDS -->
       <div class="dash-metric-grid">
         <div class="dash-metric-card">
           <div class="dash-metric-top">
@@ -854,17 +855,6 @@ function showTab(t)        { window._modAuthTab?.(t);       }
         </div>
         <div class="dash-metric-card">
           <div class="dash-metric-top">
-            <div class="dash-metric-icon andamento">🔄</div>
-            <div>
-              <div class="dash-metric-label">Em Andamento</div>
-              <div class="dash-metric-val andamento" id="dm-andamento">0</div>
-            </div>
-          </div>
-          <svg class="dash-sparkline" id="spark-andamento" viewBox="0 0 160 48" preserveAspectRatio="none"></svg>
-          <div class="dash-metric-delta neutral" id="dm-andamento-delta">— sem dados anteriores</div>
-        </div>
-        <div class="dash-metric-card">
-          <div class="dash-metric-top">
             <div class="dash-metric-icon concluido">✅</div>
             <div>
               <div class="dash-metric-label">Concluídas</div>
@@ -873,6 +863,17 @@ function showTab(t)        { window._modAuthTab?.(t);       }
           </div>
           <svg class="dash-sparkline" id="spark-concluido" viewBox="0 0 160 48" preserveAspectRatio="none"></svg>
           <div class="dash-metric-delta neutral" id="dm-concluido-delta">— sem dados anteriores</div>
+        </div>
+        <div class="dash-metric-card">
+          <div class="dash-metric-top">
+            <div class="dash-metric-icon andamento">⏱</div>
+            <div>
+              <div class="dash-metric-label">Tempo Médio</div>
+              <div class="dash-metric-val andamento" id="dm-tempo-medio">—</div>
+            </div>
+          </div>
+          <svg class="dash-sparkline" id="spark-andamento" viewBox="0 0 160 48" preserveAspectRatio="none"></svg>
+          <div class="dash-metric-delta neutral" id="dm-andamento-delta">tempo médio de atendimento</div>
         </div>
         <div class="dash-metric-card">
           <div class="dash-metric-top">
@@ -887,28 +888,62 @@ function showTab(t)        { window._modAuthTab?.(t);       }
         </div>
       </div>
 
-      <!-- CHARTS ROW -->
-      <div class="dash-row-3">
-
-        <!-- Line chart: O.S. por dia -->
+      <!-- ROW 2: GRÁFICO LINHA + EQUIPES -->
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:16px;margin-bottom:20px;">
         <div class="dash-panel">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div class="dash-panel-title" style="margin-bottom:0;">Ordens de Serviço por dia</div>
+            <div class="dash-panel-title" style="margin-bottom:0;">O.S. por dia</div>
             <div style="display:flex;gap:12px;font-size:12px;color:var(--text3);">
               <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:3px;background:var(--cyan);display:inline-block;border-radius:2px;"></span>Abertas</span>
               <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:3px;background:var(--green);display:inline-block;border-radius:2px;"></span>Concluídas</span>
             </div>
           </div>
-          <div class="chart-canvas-wrap">
-            <canvas id="dash-line-chart" role="img" aria-label="Gráfico de O.S. abertas e concluídas por dia">Nenhum dado disponível.</canvas>
+          <div class="chart-canvas-wrap"><canvas id="dash-line-chart"></canvas></div>
+        </div>
+        <!-- Equipes side by side -->
+        <div class="dash-panel" style="display:flex;flex-direction:column;gap:0;">
+          <div class="dash-panel-title">O.S. por equipe</div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;" id="dash-equipes-wrap">
+            <div style="color:var(--text3);font-size:13px;text-align:center;">Carregando...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 3: RANKING + MATERIAIS + ATIVIDADES -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
+
+        <!-- Ranking técnicos -->
+        <div class="dash-panel">
+          <div class="dash-panel-title">🏆 Ranking de Técnicos</div>
+          <div id="dash-ranking" style="display:flex;flex-direction:column;gap:10px;">
+            <div style="color:var(--text3);font-size:13px;">Carregando...</div>
           </div>
         </div>
 
-        <!-- Donut: prioridades -->
+        <!-- Materiais mais usados -->
+        <div class="dash-panel">
+          <div class="dash-panel-title">🔧 Materiais Mais Usados</div>
+          <div id="dash-materiais" style="display:flex;flex-direction:column;gap:8px;">
+            <div style="color:var(--text3);font-size:13px;">Carregando...</div>
+          </div>
+        </div>
+
+        <!-- Atividades recentes -->
+        <div class="dash-panel" style="display:flex;flex-direction:column;">
+          <div class="dash-panel-title">⚡ Atividades Recentes</div>
+          <div class="activity-feed" id="activity-feed">
+            <div class="empty" style="padding:20px 0;">Carregando...</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ROW 4: DONUT PRIORIDADE + SERVIÇOS -->
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:16px;margin-bottom:20px;">
         <div class="dash-panel" style="display:flex;flex-direction:column;">
           <div class="dash-panel-title">Por prioridade</div>
           <div class="donut-wrap">
-            <canvas id="dash-donut-chart" width="150" height="150" role="img" aria-label="Distribuição por prioridade">Nenhum dado.</canvas>
+            <canvas id="dash-donut-chart" width="150" height="150"></canvas>
             <div class="donut-center">
               <div class="donut-center-val" id="donut-total">0</div>
               <div class="donut-center-lbl">Total</div>
@@ -916,18 +951,13 @@ function showTab(t)        { window._modAuthTab?.(t);       }
           </div>
           <div class="donut-legend" id="donut-legend"></div>
         </div>
-
-        <!-- Activity feed -->
-        <div class="dash-panel" style="display:flex;flex-direction:column;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div class="dash-panel-title" style="margin-bottom:0;">Atividades recentes</div>
-          </div>
-          <div class="activity-feed" id="activity-feed">
-            <div class="empty" style="padding:20px 0;">Carregando...</div>
-          </div>
+        <!-- Gráfico barras por tipo de serviço -->
+        <div class="dash-panel">
+          <div class="dash-panel-title">O.S. por tipo de serviço</div>
+          <div class="chart-canvas-wrap"><canvas id="dash-bar-chart"></canvas></div>
         </div>
-
       </div>
+
     </div>
 
     <!-- ===== PAINEL: KANBAN ===== -->
@@ -3288,50 +3318,118 @@ function renderRanking() {
   const tecMap = {};
   lista.forEach(os => {
     const nome = os.responsavel || 'Sem responsável';
-    if (!tecMap[nome]) tecMap[nome] = { total: 0, concluidas: 0, tempos: [] };
+    if (!tecMap[nome]) tecMap[nome] = { total: 0, concluidas: 0, aguardando: 0, andamento: 0, tempos: [], servicos: {} };
     tecMap[nome].total++;
     if (os.status === 'concluido') {
       tecMap[nome].concluidas++;
       if (os.tempoAtendimentoMin != null) tecMap[nome].tempos.push(os.tempoAtendimentoMin);
     }
+    if (os.status === 'aguardando') tecMap[nome].aguardando++;
+    if (os.status === 'andamento')  tecMap[nome].andamento++;
+    if (os.servico) tecMap[nome].servicos[os.servico] = (tecMap[nome].servicos[os.servico]||0)+1;
   });
 
   const ranking = Object.entries(tecMap)
     .map(([nome, d]) => ({
-      nome,
-      ...d,
-      tempoMedio: d.tempos.length ? Math.round(d.tempos.reduce((a,b) => a+b, 0) / d.tempos.length) : null
+      nome, ...d,
+      tempoMedio: d.tempos.length ? Math.round(d.tempos.reduce((a,b)=>a+b,0)/d.tempos.length) : null,
+      resolucao: d.total > 0 ? Math.round(d.concluidas / d.total * 100) : 0,
+      topServico: Object.entries(d.servicos).sort((a,b)=>b[1]-a[1])[0]?.[0] || '—',
     }))
     .sort((a, b) => b.concluidas - a.concluidas || b.total - a.total);
 
   const maxConcluidas = ranking[0]?.concluidas || 1;
-  const posEmoji = ['🥇','🥈','🥉'];
-  const posCls = ['first','second','third'];
-
   const container = document.getElementById('ranking-list');
   if (ranking.length === 0) {
     container.innerHTML = '<div class="consulta-empty">Nenhuma O.S. encontrada neste período.</div>';
     return;
   }
 
-  container.innerHTML = ranking.map((t, i) => {
-    const barW = maxConcluidas > 0 ? Math.round((t.concluidas / maxConcluidas) * 100) : 0;
-    const pos = i < 3 ? posEmoji[i] : `${i+1}º`;
-    const posCl = i < 3 ? posCls[i] : '';
-    const tempoStr = t.tempoMedio != null ? formatTempo(t.tempoMedio) : '—';
-    return `<div class="ranking-row">
-      <div class="ranking-pos ${posCl}">${pos}</div>
-      <div style="flex:1;">
-        <div class="ranking-nome">${esc(t.nome)}</div>
-        <div class="ranking-bar-wrap"><div class="ranking-bar" style="width:${barW}%"></div></div>
-      </div>
-      <div class="ranking-stats">
-        <div class="ranking-num"><span class="ranking-num-val" style="color:var(--text)">${t.total}</span><span class="ranking-num-lbl">Total</span></div>
-        <div class="ranking-num"><span class="ranking-num-val" style="color:var(--green)">${t.concluidas}</span><span class="ranking-num-lbl">Concluídas</span></div>
-        <div class="ranking-num"><span class="ranking-num-val" style="color:var(--cyan);font-size:13px;">${tempoStr}</span><span class="ranking-num-lbl">Tempo Médio</span></div>
-      </div>
+  // Pódio (top 3) + lista
+  const top3 = ranking.slice(0, 3);
+  const resto = ranking.slice(3);
+
+  const podioColors = [
+    { bg:'linear-gradient(135deg,#ffb02022,#ff980022)', border:'#ffb02066', txt:'var(--amber)', medal:'🥇', size:'72px', order:1 },
+    { bg:'linear-gradient(135deg,#ffffff18,#ffffff08)', border:'#ffffff33', txt:'var(--text2)', medal:'🥈', size:'60px', order:0 },
+    { bg:'linear-gradient(135deg,#cd7f3222,#cd7f3210)', border:'#cd7f3255', txt:'#cd7f32',     medal:'🥉', size:'56px', order:2 },
+  ];
+
+  // Reordena pódio: 2º, 1º, 3º
+  const podioOrder = [1, 0, 2].map(i => top3[i]).filter(Boolean);
+
+  const podioHtml = `
+    <div style="display:flex;align-items:flex-end;justify-content:center;gap:12px;margin-bottom:28px;padding:20px 0 0;">
+      ${podioOrder.map((t, vi) => {
+        const ri = [1,0,2][vi]; // índice real no ranking
+        const cfg = podioColors[ri];
+        const initials = t.nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+        const tempoStr = t.tempoMedio != null ? formatTempo(t.tempoMedio) : '—';
+        const heights = ['140px','160px','120px'];
+        return `<div style="display:flex;flex-direction:column;align-items:center;gap:0;width:160px;">
+          <!-- Avatar + medalha -->
+          <div style="position:relative;margin-bottom:8px;">
+            <div style="width:${cfg.size};height:${cfg.size};border-radius:50%;background:${cfg.bg};border:2px solid ${cfg.border};display:flex;align-items:center;justify-content:center;font-size:${ri===0?'24px':'20px'};font-weight:700;color:${cfg.txt};">${initials}</div>
+            <div style="position:absolute;bottom:-4px;right:-4px;font-size:20px;line-height:1;">${cfg.medal}</div>
+          </div>
+          <!-- Nome -->
+          <div style="font-size:${ri===0?'14px':'13px'};font-weight:700;color:var(--text);text-align:center;margin-bottom:2px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.nome)}</div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">${esc(t.topServico)}</div>
+          <!-- Plataforma do pódio -->
+          <div style="width:100%;height:${heights[vi]};background:${cfg.bg};border:1px solid ${cfg.border};border-radius:10px 10px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:10px;">
+            <div style="text-align:center;">
+              <div style="font-size:28px;font-weight:700;font-family:var(--font2);color:${cfg.txt};">${t.concluidas}</div>
+              <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">Concluídas</div>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <div style="text-align:center;">
+                <div style="font-size:13px;font-weight:700;color:var(--text);">${t.total}</div>
+                <div style="font-size:9px;color:var(--text3);text-transform:uppercase;">Total</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:13px;font-weight:700;color:var(--cyan);">${tempoStr}</div>
+                <div style="font-size:9px;color:var(--text3);text-transform:uppercase;">T. Médio</div>
+              </div>
+            </div>
+            <!-- Barra de resolução -->
+            <div style="width:90%;height:4px;background:#ffffff15;border-radius:2px;overflow:hidden;">
+              <div style="height:4px;width:${t.resolucao}%;background:${cfg.txt};border-radius:2px;"></div>
+            </div>
+            <div style="font-size:10px;color:var(--text3);">${t.resolucao}% resolução</div>
+          </div>
+        </div>`;
+      }).join('')}
     </div>`;
-  }).join('');
+
+  // Lista dos demais
+  const listaHtml = resto.length > 0 ? `
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Demais posições</div>
+      ${resto.map((t, i) => {
+        const pos = i + 4;
+        const barW = Math.round(t.concluidas / maxConcluidas * 100);
+        const tempoStr = t.tempoMedio != null ? formatTempo(t.tempoMedio) : '—';
+        const initials = t.nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+        return `<div class="ranking-row">
+          <div style="width:24px;text-align:center;font-size:13px;font-weight:700;color:var(--text3);flex-shrink:0;">${pos}º</div>
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--bg4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text2);flex-shrink:0;">${initials}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">${esc(t.nome)}</div>
+            <div style="height:4px;background:var(--bg4);border-radius:2px;overflow:hidden;">
+              <div style="height:4px;width:${barW}%;background:var(--cyan);border-radius:2px;"></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;flex-shrink:0;">
+            <div class="ranking-num"><span class="ranking-num-val" style="color:var(--text)">${t.total}</span><span class="ranking-num-lbl">Total</span></div>
+            <div class="ranking-num"><span class="ranking-num-val" style="color:var(--green)">${t.concluidas}</span><span class="ranking-num-lbl">Concluid.</span></div>
+            <div class="ranking-num"><span class="ranking-num-val" style="color:var(--cyan);font-size:13px;">${tempoStr}</span><span class="ranking-num-lbl">T. Médio</span></div>
+            <div class="ranking-num"><span class="ranking-num-val" style="color:var(--purple);font-size:13px;">${t.resolucao}%</span><span class="ranking-num-lbl">Resolução</span></div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  container.innerHTML = podioHtml + listaHtml;
 }
 
 // openRelatorioMensal now handled by switchTab above
@@ -4439,41 +4537,194 @@ function renderDashboard() {
   const osList = getDashOS();
   const prevList = dashPeriodo !== 'tudo' ? getPrevOS() : [];
 
-  const abertas = osList.filter(o => o.status !== 'concluido').length;
-  const andamento = osList.filter(o => o.status === 'andamento').length;
-  const concluido = osList.filter(o => o.status === 'concluido').length;
+  const abertas    = osList.filter(o => o.status !== 'concluido').length;
+  const concluido  = osList.filter(o => o.status === 'concluido').length;
   const aguardando = osList.filter(o => o.status === 'aguardando').length;
 
-  const prevAbertas = prevList.filter(o => o.status !== 'concluido').length;
-  const prevAndamento = prevList.filter(o => o.status === 'andamento').length;
+  const prevAbertas   = prevList.filter(o => o.status !== 'concluido').length;
   const prevConcluido = prevList.filter(o => o.status === 'concluido').length;
-  const prevAguardando = prevList.filter(o => o.status === 'aguardando').length;
+  const prevAguardando= prevList.filter(o => o.status === 'aguardando').length;
 
-  document.getElementById('dm-abertas').textContent = abertas;
-  document.getElementById('dm-andamento').textContent = andamento;
+  document.getElementById('dm-abertas').textContent   = abertas;
   document.getElementById('dm-concluido').textContent = concluido;
-  document.getElementById('dm-aguardando').textContent = aguardando;
+  document.getElementById('dm-aguardando').textContent= aguardando;
 
-  buildDeltaHtml(abertas, prevAbertas, 'dm-abertas-delta');
-  buildDeltaHtml(andamento, prevAndamento, 'dm-andamento-delta');
-  buildDeltaHtml(concluido, prevConcluido, 'dm-concluido-delta');
+  // Tempo médio
+  const comTempo = osList.filter(o => o.tempoAtendimentoMin > 0);
+  const tempoMedio = comTempo.length > 0
+    ? Math.round(comTempo.reduce((s,o) => s + o.tempoAtendimentoMin, 0) / comTempo.length) : null;
+  document.getElementById('dm-tempo-medio').textContent = tempoMedio ? formatTempo(tempoMedio) : '—';
+  document.getElementById('dm-andamento-delta').textContent =
+    tempoMedio ? `média de ${comTempo.length} O.S. com tempo registrado` : 'sem O.S. com tempo registrado';
+
+  buildDeltaHtml(abertas,    prevAbertas,    'dm-abertas-delta');
+  buildDeltaHtml(concluido,  prevConcluido,  'dm-concluido-delta');
   buildDeltaHtml(aguardando, prevAguardando, 'dm-aguardando-delta');
 
-  // Sparklines (use daily data)
   const daily = buildDailyData(osList);
-  renderSparkline('spark-abertas', daily.abertas, '#4d9fff');
-  renderSparkline('spark-andamento', daily.abertas.map((a,i) => Math.round(a * 0.4)), '#00d4ff');
+  renderSparkline('spark-abertas',   daily.abertas,    '#4d9fff');
   renderSparkline('spark-concluido', daily.concluidas, '#00c896');
-  renderSparkline('spark-aguardando', daily.abertas.map((a,i) => Math.round(a * 0.6)), '#ffb020');
+  renderSparkline('spark-aguardando',daily.abertas.map(a => Math.round(a * 0.6)), '#ffb020');
+  renderSparkline('spark-andamento', comTempo.map(o => o.tempoAtendimentoMin), '#00d4ff');
 
-  // Charts via Chart.js
   loadChartJs(() => {
     renderLineChart(daily);
     renderDonutChart(osList);
+    renderBarChart(osList);
   });
 
-  // Activity feed
   renderActivityFeed();
+  renderDashEquipes(osList);
+  renderDashRanking(osList);
+  renderDashMateriais(osList);
+}
+
+function renderDashEquipes(osList) {
+  const wrap = document.getElementById('dash-equipes-wrap');
+  if (!wrap) return;
+  const equipes = ['Equipe 01', 'Equipe 02'];
+  const total = osList.length || 1;
+  wrap.innerHTML = equipes.map(eq => {
+    const osEq = osList.filter(o => (o.responsavel||'').includes(eq));
+    const conc = osEq.filter(o => o.status === 'concluido').length;
+    const and  = osEq.filter(o => o.status === 'andamento').length;
+    const ag   = osEq.filter(o => o.status === 'aguardando').length;
+    const pct  = Math.round(osEq.length / total * 100);
+    const tempoArr = osEq.filter(o => o.tempoAtendimentoMin > 0);
+    const tempoMed = tempoArr.length > 0
+      ? formatTempo(Math.round(tempoArr.reduce((s,o) => s+o.tempoAtendimentoMin, 0) / tempoArr.length)) : '—';
+    return `<div style="border:1px solid var(--border);border-radius:10px;padding:12px 14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:13px;font-weight:700;color:var(--text);">📋 ${eq}</span>
+        <span style="font-size:11px;color:var(--text3);">${pct}% do total</span>
+      </div>
+      <div style="display:flex;gap:14px;margin-bottom:10px;">
+        <div style="text-align:center;">
+          <div style="font-size:20px;font-weight:700;font-family:var(--font2);color:var(--green);">${conc}</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;">Concluid.</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:20px;font-weight:700;font-family:var(--font2);color:var(--cyan);">${and}</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;">Andamento</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:20px;font-weight:700;font-family:var(--font2);color:var(--amber);">${ag}</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;">Aguard.</div>
+        </div>
+        <div style="text-align:center;margin-left:auto;">
+          <div style="font-size:16px;font-weight:700;font-family:var(--font2);color:var(--purple);">${tempoMed}</div>
+          <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;">Tempo Méd.</div>
+        </div>
+      </div>
+      <div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;">
+        <div style="height:6px;width:${osEq.length > 0 ? Math.round(conc/osEq.length*100) : 0}%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:3px;transition:width .5s;"></div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:4px;">${osEq.length > 0 ? Math.round(conc/osEq.length*100) : 0}% de resolução</div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashRanking(osList) {
+  const el = document.getElementById('dash-ranking');
+  if (!el) return;
+  const map = {};
+  osList.forEach(os => {
+    const resp = (os.responsavel || 'Sem equipe').trim();
+    if (!map[resp]) map[resp] = { conc: 0, total: 0, tempo: [] };
+    map[resp].total++;
+    if (os.status === 'concluido') map[resp].conc++;
+    if (os.tempoAtendimentoMin > 0) map[resp].tempo.push(os.tempoAtendimentoMin);
+  });
+  const ranking = Object.entries(map)
+    .sort((a, b) => b[1].conc - a[1].conc)
+    .slice(0, 5);
+  if (ranking.length === 0) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;">Sem dados.</div>'; return; }
+  const maxConc = ranking[0][1].conc || 1;
+  const medalhas = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+  el.innerHTML = ranking.map(([nome, d], i) => {
+    const pct = Math.round(d.conc / maxConc * 100);
+    const tempoMed = d.tempo.length > 0
+      ? formatTempo(Math.round(d.tempo.reduce((s,v)=>s+v,0)/d.tempo.length)) : '—';
+    const initials = nome.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+    return `<div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-size:16px;flex-shrink:0;">${medalhas[i]||'·'}</span>
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--cyan);color:#000;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${initials}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(nome)}</div>
+        <div style="height:4px;background:var(--bg4);border-radius:2px;margin-top:4px;overflow:hidden;">
+          <div style="height:4px;width:${pct}%;background:var(--cyan);border-radius:2px;transition:width .5s;"></div>
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-size:14px;font-weight:700;color:var(--green);">${d.conc}</div>
+        <div style="font-size:10px;color:var(--text3);">${tempoMed}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDashMateriais(osList) {
+  const el = document.getElementById('dash-materiais');
+  if (!el) return;
+  const map = {};
+  osList.forEach(os => {
+    (os.materiais||[]).forEach(m => {
+      if (!m.tipo) return;
+      if (!map[m.tipo]) map[m.tipo] = { qty: 0, count: 0 };
+      map[m.tipo].qty += parseFloat(m.qty||0);
+      map[m.tipo].count++;
+    });
+  });
+  const sorted = Object.entries(map).sort((a,b) => b[1].qty - a[1].qty).slice(0, 7);
+  if (sorted.length === 0) { el.innerHTML = '<div style="color:var(--text3);font-size:13px;">Nenhum material usado no período.</div>'; return; }
+  const maxQty = sorted[0][1].qty || 1;
+  el.innerHTML = sorted.map(([tipo, d]) => {
+    const pct = Math.round(d.qty / maxQty * 100);
+    return `<div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
+        <span style="font-size:12px;color:var(--text2);font-weight:600;">${esc(tipo)}</span>
+        <span style="font-size:12px;font-family:var(--font2);color:var(--cyan);">${d.qty % 1 === 0 ? d.qty : d.qty.toFixed(1)}</span>
+      </div>
+      <div style="height:5px;background:var(--bg4);border-radius:3px;overflow:hidden;">
+        <div style="height:5px;width:${pct}%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:3px;transition:width .5s;"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBarChart(osList) {
+  const canvas = document.getElementById('dash-bar-chart');
+  if (!canvas || !window.Chart) return;
+  if (window.dashBarChart) { window.dashBarChart.destroy(); window.dashBarChart = null; }
+  const map = {};
+  osList.forEach(os => {
+    const s = os.servico || 'Outros';
+    map[s] = (map[s]||0) + 1;
+  });
+  const entries = Object.entries(map).sort((a,b) => b[1]-a[1]).slice(0,6);
+  if (entries.length === 0) return;
+  const labels = entries.map(e => e[0].length > 18 ? e[0].slice(0,16)+'…' : e[0]);
+  const data   = entries.map(e => e[1]);
+  window.dashBarChart = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: ['#00d4ff44','#00c89644','#ffb02044','#9d6fff44','#ff4d6a44','#4d9fff44'],
+        borderColor:     ['#00d4ff','#00c896','#ffb020','#9d6fff','#ff4d6a','#4d9fff'],
+        borderWidth: 1.5, borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color:'#5a5a72', font:{size:11} }, grid:{color:'#2e2e38'}, beginAtZero:true },
+        y: { ticks: { color:'#8888aa', font:{size:11} }, grid:{display:false} }
+      }
+    }
+  });
 }
 
 function loadChartJs(cb) {
