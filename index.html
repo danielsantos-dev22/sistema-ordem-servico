@@ -3902,11 +3902,62 @@ function renderAgendaDia() {
           ${item.status !== 'cancelado'
             ? `<button class="btn btn-outline btn-sm" style="color:var(--red);border-color:var(--red);" onclick="marcarAgendaCancelado('${item.id}')">✕ Cancelar</button>`
             : ''}
+          ${item.status === 'pendente'
+            ? `<button class="btn btn-primary btn-sm" onclick="criarOSdaAgenda('${item.id}')" title="Abrir O.S. no Kanban com os dados desta manutenção">📋 Criar O.S.</button>`
+            : ''}
         </div>
       </div>
     </div>`;
   }).join('');
 }
+
+window.criarOSdaAgenda = (id) => {
+  const item = agendaItens.find(i => i.id === id);
+  if (!item) return;
+
+  // Navega para o Kanban
+  const navBtns = document.querySelectorAll('.nav-tab');
+  navBtns.forEach(b => b.classList.remove('active'));
+  navBtns[1]?.classList.add('active'); // aba Kanban
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-kanban')?.classList.add('active');
+
+  // Abre modal de nova O.S. com dados preenchidos
+  openNewOS();
+  setTimeout(() => {
+    // Título → descrição da O.S.
+    const desc = document.getElementById('os-descricao');
+    if (desc) desc.value = item.titulo + (item.obs ? '\n' + item.obs : '');
+
+    // Cliente
+    const cli = document.getElementById('os-cliente');
+    if (cli) cli.value = item.cliente || '';
+
+    // Endereço (usa o campo cliente/local como endereço também)
+    const end = document.getElementById('os-endereco');
+    if (end) end.value = item.cliente || '';
+
+    // Equipe responsável
+    const resp = document.getElementById('os-responsavel');
+    if (resp) resp.value = item.equipe || '';
+
+    // Prioridade baseada na urgência
+    const prio = document.getElementById('os-prioridade');
+    if (prio) prio.value = item.urgencia === 'alta' ? 'alta' : item.urgencia === 'baixa' ? 'baixa' : 'media';
+
+    // Serviço padrão
+    const serv = document.getElementById('os-servico');
+    if (serv && item.titulo) {
+      // Tenta identificar o tipo de serviço pelo título
+      const titulo = item.titulo.toUpperCase();
+      const opcoes = Array.from(serv.options).map(o => o.value.toUpperCase());
+      const match = opcoes.find(o => o && titulo.includes(o));
+      if (match) serv.value = serv.options[opcoes.indexOf(match)].value;
+    }
+
+    showToast('Dados da agenda preenchidos na O.S.!', 'success');
+  }, 150);
+};
 
 function renderAgendaProximas() {
   const lista = document.getElementById('agenda-proximas-list');
