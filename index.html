@@ -48,16 +48,43 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(ellipse at 20% 50%, #0a1628 0%, #0d0d0f 60%);
+    position: relative;
+    overflow: hidden;
+    background: #0d0d0f;
+  }
+  #auth-stars-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .auth-bg-glow {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 70% 35%, rgba(80,20,140,0.5) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 70% at 80% 85%, rgba(20,10,60,0.7) 0%, transparent 65%),
+      #0d0d0f;
+    z-index: 0;
+  }
+  .auth-mountain {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 65%; height: 65%;
+    z-index: 1;
+    pointer-events: none;
   }
   .auth-box {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-top: 2px solid var(--cyan);
-    border-radius: 12px;
+    position: relative;
+    z-index: 2;
+    background: rgba(13,13,15,0.55);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
     padding: 40px;
     width: 420px;
     max-width: 95vw;
+    backdrop-filter: blur(2px);
   }
   .auth-logo {
     display: flex; align-items: center; gap: 12px;
@@ -72,7 +99,12 @@
   }
   .auth-logo-text { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
   .auth-logo-text span { color: var(--cyan); }
-  .auth-tabs { display: flex; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .auth-main-title {
+    font-size: 38px; font-weight: 800; color: #fff;
+    letter-spacing: -1px; line-height: 1.15; margin-bottom: 28px;
+  }
+  .auth-main-title span { color: #c084fc; }
+  .auth-tabs { display: flex; margin-bottom: 28px; border-bottom: 1px solid rgba(255,255,255,0.1); }
   .auth-tab {
     flex: 1; padding: 10px; background: none; border: none; color: var(--text2);
     font-family: var(--font); font-size: 15px; font-weight: 600; cursor: pointer;
@@ -748,16 +780,34 @@ document.addEventListener('DOMContentLoaded', populateAllMaterialSelects);
 function doLogin()         { window._modDoLogin?.();        }
 function doRegister()      { window._modDoRegister?.();     }
 function switchTab(t, btn) { window._appSwitchTab?.(t, btn); }
-function showTab(t)        { window._modAuthTab?.(t);       }
+function showTab(t)        { window._modAuthTab?.(t); window._authTitleUpdate?.(t); }
 </script>
 
 <!-- AUTH SCREEN -->
 <div id="auth-screen">
+  <div class="auth-bg-glow"></div>
+  <canvas id="auth-stars-canvas"></canvas>
+
+  <svg class="auth-mountain" viewBox="0 0 700 480" preserveAspectRatio="xMaxYMax meet" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="mGrad1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1a0a2e" stop-opacity="0.97"/>
+        <stop offset="100%" stop-color="#0d0d0f" stop-opacity="1"/>
+      </linearGradient>
+    </defs>
+    <polygon points="0,480 700,480 700,90 580,210 440,70 330,165 210,55 100,185 0,310" fill="url(#mGrad1)"/>
+    <polygon points="440,70 330,165 530,165" fill="#1a0833" opacity="0.7"/>
+    <polygon points="210,55 100,185 300,185" fill="#150825" opacity="0.8"/>
+    <polygon points="580,210 700,90 700,280" fill="#120720" opacity="0.6"/>
+    <line x1="600" y1="155" x2="660" y2="200" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>
+
   <div class="auth-box">
     <div class="auth-logo">
       <div class="auth-logo-icon">OS</div>
       <div class="auth-logo-text">OS <span>2.0</span></div>
     </div>
+    <div class="auth-main-title" id="auth-main-title">Faça seu<br>Login<span>.</span></div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="showTab('login')">ENTRAR</button>
       <button class="auth-tab" onclick="showTab('register')">CADASTRAR</button>
@@ -774,7 +824,8 @@ function showTab(t)        { window._modAuthTab?.(t);       }
         <label>Senha</label>
         <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()" />
       </div>
-      <button class="btn btn-primary" onclick="doLogin()">ENTRAR</button>
+      <button class="btn btn-primary" style="background:#9333ea;color:#fff;" onmouseover="this.style.background='#7e22ce'" onmouseout="this.style.background='#9333ea'" onclick="doLogin()">Entrar</button>
+      <p style="text-align:center;margin-top:14px;font-size:13px;color:rgba(255,255,255,0.35);cursor:pointer;text-decoration:underline;" onclick="showTab('register')">Ainda não tenho uma conta</p>
     </div>
 
     <!-- REGISTER FORM -->
@@ -791,10 +842,47 @@ function showTab(t)        { window._modAuthTab?.(t);       }
         <label>Senha</label>
         <input type="password" id="reg-password" placeholder="mínimo 6 caracteres" />
       </div>
-      <button class="btn btn-primary" onclick="doRegister()">CRIAR CONTA</button>
+      <button class="btn btn-primary" style="background:#9333ea;color:#fff;" onmouseover="this.style.background='#7e22ce'" onmouseout="this.style.background='#9333ea'" onclick="doRegister()">Criar conta</button>
+      <p style="text-align:center;margin-top:14px;font-size:13px;color:rgba(255,255,255,0.35);cursor:pointer;text-decoration:underline;" onclick="showTab('login')">Já tenho uma conta</p>
     </div>
   </div>
+
+  <p style="position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:12px;color:rgba(255,255,255,0.2);z-index:2;">
+    2025 | Sistema de Ordens de Serviço
+  </p>
 </div>
+
+<script>
+(function() {
+  const canvas = document.getElementById('auth-stars-canvas');
+  function drawStars() {
+    const W = window.innerWidth, H = window.innerHeight;
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,W,H);
+    for (let i = 0; i < 220; i++) {
+      const x = Math.random()*W, y = Math.random()*H*0.8;
+      const r = Math.random()*1.3+0.2, a = Math.random()*0.75+0.15;
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(255,255,255,${a})`; ctx.fill();
+    }
+    const sx=W*0.72, sy=H*0.17;
+    const sg = ctx.createLinearGradient(sx,sy,sx+100,sy+65);
+    sg.addColorStop(0,'rgba(255,255,255,0)'); sg.addColorStop(1,'rgba(255,255,255,0.75)');
+    ctx.beginPath(); ctx.moveTo(sx+100,sy+65); ctx.lineTo(sx,sy);
+    ctx.strokeStyle=sg; ctx.lineWidth=1.5; ctx.stroke();
+  }
+  drawStars();
+  window.addEventListener('resize', drawStars);
+
+  const origShowTab = window.showTab;
+  window._authTitleUpdate = function(tab) {
+    const el = document.getElementById('auth-main-title');
+    if (!el) return;
+    el.innerHTML = tab === 'register' ? 'Crie sua<br>Conta<span style="color:#c084fc">.</span>' : 'Faça seu<br>Login<span style="color:#c084fc">.</span>';
+  };
+})();
+</script>
 
 <!-- APP SCREEN -->
 <div id="app-screen">
